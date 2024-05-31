@@ -13,8 +13,20 @@ function getAllUsers(req, res){
 }
 
 function authenticate(req, res){
-    const request_body = req.body;
-    return res.status(200).json(request_body); 
+    const input_username = req.body.username;
+    const input_password = req.body.password;
+
+    for(let user of UserDatabase){
+        const username = user.getUsername();
+        const password = user.getPassword();
+
+        if(username == input_username && password == input_password){
+            return res.status(200).json({message: "Authentication Successful!"}); 
+        }
+        else{
+            return res.status(401).json({message: "Username or password is incorrect."});
+        }
+    }
 }
 
 
