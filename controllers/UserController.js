@@ -23,12 +23,9 @@ function authenticate(req, res){
         if(username == input_username && password == input_password){
             return res.status(200).json({message: "Authentication Successful!"}); 
         }
-        else{
-            return res.status(401).json({message: "Username or password is incorrect."});
-        }
     }
+    return res.status(401).json({message: "Username or password is incorrect."});
 }
-
 
 // EXPORT ALL THE FUNCTIONS
 module.exports = {getAllUsers, authenticate};
