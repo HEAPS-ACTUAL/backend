@@ -9,5 +9,9 @@ const UserDatabase = [
 // FUNCTIONS
 function getAllUsers(req, res){
     const allUsers = UserDatabase;
-    return response.status(200).json(allUsers);
+    return res.status(200).json(allUsers);
 }
+
+
+// EXPORT ALL THE FUNCTIONS
+module.exports = {getAllUsers};
