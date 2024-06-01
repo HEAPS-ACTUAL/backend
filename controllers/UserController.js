@@ -1,11 +1,5 @@
 const query = require('../utils/Promisify');
 
-// MOCK DATABASE
-// const UserDatabase = [
-//     new User('alice@gmail.com', 'alice1'),
-//     new User('bob@hotmail.com', 'bob1')
-// ]
-
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
     const sqlQuery = 'Select * from user';
