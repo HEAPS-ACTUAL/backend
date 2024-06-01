@@ -1,6 +1,5 @@
 const User = require('../classes/User');
-const con = require('../models/ConnectionManager');
-const callback = require('../models/Callback function');
+const query = require('../utils/Promisify');
 
 // MOCK DATABASE
 // const UserDatabase = [
@@ -11,16 +10,9 @@ const callback = require('../models/Callback function');
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
     const sqlQuery = 'Select * from user';
+    const allUsers = await query(sqlQuery);
 
-    const allUsers = con.query(sqlQuery, callback);
-
-    console.log(allUsers);
-    con.end();
-    
-    // return res.status(200).json(allUsers);
-
-    // const allUsers = UserDatabase;
-    // return res.status(200).json(allUsers);
+    return res.status(200).json(allUsers);
 }
 
 
@@ -39,14 +31,8 @@ async function getUserByEmail(req, res = null){
     
     let userFound = null;
 
-    for(let user of UserDatabase){
-        const email = user.getEmail();
-
-        if(email === inputEmail){
-            userFound = user;
-            break;
-        }
-    }
+    const sqlQuery = 'Select * from user where email = ?';
+    userFound = await query(sqlQuery, [inputEmail]);
     
     /*
     If the function is called without the "res" parameter, return a user object.
@@ -54,7 +40,7 @@ async function getUserByEmail(req, res = null){
     */
     
     if(res == null){
-        return userFound;
+        return userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
         
     }
     else{
@@ -69,21 +55,22 @@ async function getUserByEmail(req, res = null){
 
 async function authenticate(req, res){
     const userFound = await getUserByEmail(req);
+    console.log(userFound);
     
-    if(userFound == null){
-        return res.status(401).json({message: "Email does not exist. Please create an account."});
-    }
-    else{
-        const actualPassword = userFound.getPassword();
-        const inputPassword = req.body.password;
+    // if(userFound == null){
+    //     return res.status(401).json({message: "Email does not exist. Please create an account."});
+    // }
+    // else{
+    //     const actualPassword = userFound.getPassword();
+    //     const inputPassword = req.body.password;
 
-        if(actualPassword === inputPassword){
-            return res.status(200).json({message: "Authentication Successful!"});
-        }
-        else{
-            return res.status(401).json({message: "Wrong password. Login failed!"});
-        }
-    }
+    //     if(actualPassword === inputPassword){
+    //         return res.status(200).json({message: "Authentication Successful!"});
+    //     }
+    //     else{
+    //         return res.status(401).json({message: "Wrong password. Login failed!"});
+    //     }
+    // }
 }
 
 // EXPORT ALL THE FUNCTIONS
