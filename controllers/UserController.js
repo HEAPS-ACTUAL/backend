@@ -1,4 +1,3 @@
-const User = require('../classes/User');
 const query = require('../utils/Promisify');
 
 // MOCK DATABASE
