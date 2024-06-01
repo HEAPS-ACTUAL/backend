@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const util = require('util');
+
 
 const con = mysql.createConnection({
     host: "localhost",
@@ -8,6 +8,4 @@ const con = mysql.createConnection({
     database: "heap"
 })
 
-const query = util.promisify(con.query).bind(con);
-
-module.exports = {con, query};
+module.exports = con;
