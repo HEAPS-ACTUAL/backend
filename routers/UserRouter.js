@@ -4,7 +4,7 @@ This file is in charge of determining which functions from UserController.js to 
 
 const express = require('express');
 const router = express.Router();
-const { getAllUsers, authenticate, getUserByEmail } = require('../controllers/UserController');
+const { getAllUsers, authenticate, getUserByEmail, createNewUser } = require('../controllers/UserController');
 
 // GET ALL USERS
 router.get('/', getAllUsers);
@@ -14,5 +14,8 @@ router.get('/profile', getUserByEmail);
 
 // AUTHENTICATE
 router.post('/authenticate', authenticate);
+
+// RESGISTER
+router.post('/register', createNewUser);
 
 module.exports = router;

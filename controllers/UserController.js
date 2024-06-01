@@ -1,4 +1,5 @@
 const query = require('../utils/Promisify');
+const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
@@ -65,8 +66,20 @@ async function authenticate(req, res){
 }
 
 async function createNewUser(req, res){
+    const inputEmail = req.body.email;
+    const inputPassword = req.body.password;
+    const inputFirstName = req.body.firstName;
+    const inputLastName = req.body.lastName;
+    const inputGender = req.body.gender;
 
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(inputPassword, salt);
+
+    const sqlQuery = "Insert into user (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
+    const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
+
+    return res.status(200).json(insertOk);
 }
 
 // EXPORT ALL THE FUNCTIONS
-module.exports = {getAllUsers, getUserByEmail, authenticate};
+module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser};
