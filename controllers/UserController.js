@@ -14,13 +14,13 @@ async function getAllUsers(req, res){
 
 
 /*
-WHY IS "RES" SET TO NULL BY DEFAULT?
+WHY IS "RES" SET TO NULL BY DEFAULT FOR THE getUserByEmail FUNCTION?
 
-In the function getUserByEmail, the value of the parameter res is set as null by default
-because both the frontend and the function authenticate (as seen below) will call getUserByEmail.
+Because both the frontend and the function authenticate (as seen below) will call getUserByEmail.
 When it is called directly by the frontend, the "res" parameter will be provided automatically
-by router.get() (i think... HAHAHA), but when it is called by authenticate, the "res" parameter will not be provided and "res"
-will take on its default null value.
+by router.get() (i think... HAHAHA), but when it is called by authenticate, the "res" parameter 
+will not be provided and "res" will take on its default null value. We want the function to perform
+differently depending on who is calling it (see if statement below).
 */
 
 async function getUserByEmail(req, res = null){
