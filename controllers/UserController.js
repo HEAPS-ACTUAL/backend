@@ -53,10 +53,12 @@ async function authenticate(req, res){
         return res.status(401).json({message: "Email does not exist. Please create an account."});
     }
     else{
-        const actualPassword = userFound.HashedPassword;
+        const hashedPassword = userFound.HashedPassword;
         const inputPassword = req.body.password;
 
-        if(actualPassword === inputPassword){
+        const comparePassword = await bcrypt.compare(inputPassword, hashedPassword);
+        
+        if(comparePassword == true){
             return res.status(200).json({message: "Authentication Successful!"});
         }
         else{
@@ -81,5 +83,5 @@ async function createNewUser(req, res){
     return res.status(200).json(insertOk);
 }
 
-// EXPORT ALL THE FUNCTIONS
+// EXPORT ALL THE FUNCTIONS 
 module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser};
