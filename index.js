@@ -1,11 +1,22 @@
 const express = require('express');
 const cors = require('cors');
+const con = require('./models/ConnectionManager');
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
 app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
 
 const PORT = 8001; // DEFINING OUR PORT AS 8001
+
+// ESTABLISHING CONNECTION WITH SQL DATABASE
+con.connect((error) => {
+    if(error){
+        console.log(`ERROR: ${error}`);
+    }
+    else{
+        console.log("Successfully connected to DB!");
+    }
+})
 
 // HEALTH CHECK ENDPOINT
 app.get('/', (req, res) => {
