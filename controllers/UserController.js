@@ -1,15 +1,26 @@
-const User = require('../classes/User')
+const User = require('../classes/User');
+const con = require('../models/ConnectionManager');
+const callback = require('../models/Callback function');
 
 // MOCK DATABASE
-const UserDatabase = [
-    new User('alice@gmail.com', 'alice1'),
-    new User('bob@hotmail.com', 'bob1')
-]
+// const UserDatabase = [
+//     new User('alice@gmail.com', 'alice1'),
+//     new User('bob@hotmail.com', 'bob1')
+// ]
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
-    const allUsers = UserDatabase;
-    return res.status(200).json(allUsers);
+    const sqlQuery = 'Select * from user';
+
+    const allUsers = con.query(sqlQuery, callback);
+
+    console.log(allUsers);
+    con.end();
+    
+    // return res.status(200).json(allUsers);
+
+    // const allUsers = UserDatabase;
+    // return res.status(200).json(allUsers);
 }
 
 
