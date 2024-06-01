@@ -64,5 +64,9 @@ async function authenticate(req, res){
     }
 }
 
+async function createNewUser(req, res){
+
+}
+
 // EXPORT ALL THE FUNCTIONS
 module.exports = {getAllUsers, getUserByEmail, authenticate};
