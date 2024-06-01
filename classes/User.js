@@ -1,18 +1,18 @@
 class User {
-    #username;
-    #password;
+    email;
+    password;
 
-    constructor(username, password){
-        this.#username = username;
-        this.#password = password;
+    constructor(email, password){
+        this.email = email;
+        this.password = password;
     }
 
-    getUsername(){
-        return this.#username;
+    getEmail(){
+        return this.email;
     }
 
     getPassword(){
-        return this.#password;
+        return this.password;
     }
 }
 
