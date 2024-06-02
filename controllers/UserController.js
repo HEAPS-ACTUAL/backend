@@ -77,10 +77,17 @@ async function createNewUser(req, res){
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(inputPassword, salt);
 
-    const sqlQuery = "Insert into user (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
-    const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
-
-    return res.status(200).json(insertOk);
+    try{
+        const sqlQuery = "Insert into user (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
+        
+        if(insertOk){
+            return res.status(200).json({message: "Account created!"});
+        }
+    }
+    catch(error){
+        return res.status(401).json({message: "Email already exists!"});
+    }
 }
 
 // EXPORT ALL THE FUNCTIONS 
