@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 app.use('/user', require('./routers/UserRouter'));
 
 // ROUTES FOR FILE
-app.use('/file', require('./routers/UserRouter'));
+app.use('/file', require('./routers/FileRouter'));
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
