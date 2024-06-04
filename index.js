@@ -5,6 +5,9 @@ const con = require('./models/ConnectionManager');
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
 app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
+app.use(express.urlencoded({ extended: true })); // you can parse incoming Request Object if object, with nested objects, or generally any type.
+
+
 
 const PORT = 8001; // DEFINING OUR PORT AS 8001
 
