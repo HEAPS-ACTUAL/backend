@@ -105,7 +105,7 @@ async function uploadFile(req, res){
         const fileBuffer = uploadedFile.buffer
         // console.log(uploadedFile);
 
-        processPDF(fileBuffer, res);
+        processPDF(fileBuffer);
         // console.log(pdfParse(req.files.pdfFile)); // testing pdf to text conversion
         return res.status(200).json({message: "File successfully uploaded"});
     } catch(error) {
@@ -116,7 +116,7 @@ async function uploadFile(req, res){
 }
 
 // Helper function
-async function processPDF(fileBuffer, res) {
+async function processPDF(fileBuffer) {
     try {
         console.log("Processing a PDF file!")
         // Parse the PDF content
