@@ -2,11 +2,7 @@ const query = require('../utils/Promisify');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 const fileUpload = require("express-fileupload");
 const PDFParser = require("pdf-parse");
-const fs = require('fs');
-const uploadDirectory = './uploads';
 const multer = require('multer');
-const path = require('path');
-const mammoth = require('mammoth');
 const pdf = require('html-pdf');
 
 // FUNCTIONS RELATED TO USER
