@@ -122,11 +122,12 @@ async function uploadFile(req, res){
 // Helper function
 async function processPDF(fileBuffer, res) {
     try {
+        console.log("Processing a PDF file!")
         // Parse the PDF content
         const data = await PDFParser(fileBuffer);
         const pdfText = data.text;
         console.log(pdfText);
-        
+
     } catch (error){
         console.error('An error occurred while processing the PDF:', error);
         res.status(500).json({ error: 'Failed to process the PDF' });
