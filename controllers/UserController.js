@@ -1,7 +1,6 @@
 const query = require('../utils/Promisify');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
-
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
     const sqlQuery = 'Select * from user';
