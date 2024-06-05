@@ -16,8 +16,9 @@ async function uploadFile(req, res){
 
         processPDF(fileBuffer);
         // console.log(pdfParse(req.files.pdfFile)); // testing pdf to text conversion
-        return res.status(200).json({message: "File successfully uploaded"});
-    } catch(error) {
+        return res.status(200).json({message: "File successfully uploaded"});  
+    } 
+    catch(error) {
         console.error('An error occurred while processing the file:', error);
         res.status(500).json({ error: 'Failed to process the file' });
     }
@@ -32,8 +33,8 @@ async function processPDF(fileBuffer) {
         const data = await PDFParser(fileBuffer);
         const pdfText = data.text;
         console.log(pdfText);
-
-    } catch (error){
+    } 
+    catch (error){
         console.error('An error occurred while processing the PDF:', error);
         res.status(500).json({ error: 'Failed to process the PDF' });
     }
