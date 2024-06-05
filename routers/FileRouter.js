@@ -5,8 +5,8 @@ execute based on the endpoint of the request that is being sent.
 
 const express = require('express');
 const router = express.Router();
-const { uploadFile } = require('../controllers/FileController');
 const multer = require('multer');
+const { uploadFile } = require('../controllers/FileController');
 
 // Set up multer for in-memory file uploads
 const storage = multer.memoryStorage(); // creates a buffer storage
