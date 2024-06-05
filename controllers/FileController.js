@@ -1,7 +1,4 @@
-const fileUpload = require("express-fileupload");
 const PDFParser = require("pdf-parse");
-const multer = require('multer');
-const pdf = require('html-pdf');
 
 async function uploadFile(req, res){
     try {
@@ -20,23 +17,23 @@ async function uploadFile(req, res){
     } 
     catch(error) {
         console.error('An error occurred while processing the file:', error);
-        res.status(500).json({ error: 'Failed to process the file' });
+        return res.status(500).json({ error: 'Failed to process the file' });
     }
-   
-}
+} 
 
 // Helper function
 async function processPDF(fileBuffer) {
     try {
         console.log("Processing a PDF file!")
-        // Parse the PDF content
+
+        // Extracting the text from the PDF file
         const data = await PDFParser(fileBuffer);
         const pdfText = data.text;
         console.log(pdfText);
     } 
     catch (error){
         console.error('An error occurred while processing the PDF:', error);
-        res.status(500).json({ error: 'Failed to process the PDF' });
+        return res.status(500).json({ error: 'Failed to process the PDF' });
     }
 }
 
