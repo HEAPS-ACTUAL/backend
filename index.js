@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
 const queryController = require("./controllers/QueryController");
-const saveTextRouter = require("./routers/saveTextRouter"); // Import the saveTextRouter
 const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
 
 const app = express(); // Creating an instance of Express
@@ -27,9 +26,6 @@ app.get("/", (req, res) => {
 
 // Routes for user
 app.use("/user", require("./routers/UserRouter"));
-
-// Save Text Route for testing
-app.use("/save-text", saveTextRouter); // Use the saveTextRouter
 
 // File upload route
 app.use("/file", fileRouter); // Use the fileRouter for file upload
