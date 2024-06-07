@@ -30,11 +30,6 @@ const chatgpt = new openAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-console.log(
-  "Loaded API Key:",
-  process.env.UGCZ2QL98v4bN4HDSM8GT3BlbkFJWE2C6eI6M7AFSsZlvLSZ
-);
-
 async function chatRequest() {
   try {
     const message = "What is 2 + 2?";
