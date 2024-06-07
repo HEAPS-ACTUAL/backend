@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
 const queryController = require("./controllers/QueryController");
-const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
+// const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
@@ -30,9 +30,6 @@ app.use('/user', require('./routers/UserRouter'));
 
 // ROUTES FOR FILE
 app.use('/file', require('./routers/FileRouter'));
-
-// File upload route
-app.use("/file", fileRouter); // Use the fileRouter for file upload
 
 // Query Route
 app.post("/query", (req, res) => {
