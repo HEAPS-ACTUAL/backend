@@ -5,6 +5,7 @@ const con = require('./models/ConnectionManager');
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
 app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
+app.use(express.urlencoded({ extended: true })); // you can parse incoming Request Object if object, with nested objects, or generally any type.
 
 const PORT = 8001; // DEFINING OUR PORT AS 8001
 
@@ -25,6 +26,9 @@ app.get('/', (req, res) => {
 
 // ROUTES FOR USER
 app.use('/user', require('./routers/UserRouter'));
+
+// ROUTES FOR FILE
+app.use('/file', require('./routers/FileRouter'));
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
