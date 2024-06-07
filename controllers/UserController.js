@@ -23,7 +23,7 @@ differently depending on who is calling it (see if statement below).
 async function getUserByEmail(req, res = null){
     const inputEmail = req.body.email;
     const sqlQuery = 'Select * from user where email = ?';
-    
+
     userFound = await query(sqlQuery, [inputEmail]);
     userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
     
@@ -41,7 +41,7 @@ async function getUserByEmail(req, res = null){
             return res.status(200).json(userFound);
         }
         else{
-            return res.status(404).json(userFound);
+            return res.status(401).json(userFound);
         }
     }
 }

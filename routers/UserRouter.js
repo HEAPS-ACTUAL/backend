@@ -12,7 +12,7 @@ const { getAllUsers, authenticate, getUserByEmail, createNewUser } = require('..
 router.get('/', getAllUsers);
 
 // GET USER BY EMAIL
-router.get('/profile', getUserByEmail);
+router.post('/profile', getUserByEmail);
 
 // AUTHENTICATE
 router.post('/authenticate', authenticate);
