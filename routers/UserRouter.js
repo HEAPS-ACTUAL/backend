@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllUsers, authenticate, getUserByEmail, createNewUser } = require('../controllers/UserController');
 
+
 // GET ALL USERS
 router.get('/', getAllUsers);
 

@@ -1,13 +1,18 @@
-const express = require("express");
+/*
+This file is in charge of determining which functions from FileController.js to 
+execute based on the endpoint of the request that is being sent.
+*/
+
+const express = require('express');
 const router = express.Router();
-const multer = require("multer");
-const fileController = require("../controllers/FileController");
+const multer = require('multer');
+const { uploadFile } = require('../controllers/FileController');
 
 // Set up multer for in-memory file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const storage = multer.memoryStorage(); // creates a buffer storage
+const upload = multer({ storage: storage });
 
-// Route to handle file upload
-router.post("/upload", upload.single("file"), fileController.uploadFile);
+// UPLOAD PDF BY USER
+router.post('/upload', upload.single('file'), uploadFile);
 
 module.exports = router;

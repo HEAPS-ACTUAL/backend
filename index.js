@@ -4,9 +4,10 @@ const con = require("./models/ConnectionManager");
 const queryController = require("./controllers/QueryController");
 const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
 
-const app = express(); // Creating an instance of Express
-app.use(express.json()); // Telling Express to understand JSON
-app.use(cors()); // Enable CORS
+const app = express(); // CREATING AN INSTANCE OF EXPRESS
+app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
+app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
+app.use(express.urlencoded({ extended: true })); // you can parse incoming Request Object if object, with nested objects, or generally any type.
 
 const PORT = 8001; // Defining our port as 8001
 
@@ -19,13 +20,16 @@ con.connect((error) => {
   }
 });
 
-// Health check endpoint
-app.get("/", (req, res) => {
-  return res.status(200).json({ message: "Server is up and running!" });
-});
+// HEALTH CHECK ENDPOINT
+app.get('/', (req, res) => {
+    return res.status(200).json({message: "Server is up and running!"});
+})
 
-// Routes for user
-app.use("/user", require("./routers/UserRouter"));
+// ROUTES FOR USER
+app.use('/user', require('./routers/UserRouter'));
+
+// ROUTES FOR FILE
+app.use('/file', require('./routers/FileRouter'));
 
 // File upload route
 app.use("/file", fileRouter); // Use the fileRouter for file upload
