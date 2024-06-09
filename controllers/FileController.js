@@ -23,7 +23,8 @@ async function uploadFile(req, res) {
             message: "File successfully uploaded",
             id: req.file.originalname,
         });
-    } catch (error) {
+    } 
+    catch (error) {
         console.error("An error occurred while processing the file:", error);
         return res.status(500).json({ error: "Failed to process the file" });
     }
@@ -37,7 +38,8 @@ async function processPDF(fileBuffer) {
         // Extracting the text from the PDF file
         const data = await PDFParser(fileBuffer);
         return data.text;
-    } catch (error) {
+    } 
+    catch (error) {
         console.error("An error occurred while processing the PDF:", error);
         throw new Error("Failed to process the PDF");
     }
