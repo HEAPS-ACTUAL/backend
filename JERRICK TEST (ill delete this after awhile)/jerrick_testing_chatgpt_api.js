@@ -32,7 +32,7 @@ const chatgpt = new openAI({
 
 async function chatRequest() {
     try {
-        const message = "What is 2 + 2?";
+        const message = "what is 2 + 2?";
         const response = await chatgpt.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: message }],
