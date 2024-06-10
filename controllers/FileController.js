@@ -5,10 +5,11 @@ const con = require("../models/ConnectionManager");
 async function extractTextFromPDF(req, res) {
     try {
         // console.log("Received a file upload request");
+        console.log(req);
 
         if (!req.file) {
             console.log("No file uploaded in the request"); // Log if no file is received
-            return res.status(400).json({ message: "No file uploaded!" });
+            return res.status(404).json({ message: "No file uploaded!" });
         }
 
         const uploadedFile = req.file;

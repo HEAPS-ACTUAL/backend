@@ -5,6 +5,8 @@ const { extractTextFromPDF } = require("./FileController");
 
 async function generateSampleQuestions(req, res){
     try{
+        console.log('function is being called!');
+        // console.log(req);
         const extractedText = await extractTextFromPDF(req, res);
         const questions = await generateQuiz(extractedText);
         console.log(questions);
