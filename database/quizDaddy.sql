@@ -28,7 +28,8 @@ CREATE TABLE File (
 -- Creating the Quiz table
 CREATE TABLE Quiz (
     UserEmail VARCHAR(100) NOT NULL,
-    QuizID INT,
+    QuizID INT NOT NULL,
+    QuizName VARCHAR(100),
     Difficulty CHAR(1), 
     DateCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (UserEmail, QuizID),
