@@ -1,0 +1,40 @@
+const openAI = require('openai');
+require('dotenv').config({path: '../.env'});
+
+const { extractTextFromPDF } = require("./FileController");
+
+async function generateSampleQuestions(req, res){
+    try{
+        const extractedText = await extractTextFromPDF(req, res);
+        const questions = await generateQuiz(extractedText);
+        console.log(questions);
+        res.status(200).json({questions: questions});
+    }
+    catch(error){
+        res.status(404).json({message: error});
+    }    
+}
+
+async function generateQuiz(extractedText){
+    const chatgpt = new openAI({apiKey: process.env.OPENAI_API_KEY});
+
+    try{
+        const numberOfQuestions = 10;
+        const query = `Generate ${numberOfQuestions} questions based on the following text:\n\n${extractedText}`;
+
+        const response = await chatgpt.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: query }],
+            temperature: 0,
+            max_tokens: 1000,
+        })
+
+        questions = response.choices[0].message.content;
+        return questions;
+    }
+    catch(error){
+        res.status(404).json({message: error})
+    }
+}
+
+module.exports = {generateSampleQuestions, generateQuiz};
