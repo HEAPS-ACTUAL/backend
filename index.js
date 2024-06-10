@@ -14,7 +14,7 @@ const PORT = 8001; // Defining our port as 8001
 // Establishing connection with SQL Database
 con.connect((error) => {
     if (error) {
-        console.log(`ERROR: ${error}`);
+        console.log(`DATABASE ERROR: ${error}`);
     } else {
         console.log("Successfully connected to DB!");
     }
