@@ -1,4 +1,3 @@
-
 const query = require('../utils/Promisify');
 
 async function createNewQuiz(email, quizName, difficulty){
@@ -34,8 +33,6 @@ async function countTotalNumberOfQuizzes(email){
 // createNewQuiz('alice@gmail.com', 'math', 'E'); 
 // countTotalNumberOfQuizzes('alice@gmail.com');
 
-module.exports = {createNewQuiz};
-=======
 const openAI = require('openai');
 require('dotenv').config({path: '../.env'});
 
@@ -77,4 +74,4 @@ async function generateQuiz(extractedText){
     }
 }
 
-module.exports = {generateSampleQuestions, generateQuiz};
+module.exports = {generateSampleQuestions, generateQuiz, createNewQuiz};
