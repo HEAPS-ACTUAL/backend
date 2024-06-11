@@ -29,8 +29,8 @@ async function countTotalNumberOfQuizzes(email){
     }
 }
 
-// To test the functions
-// createNewQuiz('alice@gmail.com', 'math', 'E'); 
+// To test the insert functions
+// createNewQuiz('alice@gmail.com', 'math', 'E');
 // countTotalNumberOfQuizzes('alice@gmail.com');
 
 const openAI = require('openai');
@@ -40,16 +40,16 @@ const { extractTextFromPDF } = require("./FileController");
 
 async function generateSampleQuestions(req, res){
     try{
-        console.log('function is being called!');
-        // console.log(req);
+        console.log('extracting text now...');
         const extractedText = await extractTextFromPDF(req, res);
+        console.log('querying chatgpt now...');
         const questions = await generateQuiz(extractedText);
-        console.log(questions);
-        res.status(200).json({questions: questions});
+        // console.log(questions);
+        return res.status(200).json({questions: questions});
     }
     catch(error){
         res.status(404).json({message: error});
-    }    
+    }
 }
 
 async function generateQuiz(extractedText){
@@ -57,16 +57,56 @@ async function generateQuiz(extractedText){
 
     try{
         const numberOfQuestions = 10;
-        const query = `Generate ${numberOfQuestions} questions based on the following text:\n\n${extractedText}`;
+        const difficultyLevel = 'easy'; // This can be changed to take in an input from the user, allowing them to choose the diffiulty of the questions
+        const query = 
+        `${extractedText} \n\n
+        Based on the text above, generate ${numberOfQuestions} questions. These questions should test how well I know the content of the given text. The difficulty level of the questions should be ${difficultyLevel}. \n\n
+        
+        The questions are multiple choice questions and each question should have 4 options (1 correct and 3 wrong). I also want a short explanation on which option is correct. \n
+        
+        Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Explanation", "Options".
+        Generate JSON objects for the options with fields: "Option", "IsCorrect?". \n
+        
+        Format your response exactly like this: \n
+
+        QUESTIONS:
+        {
+        "QuestionNumber": ,
+        "ActualQuestion": ,
+        "Explanation":
+        }
+
+        OPTIONS:
+        {
+        "Option": , 
+        "IsCorrect?": 
+        }`
+
+        // (question1, explanation on the correct answer) |
+        // (question2, explanation on the correct answer) |
+        // (question3, explanation on the correct answer) |
+        // ... |
+        // (question${numberOfQuestions}, explanation on the correct answer)
+        // ] \n
+        
+        // OPTIONS: {
+        // 'question 1': [('option A', isCorrect?) | ('option B', isCorrect?) | ('option C', isCorrect)? | ('option D', isCorrect?)],
+        // 'question 2': [('option A', isCorrect?) | ('option B', isCorrect?) | ('option C', isCorrect)? | ('option D', isCorrect?)],
+        // 'question 3': [('option A', isCorrect?) | ('option B', isCorrect?) | ('option C', isCorrect)? | ('option D', isCorrect?)],
+        // ... ,
+        // 'question${numberOfQuestions}': [('option A', isCorrect?) | ('option B', isCorrect?) | ('option C', isCorrect?) | ('option D', isCorrect?)]
+        // }`;
 
         const response = await chatgpt.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: query }],
             temperature: 0,
-            max_tokens: 1000,
+            max_tokens: 2000,
         })
-
+        
+        console.log(response.choices[0].finish_reason);
         questions = response.choices[0].message.content;
+        
         return questions;
     }
     catch(error){

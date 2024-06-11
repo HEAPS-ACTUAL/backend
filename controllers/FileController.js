@@ -5,7 +5,7 @@ const con = require("../models/ConnectionManager");
 async function extractTextFromPDF(req, res) {
     try {
         // console.log("Received a file upload request");
-        console.log(req);
+        // console.log(req);
 
         if (!req.file) {
             console.log("No file uploaded in the request"); // Log if no file is received
