@@ -43,6 +43,18 @@ async function countTotalNumberOfOptions(email, quizID, questionNo){
     }
 }
 
+async function retrieveAllOptions(){
+    try{
+        const sqlQuery = 'select * from `Option`';
+        const returnedData = await query(sqlQuery);
+        
+        console.log(returnedData);
+    }
+    catch(error){
+        console.log(`Error: ${error}`)
+    }
+}
+
 // To test the functions
 // addNewOption('alice@gmail.com', 1, 1, 'salt', true);
 // addNewOption('alice@gmail.com', 1, 1, 'diamond', false);

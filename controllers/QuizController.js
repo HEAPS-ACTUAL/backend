@@ -114,4 +114,13 @@ async function generateQuiz(extractedText){
     }
 }
 
+const CHATGPT_response = require('../JERRICK TEST (ill delete this after awhile)/temporary');
+
+async function sortAndStoreQuiz(chatgpt_response){
+    console.log(chatgpt_response);
+    // questionsArray = chatgpt_response.split()
+}
+
+sortAndStoreQuiz(CHATGPT_response);
+
 module.exports = {generateSampleQuestions, generateQuiz, createNewQuiz};
