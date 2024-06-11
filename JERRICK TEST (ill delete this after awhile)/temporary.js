@@ -1,297 +1,222 @@
-// const CHATGPT_response = 
-// `QUESTIONS:
-// {
-// "QuestionNumber": 1,
-// "ActualQuestion": "What is the first step in creating a website with MailChimp?",
-// "Explanation": "The correct answer is to create a MailChimp account, as mentioned in Task 1."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Create the site structure",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Modify the style, fonts and color palette",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Create a MailChimp account",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Add, edit, move and delete page sections",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 2,
-// "ActualQuestion": "What is an important component of the 'About Us' page?",
-// "Explanation": "The correct answer is to describe the story of the business and the people that are part of it, as mentioned in Task 10."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Highlighting product prices",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Adding stock photos",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Describing the story of the business and its people",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Editing the 'Contact Us' page",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 3,
-// "ActualQuestion": "What can you do in the 'Page settings' section for SEO optimization?",
-// "Explanation": "The correct answer is to change the name and title to be descriptive of your brand and page, as mentioned in Task 11."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Upload images",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Edit the 'About Us' page",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Change name and title for SEO optimization",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Add text content to the footer",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 4,
-// "ActualQuestion": "What is the purpose of the 'Contact Us' page?",
-// "Explanation": "The correct answer is to provide customers with a way to contact the business, as mentioned in Task 2."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Show products and services",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Accept orders",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Engage with users",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Provide a way to contact the business",
-// "IsCorrect?": true
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 5,
-// "ActualQuestion": "What can you do in the 'Styles' menu of MailChimp?",
-// "Explanation": "The correct answer is to edit the style, fonts, and color palette of the website, as mentioned in Task 3."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Add text content",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Insert links",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Edit style, fonts, and color palette",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Upload and insert images",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 6,
-// "ActualQuestion": "What is the purpose of the 'Sales' page on a business website?",
-// "Explanation": "The correct answer is to accept orders and complete sales, as mentioned in Task 2."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Engage with users",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Show products and services",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Accept orders and complete sales",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Provide information about the business",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 7,
-// "ActualQuestion": "What can you do in the 'Content Studio' section of MailChimp?",
-// "Explanation": "The correct answer is to upload logo and images, as mentioned in Task 6."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Edit text content",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Add links",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Upload logo and images",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Change the color palette",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 8,
-// "ActualQuestion": "What is the purpose of the 'Newsletter' section on a business website?",
-// "Explanation": "The correct answer is to engage with users through newsletters, as mentioned in Task 2."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Accept orders",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Show products and services",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Engage with users through newsletters",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Provide information about the business",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 9,
-// "ActualQuestion": "What can you do in the 'Sections' of a website builder?",
-// "Explanation": "The correct answer is to act as containers for image and text content, as mentioned in Task 4."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Upload images",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Add text content",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Act as containers for image and text content",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Insert links",
-// "IsCorrect?": false
-// }
-
-// QUESTIONS:
-// {
-// "QuestionNumber": 10,
-// "ActualQuestion": "What is the purpose of the 'My Logo' option in MailChimp?",
-// "Explanation": "The correct answer is to upload your logo, as mentioned in Task 6."
-// }
-
-// OPTIONS:
-// {
-// "Option": "Add text content",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Upload logo",
-// "IsCorrect?": true
-// },
-// {
-// "Option": "Insert links",
-// "IsCorrect?": false
-// },
-// {
-// "Option": "Change the color palette",
-// "IsCorrect?": false
-// }`
-
 const CHATGPT_response = 
 `{
     "QuestionNumber": 1,
-    "ActualQuestion": "What is the first step in creating a website with MailChimp?",
-    "Explanation": "The first step in creating a website with MailChimp is to create a MailChimp account.",
+    "ActualQuestion": "What is the purpose of the backend in this project?",
+    "Explanation": "The backend is responsible for providing JSON data to the frontend.",
     "Options" : 
         [{
-        "Option": "Modify the style, fonts and color palette",
+        "Option": "Rendering dynamic elements on the frontend",
         "IsCorrect?": false
         },
         {
-        "Option": "Add text content to home page and footer",
+        "Option": "Interacting with the database",
         "IsCorrect?": false
         },
         {
-        "Option": "Create a MailChimp account",
+        "Option": "Providing JSON data to the frontend",
         "IsCorrect?": true
         },
         {
-        "Option": "Insert links",
+        "Option": "Styling the user interface",
         "IsCorrect?": false
         }]
 }|||
 {
     "QuestionNumber": 2,
-    "ActualQuestion": "What is the purpose of the 'About Us' page on a website?",
-    "Explanation": "The 'About Us' page is meant to provide information about the business, its mission, philosophy, values, and key people.",
+    "ActualQuestion": "Which command is used to install express framework in the backend?",
+    "Explanation": "The command 'npm i express' is used to install the express framework.",
     "Options" : 
         [{
-        "Option": "Show products and services",
+        "Option": "npm start",
         "IsCorrect?": false
         },
         {
-        "Option": "Accept orders",
+        "Option": "npm i mongoose",
         "IsCorrect?": false
         },
         {
-        "Option": "Give information about the business",
+        "Option": "npm i express",
         "IsCorrect?": true
         },
         {
-        "Option": "Engage with the users",
+        "Option": "npm init -y",
         "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 3,
+    "ActualQuestion": "What is the purpose of nodemon in the project setup?",
+    "Explanation": "Nodemon enables auto refreshing without manually killing and restarting the server to observe changes.",
+    "Options" : 
+        [{
+        "Option": "To install node modules",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To connect to the database",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To enable auto refreshing of the server",
+        "IsCorrect?": true
+        },
+        {
+        "Option": "To define the MongoDB path",
+        "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 4,
+    "ActualQuestion": "What is the purpose of creating a model file under the models folder?",
+    "Explanation": "The model file defines the schema required for tasks in the database.",
+    "Options" : 
+        [{
+        "Option": "To install mongoose module",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To define the MongoDB path",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To define the schema for tasks",
+        "IsCorrect?": true
+        },
+        {
+        "Option": "To interact with the database",
+        "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 5,
+    "ActualQuestion": "What is the purpose of axios in the project?",
+    "Explanation": "Axios is used to make HTTP requests from the frontend to the backend.",
+    "Options" : 
+        [{
+        "Option": "To define the schema for tasks",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To interact with the database",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To make HTTP requests from frontend to backend",
+        "IsCorrect?": true
+        },
+        {
+        "Option": "To install express framework",
+        "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 6,
+    "ActualQuestion": "What does the 'npm run devStart' command do?",
+    "Explanation": "The 'npm run devStart' command starts the backend server using nodemon.",
+    "Options" : 
+        [{
+        "Option": "Installs node modules",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "Starts the frontend server",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "Starts the backend server using nodemon",
+        "IsCorrect?": true
+        },
+        {
+        "Option": "Defines the MongoDB path",
+        "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 7,
+    "ActualQuestion": "What is the purpose of the 'status()' function in the backend?",
+    "Explanation": "The 'status()' function is used to return a status code in the response.",
+    "Options" : 
+        [{
+        "Option": "To define the default endpoint",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To return a status code in the response",
+        "IsCorrect?": true
+        },
+        {
+        "Option": "To create a new task",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To connect to the database",
+        "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 8,
+    "ActualQuestion": "What is the purpose of the 'json()' function in the backend?",
+    "Explanation": "The 'json()' function is used to return the response body in JSON format.",
+    "Options" : 
+        [{
+        "Option": "To return a status code in the response",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To create a new task",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To return the response body in JSON format",
+        "IsCorrect?": true
+        },
+        {
+        "Option": "To define the default endpoint",
+        "IsCorrect?": false
+        }]
+}|||
+{
+    "QuestionNumber": 9,
+    "ActualQuestion": "What is the purpose of the 'async' keyword in the controller functions?",
+    "Explanation": "The 'async' keyword is used to make the function asynchronous.",
+    "Options" : 
+        [{
+        "Option": "To define the default endpoint",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To make the function synchronous",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To interact with the database",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To make the function asynchronous",
+        "IsCorrect?": true
+        }]
+}|||
+{
+    "QuestionNumber": 10,
+    "ActualQuestion": "What is the purpose of the 'db.once' function in connecting to the database?",
+    "Explanation": "The 'db.once' function is used to run a function once the database connection is open.",
+    "Options" : 
+        [{
+        "Option": "To run a function upon receiving an error",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To define the MongoDB path",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To check the database connection",
+        "IsCorrect?": false
+        },
+        {
+        "Option": "To run a function once the connection is open",
+        "IsCorrect?": true
         }]
 }|||`
 

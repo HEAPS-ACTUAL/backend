@@ -5,7 +5,7 @@ const con = require("../models/ConnectionManager");
 async function extractTextFromPDF(req, res) {
     try {
         // console.log("Received a file upload request");
-        // console.log(req);
+        // console.log(req.body.email, req.body.difficulty);
 
         if (!req.file) {
             console.log("No file uploaded in the request"); // Log if no file is received
@@ -39,20 +39,5 @@ async function extractTextFromPDF(req, res) {
         return res.status(500).json({ error: "Failed to process the file" });
     }
 }
-
-// Helper function
-// async function processPDF(fileBuffer) {
-//     try {
-//         console.log("Processing a PDF file!");
-
-//         // Extracting the text from the PDF file
-//         const data = await PDFParser(fileBuffer);
-//         return data.text;
-//     } 
-//     catch (error) {
-//         console.error("An error occurred while processing the PDF:", error);
-//         throw new Error("Failed to process the PDF");
-//     }
-// }
 
 module.exports = { extractTextFromPDF };

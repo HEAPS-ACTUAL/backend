@@ -8,6 +8,7 @@ async function addNewQuestion(email, quizID, questionText, elaboration){
 
         if (insertOk){
             console.log('Question added!');
+            return questionNo;
         }
     }
     catch(error){
@@ -20,7 +21,7 @@ async function countTotalNumberOfQuestions(email, quizID){
         const sqlQuery = 'select count(*) as numOfQuestions from question where UserEmail = ? and QuizID = ?';
         const returnedData = await query(sqlQuery, [email, quizID]);
         const numOfQuestions = returnedData[0].numOfQuestions;
-        console.log(numOfQuestions);
+        // console.log(numOfQuestions);
 
         return (numOfQuestions);
     }
