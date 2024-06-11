@@ -131,7 +131,7 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
     }
 }
 
-console.log(formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response));
+// console.log(formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response));
 
 const { extractTextFromPDF } = require("./FileController");
 
