@@ -65,22 +65,32 @@ async function generateQuiz(extractedText){
         The questions are multiple choice questions and each question should have 4 options (1 correct and 3 wrong). I also want a short explanation on which option is correct. \n
         
         Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Explanation", "Options".
-        Generate JSON objects for the options with fields: "Option", "IsCorrect?". \n
+        "Options" is a list of JSON objects with fields: "Option", "IsCorrect?". \n
         
         Format your response exactly like this: \n
-
-        QUESTIONS:
         {
         "QuestionNumber": ,
         "ActualQuestion": ,
         "Explanation":
-        }
+        "Options" : 
+            [{
+            "Option": , 
+            "IsCorrect?": 
+            }]
+        }|||`
 
-        OPTIONS:
-        {
-        "Option": , 
-        "IsCorrect?": 
-        }`
+        // QUESTIONS:
+        // {
+        // "QuestionNumber": ,
+        // "ActualQuestion": ,
+        // "Explanation":
+        // }
+
+        // OPTIONS:
+        // {
+        // "Option": , 
+        // "IsCorrect?": 
+        // }
 
         // (question1, explanation on the correct answer) |
         // (question2, explanation on the correct answer) |
@@ -117,8 +127,12 @@ async function generateQuiz(extractedText){
 const CHATGPT_response = require('../JERRICK TEST (ill delete this after awhile)/temporary');
 
 async function sortAndStoreQuiz(chatgpt_response){
-    console.log(chatgpt_response);
-    // questionsArray = chatgpt_response.split()
+    let question_obj_list = chatgpt_response.split('|||');
+    
+    for(let question_obj of question_obj_list){
+        let x = JSON.parse(question_obj);
+        console.log(x);
+    }
 }
 
 sortAndStoreQuiz(CHATGPT_response);
