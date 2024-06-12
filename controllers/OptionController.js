@@ -21,7 +21,8 @@ async function addNewOption(email, quizID, questionNo, optionText, isCorrect){
         const insertOk = await query(sqlQuery, [email, quizID, questionNo, currentOption, optionText, isCorrect]);
 
         if (insertOk){
-            console.log('Option added!');
+            console.log(`Option ${currentOption} added!`);
+            return insertOk;
         }
     }
     catch(error){

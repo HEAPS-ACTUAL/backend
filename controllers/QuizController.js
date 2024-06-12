@@ -7,7 +7,7 @@ async function createNewQuiz(email, quizName, difficulty){
         const insertOk = await query(sqlQuery, [email, quizID, quizName, difficulty]);
 
         if (insertOk){
-            console.log('Quiz added!');
+            console.log(`Quiz ${quizID} added for ${email}!`);
             return quizID;
         }
     }
@@ -27,6 +27,22 @@ async function countTotalNumberOfQuizzes(email){
     }
     catch(error){
         console.log(`Error counting number of quizzes: ${error}`)
+    }
+}
+
+async function deleteQuiz(req, res){
+    const email = req.body.email;
+    const quizID = req.body.quizID;
+    const quizName = req.body.quizName;
+
+    try{
+        const sqlQuery = 'Delete from quiz where useremail = ? and quizid = ?';
+        const deleteOk = await query(sqlQuery, [email, quizID]);
+        res.status(200).json({message: `${quizName} has been deleted!`});
+    }
+    catch(error){
+        console.log(`Could not delete ${quizName} due to the following error: ${error}`);
+        res.status(404).json({message: `Could not delete ${quizName}!`});
     }
 }
 
@@ -93,8 +109,7 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
             return 'Could not store quiz!';
         }
 
-        let array_of_question_obj_strings = chatgpt_response.split('|||');
-        array_of_question_obj_strings = array_of_question_obj_strings.slice(0, -1); // removing last element of array because it is just an empty string
+        let array_of_question_obj_strings = chatgpt_response.split('|||').slice(0, -1); // slice to remove last element of array because it is just an empty string
         
         for(let question_obj_string of array_of_question_obj_strings){
             let question_obj = JSON.parse(question_obj_string); // this converts a string into a JSON
@@ -115,7 +130,7 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
                 const optionText = option_obj['Option'];
                 const isCorrect = option_obj['IsCorrect?'];
                 
-                const insertOk = false;
+                let insertOk = false;
                 insertOk = await addNewOption(email, quizID, questionNo, optionText, isCorrect);
 
                 if(!insertOk){
@@ -131,7 +146,13 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
     }
 }
 
-// console.log(formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response));
+async function test(){
+    const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
+    console.log(result);
+}
+
+test();
+
 
 const { extractTextFromPDF } = require("./FileController");
 

@@ -7,7 +7,7 @@ async function addNewQuestion(email, quizID, questionText, elaboration){
         const insertOk = await query(sqlQuery, [email, quizID, questionNo, questionText, elaboration]);
 
         if (insertOk){
-            console.log('Question added!');
+            console.log(`Question ${questionNo} added!`);
             return questionNo;
         }
     }
