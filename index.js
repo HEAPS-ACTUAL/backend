@@ -36,6 +36,9 @@ app.post("/query", (req, res) => {
     queryController.handleQuery(req, res);
 });
 
+// ROUTES FOR QUIZ
+app.use('/quiz', require('./routers/QuizRouter'));
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
