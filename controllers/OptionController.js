@@ -12,21 +12,27 @@ async function addNewOption(email, quizID, questionNo, optionText, isCorrect){
         const numOfOptions = await countTotalNumberOfOptions(email, quizID, questionNo);
         
         if(numOfOptions == 4){
-            console.log(`Error adding option for (${email}, ${quizID}, ${questionNo}): This question already has 4 options!`);
-            return;
+            const msg = `Error adding option for (${email}, ${quizID}, ${questionNo}): This question already has 4 options!`
+            console.error(msg);
+            throw new Error(msg);
         }
         
         const currentOption = optionDict[numOfOptions + 1];        
         const sqlQuery = 'Insert into `Option` (UserEmail, QuizID, QuestionNo, OptionLetter, OptionText, IsCorrect) values (?, ?, ?, ?, ?, ?)';
-        const insertOk = await query(sqlQuery, [email, quizID, questionNo, currentOption, optionText, isCorrect]);
 
-        if (insertOk){
+        try{
+            const insertOk = await query(sqlQuery, [email, quizID, questionNo, currentOption, optionText, isCorrect]);
             console.log(`Option ${currentOption} added!`);
             return insertOk;
         }
+        catch(error){
+            const msg = `Error adding option ${currentOption} into database`;
+            console.error(`${msg}: ${error.msg}`);
+            throw error
+        }
     }
     catch(error){
-        console.log(`Error adding option into database: ${error}`)
+        throw new Error(`${error.message}`);
     }
 }
 

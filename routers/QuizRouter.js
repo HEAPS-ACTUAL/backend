@@ -8,6 +8,6 @@ const storage = multer.memoryStorage(); // creates a buffer storage
 const upload = multer({ storage: storage });
 
 // GENERATE QUIZ
-router.post('/generateSampleQuestions', upload.single('file'), generateAndStoreQuiz);
+router.post('/generateAndStoreQuiz', upload.single('file'), generateAndStoreQuiz);
 
 module.exports = router;

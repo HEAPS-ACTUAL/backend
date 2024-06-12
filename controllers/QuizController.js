@@ -12,7 +12,9 @@ async function createNewQuiz(email, quizName, difficulty){
         }
     }
     catch(error){
-        console.log(`Error adding quiz into database: ${error}`);
+        const msg = `Error adding quiz into database`
+        console.error(`${msg}: ${error.message}`);
+        throw new Error(`${msg}`);
     }
 }
 
@@ -55,13 +57,15 @@ require('dotenv').config({path: '../.env'});
 
 async function queryChatgpt(difficulty, extractedText){
     const chatgpt = new openAI({apiKey: process.env.OPENAI_API_KEY});
+    const numberOfQuestions = 12;
 
-    try{
-        const numberOfQuestions = 10;
-        
+    const difficultDict = {'E': 'easy', 'M': 'intermediate', 'D': 'difficult'};
+    const difficultyString = difficultDict[difficulty];
+
+    try{        
         const query = 
         `${extractedText} \n\n
-        Based on the text above, generate ${numberOfQuestions} questions. These questions should test how well I know the content of the given text. The difficulty level of the questions should be ${difficulty}. \n\n
+        Based on the text above, generate ${numberOfQuestions} questions. These questions should test how well I know the content of the given text. The difficulty level of the questions should be ${difficultyString}. \n\n
         
         The questions are multiple choice questions and each question should have 4 options (1 correct and 3 wrong). I also want a short explanation on which option is correct. \n
         
@@ -88,12 +92,15 @@ async function queryChatgpt(difficulty, extractedText){
         })
         
         console.log(response.choices[0].finish_reason); // ensure that the generate doesnt not stop prematurely
-        questions = response.choices[0].message.content;
+        const questions = response.choices[0].message.content;
+        console.log(questions);
         
         return questions;
     }
     catch(error){
-        res.status(404).json({message: error})
+        const msg = `An error occurred while generating the quiz questions`
+        console.error(`${msg}: ${error.message}`);
+        throw new Error(msg);
     }
 }
 
@@ -117,12 +124,7 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
             const questionText = question_obj['ActualQuestion'];
             const elaboration = question_obj['Explanation'];
             
-            let questionNo = false;
-            questionNo = await addNewQuestion(email, quizID, questionText, elaboration);
-
-            if(!questionNo){
-                return 'Could not store question!';
-            }
+            let questionNo = await addNewQuestion(email, quizID, questionText, elaboration);
             
             const array_of_option_objects = question_obj['Options'];
 
@@ -130,42 +132,44 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
                 const optionText = option_obj['Option'];
                 const isCorrect = option_obj['IsCorrect?'];
                 
-                let insertOk = false;
-                insertOk = await addNewOption(email, quizID, questionNo, optionText, isCorrect);
-
-                if(!insertOk){
-                    return 'Could not store option!';
-                }
+                let insertOk = await addNewOption(email, quizID, questionNo, optionText, isCorrect);
             }        
         }
 
-        return 'Quiz, questions and options have been stored in database!';
+        const everythingOk = true;
+        return everythingOk;
     }
     catch(error){
-        return error;
+        throw new Error(`Error quiz adding into database: ${error.message}`);
     }
 }
 
-async function test(){
-    const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
-    console.log(result);
-}
+// async function test(){
+//     const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
+//     console.log(result);
+// }
 
-test();
-
+// test();
 
 const { extractTextFromPDF } = require("./FileController");
 
 async function generateAndStoreQuiz(req, res){
     try{
+        // CHECK WHETHER USER PRESSES GENERATE QUIZ WITHOUT UPLOADING ANYTHING
+        if (!req.file) {
+            res.status(404).json({ message: "No file uploaded!" });
+            throw new Error("No file uploaded");
+        }
+        
         const email = req.body.email;
         const quizName = req.body.quizName;
         const difficulty = req.body.difficulty;
+        const uploadedFile = req.file;
 
         // console.log(email, quizName, difficulty);
-
+        
         console.log('Extracting text now...');
-        const extractedText = await extractTextFromPDF(req, res);
+        const extractedText = await extractTextFromPDF(uploadedFile);   
 
         console.log('Querying chatgpt now...');
         const chatgptResponse = await queryChatgpt(difficulty, extractedText);
@@ -173,16 +177,16 @@ async function generateAndStoreQuiz(req, res){
         console.log('Questions and options obtained! Storing them into the database now!');
         const hasBeenStored = await formatAndStoreQuiz(email, quizName, difficulty, chatgptResponse);
         
-        if(hasBeenStored === 'Quiz, questions and options have been stored in database!'){
-            res.status(200).json({message: hasBeenStored});
-        }
-        else{
-            res.status(404).json({message: hasBeenStored});
+        if(hasBeenStored){
+            const msg = 'Quiz, questions and options have been stored in database!';
+            console.log(msg)
+            res.status(200).json({message: msg});
         }
     }
     catch(error){
-        res.status(404).json({message: error});
+        console.error(error.message);
+        res.status(404).json({message: error.message});
     }
 }
 
-module.exports = {generateAndStoreQuiz, queryChatgpt, createNewQuiz};
+module.exports = {generateAndStoreQuiz, queryChatgpt};

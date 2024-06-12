@@ -12,7 +12,9 @@ async function addNewQuestion(email, quizID, questionText, elaboration){
         }
     }
     catch(error){
-        console.log(`Error adding question into database: ${error}`)
+        const msg = `Error adding question ${questionNo} into database`
+        console.error(`${msg}: ${error.message}`);
+        throw new Error(msg);
     }
 }
 
