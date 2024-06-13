@@ -119,7 +119,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 10,
     "ActualQuestion": "What is the purpose of the 'db.once' function in connecting to the database?",
-    "Explanati n": "The 'db.once' function is used to run a function once the database connection is open.",
+    "Explanation": "The 'db.once' function is used to run a function once the database connection is open.",
     "Options" : 
         [
         {"Option": "To run a function upon receiving an error", "IsCorrect?": false},
@@ -127,6 +127,6 @@ const CHATGPT_response =
         {"Option": "To check the database connection", "IsCorrect?": false},
         {"Option": "To run a function once the connection is open", "IsCorrect?": true}
         ]
-}||`
+}|||`
 
 module.exports = CHATGPT_response;
