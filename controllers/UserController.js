@@ -1,4 +1,4 @@
-const query = require('../utils/Promisify');
+const query = require('../utils/PromisifyQuery');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS RELATED TO USER

@@ -1,5 +1,5 @@
 // MODULES
-const query = require('../utils/Promisify');
+const query = require('../utils/PromisifyQuery');
 const openAI = require('openai');
 require('dotenv').config({path: '../.env'});
 
@@ -16,7 +16,7 @@ SQL DATABASE RELATED FUNCTIONS
 */
 async function createNewQuiz(email, quizName, difficulty){
     try{
-        const quizID = await countTotalNumberOfQuizzes(email) + 1;
+        const quizID = await determineTheNextQuizID(email); // FUNCTION DEFINED BELOW
         const sqlQuery = 'Insert into quiz (UserEmail, QuizID, QuizName, Difficulty) values (?, ?, ?, ?)';
         const insertOk = await query(sqlQuery, [email, quizID, quizName, difficulty]);
 
@@ -34,15 +34,15 @@ async function createNewQuiz(email, quizName, difficulty){
 
 async function determineTheNextQuizID(email){
     try{
-        const sqlQuery = 'select count(*) as numOfQuizzes from quiz where UserEmail = ?';
+        const sqlQuery = 'Select QuizID from quiz where useremail = ? order by quizID desc limit 1';
         const returnedData = await query(sqlQuery, [email]);
-        const numOfQuizzes = returnedData[0].numOfQuizzes
-        // console.log(numOfQuizzes);
+        const previousQuizID = returnedData[0].QuizID
+        const nextQuizID = previousQuizID + 1;
 
-        return (numOfQuizzes);
+        return (nextQuizID);
     }
     catch(error){
-        console.log(`Error counting number of quizzes: ${error}`)
+        console.log(`Error determining the next quizID: ${error}`)
     }
 }
 
@@ -217,6 +217,7 @@ TO TEST THE ABOVE FUNCTIONS
 // createNewQuiz('alice@gmail.com', 'math', 'E');
 // countTotalNumberOfQuizzes('alice@gmail.com');
 
+// To test formatAndStoreQuiz function
 // async function test(){
 //     const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
 //     console.log(result);

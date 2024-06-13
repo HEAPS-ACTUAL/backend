@@ -1,4 +1,4 @@
-const query = require('../utils/Promisify');
+const query = require('../utils/PromisifyQuery');
 
 async function addNewOption(email, quizID, questionNo, optionText, isCorrect){
     try{
