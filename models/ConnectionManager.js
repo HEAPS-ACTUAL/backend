@@ -2,7 +2,7 @@
 Creating an connection instance to mySQL database.
 */
 const mysql = require("mysql");
-const DB_password = require("./Password_for_DB.js");
+const DB_password = require("./Password_for_DB");
 
 const con = mysql.createConnection({
   host: "localhost",
