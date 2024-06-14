@@ -49,7 +49,8 @@ async function getLastTwoQuestions(email, quizID) {
         `;
     const results = await query(sqlQuery, [email, quizID]);
     return results.reverse(); // Reverse to maintain the order of insertion when displaying
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error fetching the last two questions:", error);
     throw error;
   }

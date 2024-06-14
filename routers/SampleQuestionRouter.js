@@ -8,7 +8,8 @@ router.get("/last-two-questions/:email/:quizID", async (req, res) => {
   try {
     const questions = await getLastTwoQuestions(email, quizID);
     res.status(200).json(questions);
-  } catch (error) {
+  }
+  catch (error) {
     console.error(`Error fetching the last two questions: ${error.message}`);
     res
       .status(500)
