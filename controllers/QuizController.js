@@ -236,7 +236,7 @@ TO TEST THE ABOVE FUNCTIONS
 
 // To test formatAndStoreQuiz function
 // async function test() {
-//     const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
+//     const result = await formatAndStoreQuiz('jerricknsc@gmail.com', 'sample quiz', 'E', CHATGPT_response);
 //     console.log(result);
 // }
 
