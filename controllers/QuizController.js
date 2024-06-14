@@ -46,7 +46,7 @@ async function determineTheNextQuizID(email) {
         return nextQuizID;
     }
     catch (error) {
-        console.log(`Error determining the next quizID: ${error}`)
+        console.error(`Error determining the next quizID: ${error}`)
     }
 }
 
@@ -60,7 +60,20 @@ async function countTotalNumberOfQuizzes(email) {
         return (numOfQuizzes);
     }
     catch (error) {
-        console.log(`Error counting number of quizzes: ${error}`)
+        console.error(`Error counting number of quizzes: ${error}`)
+    }
+}
+
+async function getAllUndoneQuizzes(req, res){
+    const email = req.body.email;
+
+    try{
+        const sqlQuery = 'Select * from quiz where UserEmail = ? and IsDone = false';
+        const returnedQuizzes = await query(sqlQuery, [email]);
+        res.status(200).json(returnedQuizzes);
+    }
+    catch(error){
+        res.status(404).json({ message: `Error retrieving undone quizzes!` });
     }
 }
 
@@ -222,11 +235,11 @@ TO TEST THE ABOVE FUNCTIONS
 // countTotalNumberOfQuizzes('alice@gmail.com');
 
 // To test formatAndStoreQuiz function
-async function test() {
-    const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
-    console.log(result);
-}
+// async function test() {
+//     const result = await formatAndStoreQuiz('alice@gmail.com', 'sample quiz', 'E', CHATGPT_response);
+//     console.log(result);
+// }
 
-test();
+// test();
 
-module.exports = { generateAndStoreQuiz };
+module.exports = { generateAndStoreQuiz, getAllUndoneQuizzes };
