@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
-const { generateAndStoreQuiz, getAllUndoneQuizzes } = require("../controllers/QuizController");
+const { generateAndStoreQuiz, getToDoQuizzes, getCompletedQuizzes } = require("../controllers/QuizController");
 
 // Set up multer for in-memory file uploads
 const storage = multer.memoryStorage(); // creates a buffer storage
@@ -11,6 +11,9 @@ const upload = multer({ storage: storage });
 router.post('/generateAndStoreQuiz', upload.single('file'), generateAndStoreQuiz);
 
 // GET ALL UNDONE QUIZZES
-router.post('/getAllUndoneQuizzes', getAllUndoneQuizzes);
+router.post('/getToDoQuizzes', getToDoQuizzes);
+
+// GET ALL COMPLETED QUIZZES
+router.post('/getCompletedQuizzes', getCompletedQuizzes);
 
 module.exports = router;
