@@ -44,6 +44,9 @@ app.use("/quiz", require("./routers/QuizRouter"));
 // ROUTES FOR SAMPLEQNS
 app.use("/sample", sampleQuestionRouter);
 
+// ROUTES FOR QUESTIONS
+app.use("/question", require('./routers/QuestionRouter'));
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
