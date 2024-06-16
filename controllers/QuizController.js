@@ -249,7 +249,7 @@ TO TEST THE ABOVE FUNCTIONS
 
 // To test formatAndStoreQuiz function
 // async function test() {
-//     const result = await formatAndStoreQuiz('jerricknsc@gmail.com', 'lao lim quiz', 'E', CHATGPT_response);
+//     const result = await formatAndStoreQuiz('jerricknsc@gmail.com', 'physics', 'M', CHATGPT_response);
 //     console.log(result);
 // }
 

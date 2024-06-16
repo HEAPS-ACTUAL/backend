@@ -2,9 +2,8 @@ const query = require("../utils/PromisifyQuery");
 
 async function addNewQuestion(email, quizID, questionText, elaboration) {
     try {
-        const questionNo = (await countTotalNumberOfQuestions(email = email, quizID = quizID)) + 1;
-        const sqlQuery =
-            "Insert into question (UserEmail, QuizID, QuestionNo, QuestionText, Elaboration) values (?, ?, ?, ?, ?)";
+        const questionNo = (await countTotalNumberOfQuestions(null, null, email, quizID)) + 1;
+        const sqlQuery = "Insert into question (UserEmail, QuizID, QuestionNo, QuestionText, Elaboration) values (?, ?, ?, ?, ?)";
         const insertOk = await query(sqlQuery, [email, quizID, questionNo, questionText, elaboration]);
 
         if (insertOk) {
@@ -18,18 +17,18 @@ async function addNewQuestion(email, quizID, questionText, elaboration) {
     }
 }
 
-async function countTotalNumberOfQuestions(req = null, res = null, email = null, quizID = null) {
+async function countTotalNumberOfQuestions(req, res, email = null, quizID = null) {
     try {
         const sqlQuery = "select count(*) as numOfQuestions from question where UserEmail = ? and QuizID = ?";
         
-        if(req != null && res != null){
+        if(req && res){
             const email = req.body.email;
             const quizID = req.body.quizID;
             const returnedData = await query(sqlQuery, [email, quizID]);
             const numOfQuestions = returnedData[0].numOfQuestions;
             return res.status(200).json(numOfQuestions);
         }
-        else{
+        else if(email && quizID){
             const returnedData = await query(sqlQuery, [email, quizID]);
             const numOfQuestions = returnedData[0].numOfQuestions;
             return numOfQuestions;
