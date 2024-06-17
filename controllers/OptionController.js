@@ -55,7 +55,7 @@ async function getAllOptionsForAQuestion(email, quizID, questionNo){
         const sqlQuery = 'Select QuestionNo, OptionLetter, OptionText, IsCorrect from `option` where UserEmail = ? and QuizID = ? and QuestionNo = ?';
         const returnedData = await query(sqlQuery, [email, quizID, questionNo]);
         
-        console.log(returnedData);
+        // console.log(returnedData);
     }
     catch(error){
         console.log(`Error: ${error}`)
