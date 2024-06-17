@@ -56,7 +56,22 @@ async function getLastTwoQuestions(email, quizID) {
     }
 }
 
+async function getAllQuestionsFromAQuiz(email, quizID){
+    // const email = req.body.email;
+    // const quizID = req.body.quizID;
+
+    try{
+        const sqlQuery = 'Select QuestionNo, QuestionText, Elaboration from question where UserEmail = ? and QuizID = ?';
+        const returnedData = await query(sqlQuery, [email, quizID]);
+        console.log(returnedData);
+    }
+    catch(error){
+
+    }
+}
+
 // To test the functions
 // createNewQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
+// getAllQuestionsFromAQuiz('jerricknsc@gmail.com', 1);
 
 module.exports = { addNewQuestion, getLastTwoQuestions, countTotalNumberOfQuestions };

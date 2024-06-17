@@ -50,10 +50,10 @@ async function countTotalNumberOfOptions(email, quizID, questionNo){
     }
 }
 
-async function retrieveAllOptions(){
+async function getAllOptionsForAQuestion(email, quizID, questionNo){
     try{
-        const sqlQuery = 'select * from `Option`';
-        const returnedData = await query(sqlQuery);
+        const sqlQuery = 'Select QuestionNo, OptionLetter, OptionText, IsCorrect from `option` where UserEmail = ? and QuizID = ? and QuestionNo = ?';
+        const returnedData = await query(sqlQuery, [email, quizID, questionNo]);
         
         console.log(returnedData);
     }
@@ -68,5 +68,6 @@ async function retrieveAllOptions(){
 // addNewOption('alice@gmail.com', 1, 1, 'pepper', false);
 // addNewOption('alice@gmail.com', 1, 1, 'brains', false);
 // addNewOption('alice@gmail.com', 1, 1, 'spoon', false);
+// getAllOptionsForAQuestion('jerricknsc@gmail.com', 1, 1);
 
 module.exports = {addNewOption};
