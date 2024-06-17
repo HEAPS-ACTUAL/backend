@@ -55,7 +55,7 @@ async function countTotalNumberOfQuizzes(email) {
         const sqlQuery = 'select count(*) as numOfQuizzes from quiz where UserEmail = ?';
         const returnedData = await query(sqlQuery, [email]);
         const numOfQuizzes = returnedData[0].numOfQuizzes
-        console.log(numOfQuizzes);
+        // console.log(numOfQuizzes);
 
         return (numOfQuizzes);
     }
