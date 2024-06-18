@@ -5,9 +5,7 @@ require('dotenv').config({ path: '../.env' });
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
-// const { addNewQuestion } = require('./QuestionController');
-// const { addNewOption } = require('./OptionController');
-
+const { addNewFlashcardQuestion, countTotalNumberOfFlashcardQuestions } = require('./FlashcardQuestionController');
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 SQL DATABASE RELATED FUNCTIONS
@@ -15,7 +13,9 @@ SQL DATABASE RELATED FUNCTIONS
 */
 async function createNewFlashcard(email, flashcardName) {
     try {
+        console.log('Starting to create new flashcard'); // Debug log
         const fid = await determineTheNextFID(email); // FUNCTION DEFINED BELOW
+        console.log(`Determined FID: ${fid}`); // Debug log
         const sqlQuery = 'Insert into flashcard (UserEmail, FID, FlashcardName) values (?, ?, ?)';
         const insertOk = await query(sqlQuery, [email, fid, flashcardName]);
 
@@ -33,15 +33,16 @@ async function createNewFlashcard(email, flashcardName) {
 
 async function determineTheNextFID(email) {
     try {
-        const sqlQuery = 'Select fid from flashcard where useremail = ? order by fid desc limit 1';
+        const sqlQuery = 'Select FID from flashcard where useremail = ? order by FID desc limit 1';
         const returnedData = await query(sqlQuery, [email]);
-
+        console.log(returnedData);
         if (returnedData.length == 0) {
             return 1; // IF NO Flashcard HAS BEEN CREATED BEFORE, USE NUMBER 1 AS THE NEXT Flashcard ID
         }
 
-        const previousFID = returnedData[0].fid
+        const previousFID = returnedData[0].FID
         const nextFID = previousFID + 1;
+        console.log(nextFID);
         return nextFID;
     }
     catch (error) {
@@ -70,7 +71,6 @@ async function deleteFlashcard(req, res) {
 THESE ARE JUST HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-// const extractedText = require("../test_ISAIAH/testpdf");
 
 async function queryChatgptFlashcard(extractedText) {
     const chatgpt = new openAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -120,15 +120,16 @@ async function formatAndStoreFlashcard(email, flashcardName, chatgpt_response) {
         }
 
         let array_of_question_obj_strings = chatgpt_response.split('|||').slice(0, -1); // slice to remove last element of array because it is just an empty string
+        // console.log(array_of_question_obj_strings);
 
         for (let question_obj_string of array_of_question_obj_strings) {
             let question_obj = JSON.parse(question_obj_string); // this converts a string into a JSON
-
+            
+            const questionNo = question_obj["QuestionNumber"];
             const questionText = question_obj['ActualQuestion'];
             const answer = question_obj['Answer'];
 
-            let questionNo = await addNewFlashcardQuestion(email, fid, questionText, answer); // FUNCTION IMPORTED FROM QUESTION CONTROLLER
-            
+            await addNewFlashcardQuestion(email, fid, questionNo, questionText, answer); // FUNCTION IMPORTED FROM FLASHCARD QUESTION CONTROLLER    
         }
 
         const everythingOk = true;
@@ -181,3 +182,24 @@ async function generateAndStoreFlashcard(req, res) {
 
 module.exports = { generateAndStoreFlashcard };
 // console.log(queryChatgpt(extractedText)); // for testing
+
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+TO TEST THE ABOVE FUNCTIONS
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+// To test the insert functions
+// const extractedText = require("../test_ISAIAH/testpdf");
+// const CHATGPT_response_flashcard = require("../test_ISAIAH/test_GPT_response");
+
+// // createNewFlashcard('isaiah@gmail.com', 'jp');
+// // countTotalNumberOfFlashcardQuestions('isaiah@gmail.com');
+
+// // To test formatAndStoreQuiz function
+// async function test() {
+//     const result = await formatAndStoreFlashcard('isaiah@gmail.com', 'jp', CHATGPT_response_flashcard);
+//     console.log(result);
+// }
+
+// test();

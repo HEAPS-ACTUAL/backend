@@ -1,62 +1,46 @@
 const query = require("../utils/PromisifyQuery");
 
-async function addNewFlashcardQuestion(email, quizID, questionText, elaboration) {
+async function addNewFlashcardQuestion(email, fid, questionNo, questionText, answer) {
+   
     try {
-        const questionNo = (await countTotalNumberOfQuestions(null, null, email, quizID)) + 1;
-        const sqlQuery = "Insert into question (UserEmail, QuizID, QuestionNo, QuestionText, Elaboration) values (?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [email, quizID, questionNo, questionText, elaboration]);
+        // const questionNo = (await countTotalNumberOfFlashcardQuestions(null, null, email, fid)) + 1;
+        const sqlQuery = "Insert into Flashcardquestion (UserEmail, fid, QuestionNo, QuestionText, Answer) values (?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [email, fid, questionNo, questionText, answer]);
 
         if (insertOk) {
-            console.log(`Question ${questionNo} added!`);
-            return questionNo;
+            console.log(`Flashcard Question ${questionNo} added!`);
+            // return questionNo;
         }
     } catch (error) {
-        const msg = `Error adding question ${questionNo} into database`;
+        const msg = `Error adding Flashcard Question ${questionNo} into database`;
         console.error(`${msg}: ${error.message}`);
         throw new Error(msg);
     }
 }
 
-async function countTotalNumberOfQuestions(req, res, email = null, quizID = null) {
+async function countTotalNumberOfFlashcardQuestions(req, res, email = null, fid = null) {
     try {
-        const sqlQuery = "select count(*) as numOfQuestions from question where UserEmail = ? and QuizID = ?";
+        const sqlQuery = "select count(*) as numOfFlashcardQuestions from flashcardquestions where UserEmail = ? and fid = ?";
         
         if(req && res){
             const email = req.body.email;
-            const quizID = req.body.quizID;
-            const returnedData = await query(sqlQuery, [email, quizID]);
-            const numOfQuestions = returnedData[0].numOfQuestions;
-            return res.status(200).json(numOfQuestions);
+            const fid = req.body.fid;
+            const returnedData = await query(sqlQuery, [email, fid]);
+            const numOfFlashcardQuestions = returnedData[0].numOfFlashcardQuestions;
+            return res.status(200).json(numOfFlashcardQuestions);
         }
-        else if(email && quizID){
-            const returnedData = await query(sqlQuery, [email, quizID]);
-            const numOfQuestions = returnedData[0].numOfQuestions;
-            return numOfQuestions;
+        else if(email && fid){
+            const returnedData = await query(sqlQuery, [email, fid]);
+            const numOfFlashcardQuestions = returnedData[0].numOfFlashcardQuestions;
+            return numOfFlashcardQuestions;
         }
     } catch (error) {
-        console.error(`Error counting number of questions: ${error}`);
+        console.error(`Error counting number of Flashcard Questions: ${error}`);
     }
 }
 
-async function getLastTwoQuestions(email, quizID) {
-    try {
-        const sqlQuery = `
-            SELECT *
-            FROM Question
-            WHERE UserEmail = ? AND QuizID = ?
-            ORDER BY QuestionNo DESC
-            LIMIT 2;
-        `;
-        const results = await query(sqlQuery, [email, quizID]);
-        return results.reverse(); // Reverse to maintain the order of insertion when displaying
-    }
-    catch (error) {
-        console.error("Error fetching the last two questions:", error);
-        throw error;
-    }
-}
 
 // To test the functions
-// createNewQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
+// addNewFlashcardQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
 
-module.exports = { addNewFlashcardQuestion, getLastTwoQuestions, countTotalNumberOfQuestions };
+module.exports = { addNewFlashcardQuestion, countTotalNumberOfFlashcardQuestions };

@@ -163,6 +163,7 @@ async function queryChatgpt(difficulty, extractedText) {
 async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response) {
     try {
         const quizID = await createNewQuiz(email, quizName, difficulty);
+       
 
         if (!quizID) {
             return 'Could not store quiz!';
