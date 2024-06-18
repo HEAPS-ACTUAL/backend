@@ -5,7 +5,7 @@ require('dotenv').config({ path: '../.env' });
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
-const { addNewFlashcardQuestion, countTotalNumberOfFlashcardQuestions } = require('./FlashcardQuestionController');
+const { addNewFlashcardQuestion } = require('./FlashcardQuestionController');
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 SQL DATABASE RELATED FUNCTIONS
@@ -13,9 +13,7 @@ SQL DATABASE RELATED FUNCTIONS
 */
 async function createNewFlashcard(email, flashcardName) {
     try {
-        console.log('Starting to create new flashcard'); // Debug log
         const fid = await determineTheNextFID(email); // FUNCTION DEFINED BELOW
-        console.log(`Determined FID: ${fid}`); // Debug log
         const sqlQuery = 'Insert into flashcard (UserEmail, FID, FlashcardName) values (?, ?, ?)';
         const insertOk = await query(sqlQuery, [email, fid, flashcardName]);
 
@@ -35,14 +33,12 @@ async function determineTheNextFID(email) {
     try {
         const sqlQuery = 'Select FID from flashcard where useremail = ? order by FID desc limit 1';
         const returnedData = await query(sqlQuery, [email]);
-        console.log(returnedData);
         if (returnedData.length == 0) {
             return 1; // IF NO Flashcard HAS BEEN CREATED BEFORE, USE NUMBER 1 AS THE NEXT Flashcard ID
         }
 
         const previousFID = returnedData[0].FID
         const nextFID = previousFID + 1;
-        console.log(nextFID);
         return nextFID;
     }
     catch (error) {

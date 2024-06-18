@@ -20,7 +20,7 @@ async function addNewFlashcardQuestion(email, fid, questionNo, questionText, ans
 
 async function countTotalNumberOfFlashcardQuestions(req, res, email = null, fid = null) {
     try {
-        const sqlQuery = "select count(*) as numOfFlashcardQuestions from flashcardquestions where UserEmail = ? and fid = ?";
+        const sqlQuery = "select count(*) as numOfFlashcardQuestions from flashcardquestion where UserEmail = ? and fid = ?";
         
         if(req && res){
             const email = req.body.email;
@@ -39,8 +39,12 @@ async function countTotalNumberOfFlashcardQuestions(req, res, email = null, fid 
     }
 }
 
-
 // To test the functions
 // addNewFlashcardQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
+// async function test() {
+//     const total = await countTotalNumberOfFlashcardQuestions(null, null, 'isaiah@gmail.com', 1);
+//     console.log(`total: ${total}`);
+// }
+// test();
 
 module.exports = { addNewFlashcardQuestion, countTotalNumberOfFlashcardQuestions };
