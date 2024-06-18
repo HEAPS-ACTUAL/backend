@@ -219,7 +219,7 @@ async function generateAndStoreQuiz(req, res) {
         console.log('Extracting text now...');
         const extractedText = await extractTextFromPDF(uploadedFile); // FUNCTION IMPORTED FROM FILE CONTROLLER
 
-        console.log('Querying chatgpt now...');
+        console.log('Querying chatgpt for Quiz now...');
         const chatgptResponse = await queryChatgpt(difficulty, extractedText); // FUNCTION DEFINED ABOVE
 
         console.log('Questions and options obtained! Storing them into the database now...');

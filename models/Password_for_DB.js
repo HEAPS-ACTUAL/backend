@@ -1,2 +1,2 @@
-const DB_password = "root";
+const DB_password = "";
 module.exports = DB_password;
