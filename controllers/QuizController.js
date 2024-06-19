@@ -98,13 +98,15 @@ async function deleteQuiz(req, res) {
     try {
         const sqlQuery = 'Delete from quiz where useremail = ? and quizid = ?';
         const deleteOk = await query(sqlQuery, [email, quizID]);
-        res.status(200).json({ message: `${quizName} has been deleted!` });
+        console.log(`${quizName} has been deleted!`)
+        res.status(200).json(deleteOk);
     }
     catch (error) {
         console.log(`Could not delete ${quizName} due to the following error: ${error}`);
         res.status(404).json({ message: `Could not delete ${quizName}!` });
     }
 }
+
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -143,8 +145,8 @@ async function queryChatgpt(difficulty, extractedText) {
         const response = await chatgpt.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: query }],
-            temperature: 0,
-            max_tokens: 2000,
+            temperature: 0.7,
+            max_tokens: 3000,
         })
 
         console.log(response.choices[0].finish_reason); // ensure that the generation of questions doesnt not stop prematurely
@@ -255,4 +257,4 @@ TO TEST THE ABOVE FUNCTIONS
 
 // test();
 
-module.exports = { generateAndStoreQuiz, getToDoQuizzes, getCompletedQuizzes };
+module.exports = { generateAndStoreQuiz, getToDoQuizzes, getCompletedQuizzes, deleteQuiz };
