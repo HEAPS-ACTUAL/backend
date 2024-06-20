@@ -1,16 +1,12 @@
 drop database if exists heap;
 create database heap;
-use heap;   
-
-DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS Schedule;
-DROP TABLE IF EXISTS RevisionDates;
-DROP TABLE IF EXISTS Test;
-DROP TABLE IF EXISTS Quiz;
-DROP TABLE IF EXISTS Question;
-DROP TABLE IF EXISTS `Option`;
+use heap;
 DROP TABLE IF EXISTS History;
-
+DROP TABLE IF EXISTS `Option`;
+DROP TABLE IF EXISTS Question;
+DROP TABLE IF EXISTS Quiz;
+DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS File;
 
 -- Creating the User table
 CREATE TABLE User (
@@ -22,65 +18,75 @@ CREATE TABLE User (
     DateTimeJoined DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Schedule (
-	ScheduleID INT PRIMARY KEY,
-    StartDate DATE NOT NULL,
-    EndDate DATE NOT NULL,
-    ExamName VARCHAR(100)
+CREATE TABLE File (
+    URL VARCHAR(100) PRIMARY KEY,
+    FileName VARCHAR(100),
+    UserEmail VARCHAR(100) NOT NULL,
+    FOREIGN KEY (UserEmail) REFERENCES User(Email) ON DELETE CASCADE
 );
 
-CREATE TABLE RevisionDates (
-	ScheduleID INT NOT NULL,
-    RevisionDate DATE NOT NULL,
-    PRIMARY KEY (ScheduleID, RevisionDate),
-    FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID) ON DELETE CASCADE
-);
-
-CREATE TABLE Test (
-    Email VARCHAR(100) NOT NULL,
-    TestID INT PRIMARY KEY,
-    TestName VARCHAR(100),
-    DateTimeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
-    TestType CHAR(1),
-    ScheduleID INT,
-    FOREIGN KEY (Email) REFERENCES User(Email) ON DELETE CASCADE,
-    FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID)
-);
-
+-- Creating the Quiz table
 CREATE TABLE Quiz (
-	TestID INT PRIMARY KEY,
-	Difficulty CHAR(1),
+    UserEmail VARCHAR(100) NOT NULL,
+    QuizID INT NOT NULL,
+    QuizName VARCHAR(100),
+    Difficulty CHAR(1), 
+    DateTimeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
     IsDone BOOLEAN DEFAULT false,
-    FOREIGN KEY (TestID) REFERENCES Test(TestID)
+    PRIMARY KEY (UserEmail, QuizID),
+    FOREIGN KEY (UserEmail) REFERENCES User(Email) ON DELETE CASCADE
 );
-							   
+
+
 CREATE TABLE Question (
-    TestID INT NOT NULL,
+	UserEmail VARCHAR(100) NOT NULL,
+    QuizID INT NOT NULL,
     QuestionNo INT NOT NULL,
     QuestionText VARCHAR(255) NOT NULL,
     Elaboration VARCHAR(255),
-    PRIMARY KEY (TestID, QuestionNo),
-    FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
+    PRIMARY KEY (UserEmail, QuizID, QuestionNo),
+    FOREIGN KEY (UserEmail, QuizID) REFERENCES Quiz(UserEmail, QuizID) ON DELETE CASCADE
 );
 
 CREATE TABLE `Option` (
-    TestID INT NOT NULL,
+    UserEmail VARCHAR(100) NOT NULL,
+    QuizID INT NOT NULL,
     QuestionNo INT NOT NULL,
     OptionLetter CHAR(1) NOT NULL,
     OptionText TEXT NOT NULL,
     IsCorrect BOOLEAN NOT NULL,
-    PRIMARY KEY (TestID, QuestionNo, OptionLetter),
-    FOREIGN KEY (TestID, QuestionNo) REFERENCES Question(TestID, QuestionNo) ON DELETE CASCADE
+    PRIMARY KEY (UserEmail, QuizID, QuestionNo, OptionLetter),
+    FOREIGN KEY (UserEmail, QuizID, QuestionNo) REFERENCES Question(UserEmail, QuizID, QuestionNo) ON DELETE CASCADE
 );
 
 CREATE TABLE History (
     Email VARCHAR(100) NOT NULL,
     DateTime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    TestID INT NOT NULL,
+    QuizID INT NOT NULL,
     QuestionNo INT NOT NULL,
     UserChoice CHAR(1),
     IsCorrect BOOLEAN,
     PRIMARY KEY (Email, DateTime)
+);
+
+-- Creating the Flashcard table
+CREATE TABLE Flashcard (
+    UserEmail VARCHAR(100) NOT NULL,
+    FID INT NOT NULL,
+    FlashcardName VARCHAR(100), 
+    DateTimeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (UserEmail, FID),
+    FOREIGN KEY (UserEmail) REFERENCES User(Email) ON DELETE CASCADE
+);
+
+CREATE TABLE FlashcardQuestion (
+	UserEmail VARCHAR(100) NOT NULL,
+    FID INT NOT NULL,
+    QuestionNo INT NOT NULL,
+    QuestionText VARCHAR(255) NOT NULL,
+    Answer VARCHAR(255),
+    PRIMARY KEY (UserEmail, FID, QuestionNo),
+    FOREIGN KEY (UserEmail, FID) REFERENCES Flashcard(UserEmail, FID) ON DELETE CASCADE
 );
 
 # SAMPLE DATA TO TEST USER AUTHENTICATION
