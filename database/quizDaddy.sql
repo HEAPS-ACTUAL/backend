@@ -46,7 +46,7 @@ CREATE TABLE Test (
     FOREIGN KEY (Email) REFERENCES User(Email) ON DELETE CASCADE,
     FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID)
 );
-
+    
 CREATE TABLE Quiz (
 	TestID INT PRIMARY KEY,
 	Difficulty VARCHAR(20),

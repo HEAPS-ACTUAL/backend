@@ -4,7 +4,7 @@ const openAI = require('openai');
 require('dotenv').config({ path: '../.env' });
 
 // FUNCTIONS AND VARIABLES
-const CHATGPT_response = require('../JERRICK TEST (ill delete this after awhile)/temporary');
+const CHATGPT_response_quiz = require('../JERRICK TEST (ill delete this after awhile)/temporary');
 const { extractTextFromPDF } = require("./FileController");
 const { addNewQuestion } = require('./QuestionController');
 const { addNewOption } = require('./OptionController');
@@ -252,7 +252,7 @@ TO TEST THE ABOVE FUNCTIONS
 
 // To test formatAndStoreQuiz function
 // async function test() {
-//     const result = await formatAndStoreQuiz('jerricknsc@gmail.com', 'physics', 'M', CHATGPT_response);
+//     const result = await formatAndStoreQuiz('jerricknsc@gmail.com', 'physics', 'M', CHATGPT_response_quiz);
 //     console.log(result);
 // }
 

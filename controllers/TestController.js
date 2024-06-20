@@ -7,12 +7,13 @@ require('dotenv').config(); // { path: '../.env' } this makes .env undetected fo
 const { extractTextFromPDF } = require("./FileController");
 const { addNewQuestion } = require('./QuestionController');
 const { addNewFlashcardQuestion } = require('./FlashcardQuestionController');
+const { options } = require('../routers/SampleQuestionRouter');
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 SQL DATABASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function createNewTest(email, testName, testType) {
+async function storeNewTest(email, testName, testType) {
     try {
         const testID = await determineTheNextTestID(email); // FUNCTION DEFINED BELOW
         const sqlQuery = 'Insert into Test (email, testID, testName, testType) values (?, ?, ?, ?)';
@@ -140,11 +141,8 @@ async function getPrompt(testType, difficulty, numOfQuestions=12){
 async function formatAndStoreTest(email, testName, testType, chatgpt_response) {
      
     try {
-        const testID = await createNewTest(email, testName, testType);
-
-        if (!testID) {
-            return 'Could not store Test!';
-        }
+        const testID = await storeNewTest(email, testName, testType);
+        if (!testID) { return 'Could not store Test!'; }
 
         let array_of_question_obj_strings = chatgpt_response.split('|||').slice(0, -1); // slice to remove last element of array because it is just an empty string
         // console.log(array_of_question_obj_strings);
@@ -168,7 +166,78 @@ async function formatAndStoreTest(email, testName, testType, chatgpt_response) {
 }
 
 async function formatTest(email, testName, testType, chatgpt_response){
+    try {
+        const testID = await storeNewTest(email, testName, testType);
+        if (!testID) { return 'Could not store Test!'; }
 
+        
+        let array_of_question_obj_strings = chatgpt_response.split('|||').slice(0, -1); // slice to remove last element of array because it is just an empty string
+        // console.log(array_of_question_obj_strings);
+        const [questionArray, optionArray] = await formatQuestionsAndOptions(array_of_question_obj_strings, testID, testType);
+        // UNFINISHED, need to think of how to not return two arrays..
+
+        // console.log(questionArray);
+        // console.log(optionArray);
+        // PICK UP FROM HERE, RUN W testFormatTest() below to see output
+
+        const everythingOk = true;
+        return everythingOk;
+    }
+    catch (error) {
+        throw new Error(`Error Test adding into database: ${error.message}`);
+    }
+}
+
+async function formatQuestionsAndOptions(array_of_question_obj_strings, testID,testType ){
+    try{
+        let questionArray = [];
+        let allOptionsArray = [];
+        const quiz='Q';
+
+        for (let question_obj_string of array_of_question_obj_strings) {
+            let question_obj = JSON.parse(question_obj_string); // this converts a string into a JSON
+            const questionNo = question_obj["QuestionNumber"];
+            const questionText = question_obj['ActualQuestion'];
+            const elaboration = question_obj['Elaboration'];
+            questionArray.push([testID, questionNo, questionText, elaboration]);
+            
+            if (testType === quiz){
+                const array_of_option_objects = question_obj['Options'];
+                allOptionsArray.push(await getOptionsArray(array_of_option_objects, testID, questionNo));
+            
+            }
+        }
+        // console.log(questionArray)
+        // console.log(optionArray)
+        return [questionArray, allOptionsArray]; // I don't like that its returning two arrays, but im tired its 1.58am LOL
+
+    }catch(error){
+        throw new Error(`${error.message}`);
+    }
+}
+
+async function getOptionsArray(array_of_option_objects, testID, questionNo){
+    try{
+        const optionArray = [];
+        const optionDict = {
+            0: 'A', 
+            1: 'B', 
+            2: 'C',
+            3: 'D'
+        };
+        let curCount = -1;
+        for (let option_obj of array_of_option_objects) {
+            curCount ++;
+            const optionText = option_obj['Option'];
+            const isCorrect = option_obj['IsCorrect?'];
+            const optionLetter = optionDict[curCount];
+            optionArray.push([testID, questionNo, optionLetter, optionText, isCorrect]);
+        }
+        return optionArray;
+
+    } catch(error){
+        throw new Error(`${error.message}`);
+    }
 }
 
 /*
@@ -224,7 +293,43 @@ TO TEST THE ABOVE FUNCTIONS
 
 // To test the insert functions
 // const extractedText = require("../test_ISAIAH/testpdf");
-// const CHATGPT_response_test = require("../test_ISAIAH/test_GPT_response");
+// const CHATGPT_response_flashcard = require("../test_ISAIAH/test_GPT_response"); 
+const CHATGPT_response_quiz = require('../JERRICK TEST (ill delete this after awhile)/temporary');
+
+async function testFormatTest(){
+    const result = await formatTest("alice@gmail.com", "Isaiah Test", 'Q', CHATGPT_response_quiz)
+    
+}
+testFormatTest()
+
+/* Expected Output for testFormatTest():
+questionArray =
+[ 
+    [testID, questionNo, questionText, elaboration],
+    [5, 1, 'What is the purpose of the backend in this project?', 'The backend is responsible for providing JSON data to the frontend.'],
+    [5, 2, 'Which command is used to install express framework in the backend?', "The command 'npm i express' is used to install the express framework."] ...
+]
+optionArray =
+[
+    [ testID, questionNo, optionLetter, optionText, isCorrect ],
+    [ 5, 6, 'B', 'Starts the frontend server', false ],
+    [ 5, 6, 'C', 'Starts the backend server using nodemon', true ],
+    [ 5, 6, 'D', 'Defines the MongoDB path', false ]
+  ],
+    [ 5, 6, 'A', 'Installs node modules', false ],
+    [ 5, 6, 'B', 'Starts the frontend server', false ],
+    [ 5, 6, 'C', 'Starts the backend server using nodemon', true ],
+    [ 5, 6, 'D', 'Defines the MongoDB path', false ]
+  ],
+  [
+    [ 5, 7, 'A', 'To define the default endpoint', false ],
+    [ 5, 7, 'B', 'To return a status code in the response', true ],
+    [ 5, 7, 'C', 'To create a new task', false ],
+    [ 5, 7, 'D', 'To connect to the database', false ]
+  ]
+
+*/
+
 // async function testQueryChatgptForTest(){
 //     const testType = 'F';
 //     const difficulty = "hard";

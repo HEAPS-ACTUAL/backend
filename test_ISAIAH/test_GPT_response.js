@@ -1,4 +1,4 @@
-const CHATGPT_response_test = 
+const CHATGPT_response_flashcard = 
 `{
         "QuestionNumber": 1,
         "ActualQuestion": "What covenant do we live under according to Pastor Joseph Prince?",
@@ -21,4 +21,4 @@ const CHATGPT_response_test =
         "Answer": "Understanding and believing in our complete forgiveness in Christ activates the new covenant and helps us live out our lives in Christ triumphantly."
 }|||`
 
-module.exports = CHATGPT_response_test;
+module.exports = CHATGPT_response_flashcard;
