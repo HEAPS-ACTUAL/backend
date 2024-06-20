@@ -1,6 +1,6 @@
-drop database if exists heap2;
-create database heap2;
-use heap2;   
+drop database if exists heap;
+create database heap;
+use heap;   
 
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Schedule;

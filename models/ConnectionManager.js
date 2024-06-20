@@ -8,7 +8,7 @@ const con = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: DB_password,
-  database: "heap2",
+  database: "heap",
 });
 
 module.exports = con;
