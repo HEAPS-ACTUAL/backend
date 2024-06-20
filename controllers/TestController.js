@@ -71,14 +71,11 @@ THESE ARE JUST HELPER FUNCTIONS
 
 async function queryChatgptForTest(extractedText, testType, difficulty) {
     const chatgpt = new openAI({ apiKey: process.env.OPENAI_API_KEY });
-    const numberOfQuestions = 12;
-    const difficultyDict = { 'E': 'easy', 'M': 'intermediate', 'H': 'hard' };
-    const difficultyString = difficultyDict[difficulty];
-    const promptDict = require("../models/promptDict");
-
+    const prompt = await getPrompt(testType, difficulty, numOfQuestions=12); // contains key-value for appropriate Test prompt
+    // console.log(prompt);
     try {
         const query =
-            `${extractedText} \n\n` + promptDict[testType];
+            `${extractedText} \n\n` + prompt;
         
         const response = await chatgpt.chat.completions.create({
             model: "gpt-3.5-turbo",
@@ -100,7 +97,48 @@ async function queryChatgptForTest(extractedText, testType, difficulty) {
     }
 }
 
+async function getPrompt(testType, difficulty, numOfQuestions=12){
+    // For now, function is just for these two entities, future entities may require more if-else statements instead
+    const promptDict = {
+        'F': () =>`Based on the text above, generate a maximised number of Test questions. These questions should test how well I know the content of the given text. \n\n
+        
+        Use a variety of formats for the questions such as "Define this term", "Describe this process", “True or false”, “Fill in the blank”. There should also be an Elaboration. \n
+        
+        Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Elaboration". \n
+        
+        Format your response exactly like this: \n
+        {
+        "QuestionNumber": ,
+        "ActualQuestion": ,
+        "Elaboration":
+        }|||`,
+        'Q': (numOfQuestions, difficulty) => `Based on the text above, generate ${numOfQuestions} questions. These questions should test how well I know the content of the given text. The difficulty level of the questions should be ${difficulty}. \n\n
+        
+        The questions are multiple choice questions and each question should have 4 options (1 correct and 3 wrong). I also want a short elaboration on which option is correct. \n
+        
+        Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Elaboration", "Options".
+        "Options" is a list of JSON objects with fields: "Option", "IsCorrect?". \n
+        
+        Format your response exactly like this: \n
+        {
+        "QuestionNumber": ,
+        "ActualQuestion": ,
+        "Elaboration":
+        "Options" : 
+            [{
+            "Option": , 
+            "IsCorrect?": 
+            }]
+        }|||`
+    }
+    if (testType === "F"){
+        return promptDict[testType]();
+    }
+    return promptDict[testType](numOfQuestions, difficulty);
+}
+
 async function formatAndStoreTest(email, testName, testType, chatgpt_response) {
+     
     try {
         const testID = await createNewTest(email, testName, testType);
 
@@ -118,7 +156,7 @@ async function formatAndStoreTest(email, testName, testType, chatgpt_response) {
             const questionText = question_obj['ActualQuestion'];
             const elaboration = question_obj['Elaboration'];
 
-            await addNewQuestion(email, testID, questionNo, questionText, elaboration); // FUNCTION IMPORTED FROM Test QUESTION CONTROLLER    
+            await addNewQuestion(testID, questionNo, questionText, elaboration); // FUNCTION IMPORTED FROM Test QUESTION CONTROLLER    
         }
 
         const everythingOk = true;
@@ -127,6 +165,10 @@ async function formatAndStoreTest(email, testName, testType, chatgpt_response) {
     catch (error) {
         throw new Error(`Error Test adding into database: ${error.message}`);
     }
+}
+
+async function formatTest(email, testName, testType, chatgpt_response){
+
 }
 
 /*
@@ -181,8 +223,15 @@ TO TEST THE ABOVE FUNCTIONS
 */
 
 // To test the insert functions
-const extractedText = require("../test_ISAIAH/testpdf");
-const CHATGPT_response_test = require("../test_ISAIAH/test_GPT_response");
+// const extractedText = require("../test_ISAIAH/testpdf");
+// const CHATGPT_response_test = require("../test_ISAIAH/test_GPT_response");
+// async function testQueryChatgptForTest(){
+//     const testType = 'F';
+//     const difficulty = "hard";
+//     const result = await queryChatgptForTest(extractedText, testType, difficulty)
+    
+// }
+// testQueryChatgptForTest()
 
 // createNewTest('alice@gmail.com', 'Test1', "F");
 // // countTotalNumberOfFlashcardQuestions('isaiah@gmail.com');
