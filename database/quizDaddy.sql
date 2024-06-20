@@ -49,7 +49,7 @@ CREATE TABLE Test (
 
 CREATE TABLE Quiz (
 	TestID INT PRIMARY KEY,
-	Difficulty CHAR(1),
+	Difficulty VARCHAR(20),
     IsDone BOOLEAN DEFAULT false,
     FOREIGN KEY (TestID) REFERENCES Test(TestID)
 );
