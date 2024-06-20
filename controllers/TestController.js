@@ -1,64 +1,65 @@
 // MODULES
 const query = require('../utils/PromisifyQuery');
 const openAI = require('openai');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config(); // { path: '../.env' } this makes .env undetected for some reason
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
+const { addNewQuestion } = require('./QuestionController');
 const { addNewFlashcardQuestion } = require('./FlashcardQuestionController');
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 SQL DATABASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function createNewFlashcard(email, flashcardName) {
+async function createNewTest(email, testName, testType) {
     try {
-        const fid = await determineTheNextFID(email); // FUNCTION DEFINED BELOW
-        const sqlQuery = 'Insert into flashcard (UserEmail, FID, FlashcardName) values (?, ?, ?)';
-        const insertOk = await query(sqlQuery, [email, fid, flashcardName]);
+        const testID = await determineTheNextTestID(email); // FUNCTION DEFINED BELOW
+        const sqlQuery = 'Insert into Test (email, testID, testName, testType) values (?, ?, ?, ?)';
+        const insertOk = await query(sqlQuery, [email, testID, testName, testType]);
 
         if (insertOk) {
-            console.log(`Flashcard ${fid} added for ${email}!`);
-            return fid;
+            console.log(`Test ${testID} added for ${email}!`);
+            return testID;
         }
     }
     catch (error) {
-        const msg = `Error adding Flashcard into database`
+        const msg = `Error adding Test into database`
         console.error(`${msg}: ${error.message}`);
         throw new Error(`${msg}`);
     }
 }
 
-async function determineTheNextFID(email) {
+async function determineTheNextTestID(email) {
     try {
-        const sqlQuery = 'Select FID from flashcard where useremail = ? order by FID desc limit 1';
+        const sqlQuery = 'Select testID from Test where email = ? order by testID desc limit 1';
         const returnedData = await query(sqlQuery, [email]);
         if (returnedData.length == 0) {
-            return 1; // IF NO Flashcard HAS BEEN CREATED BEFORE, USE NUMBER 1 AS THE NEXT Flashcard ID
+            return 1; // IF NO Test HAS BEEN CREATED BEFORE, USE NUMBER 1 AS THE NEXT Test ID
         }
 
-        const previousFID = returnedData[0].FID
-        const nextFID = previousFID + 1;
-        return nextFID;
+        const previousTestID = returnedData[0].testID
+        const nextTestID = previousTestID + 1;
+        return nextTestID;
     }
     catch (error) {
-        console.error(`Error determining the next FID: ${error}`)
+        console.error(`Error determining the next TestID: ${error}`)
     }
 }
 
-async function deleteFlashcard(req, res) {
+async function deleteTest(req, res) {
     const email = req.body.email;
-    const fid = req.body.fid;
-    const flashcardName = req.body.flashcardName;
+    const testID = req.body.testID;
+    const testName = req.body.testName;
 
     try {
-        const sqlQuery = 'Delete from Flashcard where useremail = ? and fid = ?';
-        const deleteOk = await query(sqlQuery, [email, fid]);
-        res.status(200).json({ message: `${flashcardName} has been deleted!` });
+        const sqlQuery = 'Delete from Test where email = ? and testID = ?';
+        const deleteOk = await query(sqlQuery, [email, testID]);
+        res.status(200).json({ message: `${testName} has been deleted!` });
     }
     catch (error) {
-        console.log(`Could not delete ${flashcardName} due to the following error: ${error}`);
-        res.status(404).json({ message: `Could not delete ${flashcardName}!` });
+        console.log(`Could not delete ${testName} due to the following error: ${error}`);
+        res.status(404).json({ message: `Could not delete ${testName}!` });
     }
 }
 
@@ -68,25 +69,17 @@ THESE ARE JUST HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-async function queryChatgptFlashcard(extractedText) {
+async function queryChatgptForTest(extractedText, testType, difficulty) {
     const chatgpt = new openAI({ apiKey: process.env.OPENAI_API_KEY });
+    const numberOfQuestions = 12;
+    const difficultyDict = { 'E': 'easy', 'M': 'intermediate', 'H': 'hard' };
+    const difficultyString = difficultyDict[difficulty];
+    const promptDict = require("../models/promptDict");
 
     try {
         const query =
-            `${extractedText} \n\n
-        Based on the text above, generate a maximised number of flashcard questions. These questions should test how well I know the content of the given text. \n\n
+            `${extractedText} \n\n` + promptDict[testType];
         
-        Use a variety of formats for the questions such as "Define this term", "Describe this process", “True or false”, “Fill in the blank”. There should also be an answer. \n
-        
-        Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Answer". \n
-        
-        Format your response exactly like this: \n
-        {
-        "QuestionNumber": ,
-        "ActualQuestion": ,
-        "Answer":
-        }|||`
-
         const response = await chatgpt.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: query }],
@@ -101,18 +94,18 @@ async function queryChatgptFlashcard(extractedText) {
         return questions;
     }
     catch (error) {
-        const msg = `An error occurred while generating the flashcard questions`
+        const msg = `An error occurred while generating the Test questions`
         console.error(`${msg}: ${error.message}`);
         throw new Error(msg);
     }
 }
 
-async function formatAndStoreFlashcard(email, flashcardName, chatgpt_response) {
+async function formatAndStoreTest(email, testName, testType, chatgpt_response) {
     try {
-        const fid = await createNewFlashcard(email, flashcardName);
+        const testID = await createNewTest(email, testName, testType);
 
-        if (!fid) {
-            return 'Could not store Flashcard!';
+        if (!testID) {
+            return 'Could not store Test!';
         }
 
         let array_of_question_obj_strings = chatgpt_response.split('|||').slice(0, -1); // slice to remove last element of array because it is just an empty string
@@ -123,16 +116,16 @@ async function formatAndStoreFlashcard(email, flashcardName, chatgpt_response) {
             
             const questionNo = question_obj["QuestionNumber"];
             const questionText = question_obj['ActualQuestion'];
-            const answer = question_obj['Answer'];
+            const elaboration = question_obj['Elaboration'];
 
-            await addNewFlashcardQuestion(email, fid, questionNo, questionText, answer); // FUNCTION IMPORTED FROM FLASHCARD QUESTION CONTROLLER    
+            await addNewQuestion(email, testID, questionNo, questionText, elaboration); // FUNCTION IMPORTED FROM Test QUESTION CONTROLLER    
         }
 
         const everythingOk = true;
         return everythingOk;
     }
     catch (error) {
-        throw new Error(`Error Flashcard adding into database: ${error.message}`);
+        throw new Error(`Error Test adding into database: ${error.message}`);
     }
 }
 
@@ -141,31 +134,33 @@ async function formatAndStoreFlashcard(email, flashcardName, chatgpt_response) {
 THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE QUIZ' ON THE FRONTEND
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function generateAndStoreFlashcard(req, res) {
+async function generateAndStoreTest(req, res) {
     try {
-        // CHECK WHETHER USER PRESSES GENERATE flashcard WITHOUT UPLOADING ANYTHING
+        // CHECK WHETHER USER PRESSES GENERATE Test WITHOUT UPLOADING ANYTHING
         if (!req.file) {
             res.status(404).json({ message: "No file uploaded!" });
             throw new Error("No file uploaded");
         }
 
-        const email = req.body.email;
-        const flashcardName = req.body.flashcardName;
+        const email = req.body.email; // string
+        const testName = req.body.testName; // string
+        const difficulty = req.body.difficulty; // single str ch: "E","M","H"
+        const testType = req.testType; // single str ch: "Q", "F"
         const uploadedFile = req.file;
 
-        // console.log(email, flashcardName, difficulty);
+        // console.log(email, testName, difficulty);
 
         console.log('Extracting text now...');
         const extractedText = await extractTextFromPDF(uploadedFile); // FUNCTION IMPORTED FROM FILE CONTROLLER
 
-        console.log('Querying chatgpt for Flashcard now...');
-        const chatgptResponse = await queryChatgptFlashcard(extractedText); // FUNCTION DEFINED ABOVE
+        console.log('Querying chatgpt for Test now...');
+        const chatgptResponse = await queryChatgptForTest(extractedText, testType, difficulty); // FUNCTION DEFINED ABOVE
 
         console.log('Questions obtained! Storing them into the database now...');
-        const hasBeenStored = await formatAndStoreFlashcard(email, flashcardName, chatgptResponse); // FUNCTION DEFINED ABOVE
+        const hasBeenStored = await formatAndStoreTest(email, testName,testType, chatgptResponse); // FUNCTION DEFINED ABOVE
 
         if (hasBeenStored) {
-            const msg = 'flashcard, questions and answers have been stored in database!';
+            const msg = 'Test, questions and answers have been stored in database!';
             console.log(msg)
             res.status(200).json({ message: msg });
         }
@@ -176,7 +171,7 @@ async function generateAndStoreFlashcard(req, res) {
     }
 }
 
-module.exports = { generateAndStoreFlashcard };
+module.exports = { generateAndStoreTest };
 // console.log(queryChatgpt(extractedText)); // for testing
 
 /*
@@ -186,10 +181,10 @@ TO TEST THE ABOVE FUNCTIONS
 */
 
 // To test the insert functions
-// const extractedText = require("../test_ISAIAH/testpdf");
-// const CHATGPT_response_flashcard = require("../test_ISAIAH/test_GPT_response");
+const extractedText = require("../test_ISAIAH/testpdf");
+const CHATGPT_response_test = require("../test_ISAIAH/test_GPT_response");
 
-// // createNewFlashcard('isaiah@gmail.com', 'jp');
+// createNewTest('alice@gmail.com', 'Test1', "F");
 // // countTotalNumberOfFlashcardQuestions('isaiah@gmail.com');
 
 // // To test formatAndStoreQuiz function

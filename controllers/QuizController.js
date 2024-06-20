@@ -177,7 +177,7 @@ async function formatAndStoreQuiz(email, quizName, difficulty, chatgpt_response)
             let question_obj = JSON.parse(question_obj_string); // this converts a string into a JSON
 
             const questionText = question_obj['ActualQuestion'];
-            const elaboration = question_obj['Explanation'];
+            const elaboration = question_obj['Elaboration'];
 
             let questionNo = await addNewQuestion(email, quizID, questionText, elaboration); // FUNCTION IMPORTED FROM QUESTION CONTROLLER
 

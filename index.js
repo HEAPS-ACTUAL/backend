@@ -48,7 +48,7 @@ app.use("/sample", sampleQuestionRouter);
 app.use("/question", require('./routers/QuestionRouter'));
 
 // ROUTES FOR FLASHCARDS
-app.use("/flashcard", require('./routers/FlashcardRouter'));
+app.use("/test", require('./routers/TestRouter'));
 
 // ROUTES FOR FLASHCARD QUESTIONS
 app.use("/flashcardquestion", require('./routers/FlashcardQuestionRouter.js'));
