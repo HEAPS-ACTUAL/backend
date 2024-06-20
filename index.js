@@ -47,6 +47,13 @@ app.use("/sample", sampleQuestionRouter);
 // ROUTES FOR QUESTIONS
 app.use("/question", require('./routers/QuestionRouter'));
 
+// ROUTES FOR FLASHCARDS
+app.use("/flashcard", require('./routers/FlashcardRouter'));
+
+// ROUTES FOR FLASHCARD QUESTIONS
+app.use("/flashcardquestion", require('./routers/FlashcardQuestionRouter.js'));
+
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

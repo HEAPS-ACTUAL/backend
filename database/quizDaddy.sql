@@ -69,6 +69,26 @@ CREATE TABLE History (
     PRIMARY KEY (Email, DateTime)
 );
 
+-- Creating the Flashcard table
+CREATE TABLE Flashcard (
+    UserEmail VARCHAR(100) NOT NULL,
+    FID INT NOT NULL,
+    FlashcardName VARCHAR(100), 
+    DateTimeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (UserEmail, FID),
+    FOREIGN KEY (UserEmail) REFERENCES User(Email) ON DELETE CASCADE
+);
+
+CREATE TABLE FlashcardQuestion (
+	UserEmail VARCHAR(100) NOT NULL,
+    FID INT NOT NULL,
+    QuestionNo INT NOT NULL,
+    QuestionText VARCHAR(255) NOT NULL,
+    Answer VARCHAR(255),
+    PRIMARY KEY (UserEmail, FID, QuestionNo),
+    FOREIGN KEY (UserEmail, FID) REFERENCES Flashcard(UserEmail, FID) ON DELETE CASCADE
+);
+
 # SAMPLE DATA TO TEST USER AUTHENTICATION
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('bob@hotmail.com', 'bob1', 'Bob', 'Lim', 'M');
