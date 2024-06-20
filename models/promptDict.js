@@ -11,6 +11,7 @@ const promptDict = {
     "ActualQuestion": ,
     "Elaboration":
     }|||`,
+    
     'Q': `Based on the text above, generate ${numberOfQuestions} questions. These questions should test how well I know the content of the given text. The difficulty level of the questions should be ${difficultyString}. \n\n
     
     The questions are multiple choice questions and each question should have 4 options (1 correct and 3 wrong). I also want a short elaboration on which option is correct. \n
