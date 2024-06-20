@@ -81,8 +81,8 @@ async function queryChatgptForTest(extractedText, testType, difficulty) {
         const response = await chatgpt.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: query }],
-            temperature: 0,
-            max_tokens: 2000,
+            temperature: 0.7,
+            max_tokens: 3000,
         })
 
         console.log(response.choices[0].finish_reason); // ensure that the generation of questions doesnt not stop prematurely
@@ -247,15 +247,10 @@ THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE QUIZ' ON THE FRONTEND
 */
 async function generateAndStoreTest(req, res) {
     try {
-        // CHECK WHETHER USER PRESSES GENERATE Test WITHOUT UPLOADING ANYTHING
-        if (!req.file) {
-            res.status(404).json({ message: "No file uploaded!" });
-            throw new Error("No file uploaded");
-        }
 
         const email = req.body.email; // string
         const testName = req.body.testName; // string
-        const difficulty = req.body.difficulty; // single str ch: "E","M","H"
+        const difficulty = req.body.difficulty; // string: "Easy", "Intermediate" or "Hard"
         const testType = req.testType; // single str ch: "Q", "F"
         const uploadedFile = req.file;
 
