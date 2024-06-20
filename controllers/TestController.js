@@ -5,7 +5,7 @@ require('dotenv').config(); // { path: '../.env' } this makes .env undetected fo
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
-const { addNewQuestion } = require('./QuestionController');
+const { addAllQuestionsForATest } = require('./QuestionController');
 const { addNewFlashcardQuestion } = require('./FlashcardQuestionController');
 const { options } = require('../routers/SampleQuestionRouter');
 /*
@@ -177,6 +177,7 @@ async function formatTest(email, testName, testType, chatgpt_response){
         // UNFINISHED, need to think of how to not return two arrays..
 
         // console.log(questionArray);
+        addAllQuestionsForATest(questionArray); // have yet to test
         // console.log(optionArray);
         // PICK UP FROM HERE, RUN W testFormatTest() below to see output
 

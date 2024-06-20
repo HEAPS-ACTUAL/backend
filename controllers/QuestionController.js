@@ -130,4 +130,4 @@ async function restructureQuestionsAndOptions(email, quizID, responseFromDatabas
 // createNewQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
 // getAllQuestionsAndOptionsFromAQuiz('jerricknsc@gmail.com', 1);
 
-module.exports = { addNewQuestion, getLastTwoQuestions, countTotalNumberOfQuestions, getAllQuestionsAndOptionsFromAQuiz };
+module.exports = { addAllQuestionsForATest, getLastTwoQuestions, countTotalNumberOfQuestions, getAllQuestionsAndOptionsFromAQuiz };
