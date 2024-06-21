@@ -71,6 +71,30 @@ async function deleteTest(req, res) {
     }
 }
 
+async function getTestInfo(req, res){
+    const email = req.body.email;
+    const testType = req.body.testType;
+    
+    if(req.body.testStatus){
+        var testStatus = req.body.testStatus;
+    }
+    else{
+        var testStatus = false;
+    }
+    
+    try{
+        const sqlQuery = 'call getTestInfo(?, ?, ?)';
+        const returnedData = await query(sqlQuery, [email, testType, testStatus]);
+        const testInfoArray = returnedData[0];
+        
+        res.status(200).json(testInfoArray);
+    }
+    catch(error){
+        console.error(error.message);
+        res.status(404).json({message: error.message});
+    }
+}
+
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 THESE ARE JUST HELPER FUNCTIONS
@@ -238,7 +262,7 @@ async function generateAndStoreTest(req, res) {
     }
 }
 
-module.exports = { generateAndStoreTest, deleteTest };
+module.exports = { generateAndStoreTest, deleteTest, getTestInfo };
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
