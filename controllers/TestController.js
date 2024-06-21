@@ -61,7 +61,7 @@ async function deleteTest(req, res) {
     try {
         const sqlQuery = 'Delete from Test where TestID = ?';
         
-        await query(sqlQuery, [email, testID]);
+        await query(sqlQuery, [testID]);
         
         res.status(200).json({ message: `${testName} has been deleted!` });
     }
