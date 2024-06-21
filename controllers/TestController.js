@@ -71,6 +71,10 @@ async function deleteTest(req, res) {
     }
 }
 
+/*
+This function returns an array of row objects.
+The keys of each object are: "TestID", "TestName", "DateTimeCreated", "Difficulty" and "numOfQuestions".
+*/
 async function getTestInfo(req, res){
     const email = req.body.email;
     const testType = req.body.testType;
@@ -232,7 +236,6 @@ THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE' ON THE FRONTEND
 */
 async function generateAndStoreTest(req, res) {
     try {
-
         const email = req.body.email; // string
         const testName = req.body.testName; // string
         const difficulty = req.body.difficulty; // string: "Easy", "Intermediate" or "Hard"
