@@ -140,7 +140,7 @@ function getPrompt(testType, difficulty, numOfQuestions=12){
     if (testType === "F"){
         return promptDict[testType]();
     }
-    
+
     return promptDict[testType](numOfQuestions, difficulty);
 }
 
@@ -215,7 +215,7 @@ async function generateAndStoreTest(req, res) {
         console.log('Extracting text now...');
         const extractedText = await extractTextFromPDF(uploadedFile); // FUNCTION IMPORTED FROM FILE CONTROLLER
 
-        console.log('Querying chatgpt for Test now...');
+        console.log('Querying chatgpt for test now...');
         const chatgptResponse = await queryChatgptForTest(extractedText, testType, difficulty); // FUNCTION DEFINED ABOVE
 
         console.log('Questions obtained! Storing them into the database now...');

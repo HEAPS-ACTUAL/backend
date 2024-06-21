@@ -7,7 +7,7 @@ const { generateAndStoreTest } = require("../controllers/TestController");
 const storage = multer.memoryStorage(); // creates a buffer storage
 const upload = multer({ storage: storage });
 
-// GENERATE FLASHCARD
+// GENERATE TEST AND STORE IT
 router.post('/generateAndStoreTest', upload.single('file'), generateAndStoreTest);
 
 module.exports = router;

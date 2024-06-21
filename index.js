@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
-const queryController = require("./controllers/QueryController");
 const sampleQuestionRouter = require("./routers/SampleQuestionRouter");
 
 // const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
@@ -33,11 +32,6 @@ app.use("/user", require("./routers/UserRouter"));
 // ROUTES FOR FILE
 app.use("/file", require("./routers/FileRouter"));
 
-// ROUTES FOR QUERY
-app.post("/query", (req, res) => {
-  queryController.handleQuery(req, res);
-});
-
 // ROUTES FOR QUIZ
 app.use("/quiz", require("./routers/QuizRouter"));
 
@@ -47,7 +41,7 @@ app.use("/sample", sampleQuestionRouter);
 // ROUTES FOR QUESTIONS
 app.use("/question", require('./routers/QuestionRouter'));
 
-// ROUTES FOR FLASHCARDS
+// ROUTES FOR TEST
 app.use("/test", require('./routers/TestRouter'));
 
 // ROUTES FOR FLASHCARD QUESTIONS
