@@ -7,7 +7,7 @@ SQL DATABASE RELATED FUNCTIONS
 */
 async function createNewQuiz(testID, difficulty){
     try {
-        const sqlQuery = 'Insert into Quiz (TestID, Difficulty) values (?, ?))';
+        const sqlQuery = 'Insert into Quiz (TestID, Difficulty) values (?, ?)';
         const insertOk = await query(sqlQuery, [testID, difficulty]);
 
         if (insertOk) {

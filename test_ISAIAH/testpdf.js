@@ -132,9 +132,9 @@ async function queryChatgptForTest(extractedText, testType, difficulty) {
 }
 
 
-async function test(){
-    const result = await queryChatgptForTest(extractedText, "Q", "H");
-    console.log(result);
-}
-test();
+// async function test(){
+//     const result = await queryChatgptForTest(extractedText, "Q", "H");
+//     console.log(result);
+// }
+// test();
 module.exports = extractedText;

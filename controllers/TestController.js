@@ -1,7 +1,7 @@
 // MODULES
 const query = require('../utils/PromisifyQuery');
 const openAI = require('openai');
-require('dotenv').config(); // { path: '../.env' } this makes .env undetected for some reason
+require('dotenv').config({ path: '../.env' }); // this makes .env undetected for some reason
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
@@ -247,7 +247,7 @@ TO TEST THE ABOVE FUNCTIONS
 */
 
 // To test the insert functions
-// formatAndStoreTest('jerricknsc@gmail.com', 'sample quiz', 'Q', CHATGPT_response_quiz);
+// formatAndStoreTest('jerricknsc@gmail.com', 'jerrick flashcard', 'F', 'Hard', CHATGPT_response_quiz);
 
 
 /* Expected Output for testFormatTest():
