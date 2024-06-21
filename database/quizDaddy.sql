@@ -51,7 +51,7 @@ CREATE TABLE Quiz (
 	TestID INT PRIMARY KEY,
 	Difficulty VARCHAR(20),
     IsDone BOOLEAN DEFAULT false,
-    FOREIGN KEY (TestID) REFERENCES Test(TestID)
+    FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
 							   
 CREATE TABLE Question (
