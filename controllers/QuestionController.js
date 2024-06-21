@@ -25,26 +25,6 @@ async function addAllQuestionsForATest(arrayOfValues){
     }
 }
 
-async function countTotalNumberOfQuestions(req, res, quizID = null) { // to change
-    try {
-        const sqlQuery = "select count(*) as numOfQuestions from question where TestID = ?";
-        
-        if(req && res){
-            const testID = req.body.testID;
-            const returnedData = await query(sqlQuery, [testID]);
-            const numOfQuestions = returnedData[0].numOfQuestions;
-            return res.status(200).json(numOfQuestions);
-        }
-        else if(testID){
-            const returnedData = await query(sqlQuery, [testID]);
-            const numOfQuestions = returnedData[0].numOfQuestions;
-            return numOfQuestions;
-        }
-    } catch (error) {
-        console.error(`Error counting number of questions: ${error}`);
-    }
-}
-
 async function getLastTwoQuestions(testID) { // to change
     try {
         const sqlQuery = `
@@ -130,4 +110,4 @@ async function restructureQuestionsAndOptions(email, quizID, responseFromDatabas
 // createNewQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
 // getAllQuestionsAndOptionsFromAQuiz('jerricknsc@gmail.com', 1);
 
-module.exports = { addAllQuestionsForATest, getLastTwoQuestions, countTotalNumberOfQuestions, getAllQuestionsAndOptionsFromAQuiz };
+module.exports = { addAllQuestionsForATest, getLastTwoQuestions, getAllQuestionsAndOptionsFromAQuiz };

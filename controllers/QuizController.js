@@ -21,31 +21,4 @@ async function createNewQuiz(testID, difficulty){
     }
 }
 
-async function getToDoQuizzes(req, res){ // to change
-    const email = req.body.email;
-
-    try{
-        const sqlQuery = 'Select * from quiz where UserEmail = ? and IsDone = false';
-        const returnedQuizzes = await query(sqlQuery, [email]);
-        res.status(200).json(returnedQuizzes);
-    }
-    catch(error){
-        res.status(404).json({ message: `Error retrieving undone quizzes!` });
-    }
-}
-
-async function getCompletedQuizzes(req, res){ // to change
-    const email = req.body.email;
-
-    try{
-        const sqlQuery = 'Select * from quiz where UserEmail = ? and IsDone = true';
-        const returnedQuizzes = await query(sqlQuery, [email]);
-        res.status(200).json(returnedQuizzes);
-    }
-    catch(error){
-        res.status(404).json({ message: `Error retrieving undone quizzes!` });
-    }
-}
-
-
-module.exports = { createNewQuiz, getToDoQuizzes, getCompletedQuizzes };
+module.exports = { createNewQuiz };
