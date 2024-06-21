@@ -3,8 +3,6 @@ const cors = require("cors");
 const con = require("./models/ConnectionManager");
 const sampleQuestionRouter = require("./routers/SampleQuestionRouter");
 
-// const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
-
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
 app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
@@ -29,23 +27,20 @@ app.get("/", (req, res) => {
 // ROUTES FOR USER
 app.use("/user", require("./routers/UserRouter"));
 
-// ROUTES FOR FILE
-app.use("/file", require("./routers/FileRouter"));
+// ROUTES FOR TEST
+app.use("/test", require('./routers/TestRouter'));
 
 // ROUTES FOR QUIZ
 app.use("/quiz", require("./routers/QuizRouter"));
 
-// ROUTES FOR SAMPLEQNS
-app.use("/sample", sampleQuestionRouter);
+// ROUTES FOR FLASHCARD
+app.use("/flashcardquestion", require('./routers/FlashcardRouter.js'));
 
 // ROUTES FOR QUESTIONS
 app.use("/question", require('./routers/QuestionRouter'));
 
-// ROUTES FOR TEST
-app.use("/test", require('./routers/TestRouter'));
-
-// ROUTES FOR FLASHCARD QUESTIONS
-app.use("/flashcardquestion", require('./routers/FlashcardQuestionRouter.js'));
+// ROUTES FOR SAMPLEQNS
+app.use("/sample", sampleQuestionRouter);
 
 
 // Start server

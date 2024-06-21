@@ -12,7 +12,7 @@ async function addAllQuestionsForATest(arrayOfValues){
         const insertOk = await query(sqlQuery, [arrayOfValues]);
         
         if(insertOk.affectedRows === arrayOfValues.length){
-            console.log('All questions for this quiz has been inserted!');
+            console.log('All questions for this test has been inserted!');
         }
         else{
             console.log('Not all questions have been inserted!');
@@ -25,7 +25,7 @@ async function addAllQuestionsForATest(arrayOfValues){
     }
 }
 
-async function countTotalNumberOfQuestions(req, res, quizID = null) {
+async function countTotalNumberOfQuestions(req, res, quizID = null) { // to change
     try {
         const sqlQuery = "select count(*) as numOfQuestions from question where TestID = ?";
         
@@ -45,7 +45,7 @@ async function countTotalNumberOfQuestions(req, res, quizID = null) {
     }
 }
 
-async function getLastTwoQuestions(testID) {
+async function getLastTwoQuestions(testID) { // to change
     try {
         const sqlQuery = `
             SELECT *
@@ -63,7 +63,7 @@ async function getLastTwoQuestions(testID) {
     }
 }
 
-async function getAllQuestionsAndOptionsFromAQuiz(req, res){
+async function getAllQuestionsAndOptionsFromAQuiz(req, res){ // to change
     const quizID = req.body.quizID;
     // const quizID = 1;
 
@@ -87,7 +87,7 @@ THESE ARE JUST HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-async function restructureQuestionsAndOptions(email, quizID, responseFromDatabase){
+async function restructureQuestionsAndOptions(email, quizID, responseFromDatabase){ // to change
     const questionsOfThisUser = 
     {
         email: email, 
