@@ -214,7 +214,7 @@ async function formatAndStoreTest(email, testName, testType, difficulty, chatgpt
 
         if(testType === 'Q'){
             await addAllOptionsForAQuiz(array_of_all_options); // FUNCTION IMPORTED FROM OPTION CONTROLLER
-            await createNewQuiz(testID, difficulty);
+            await createNewQuiz(testID, difficulty); 
         }
 
         return true;
@@ -320,82 +320,3 @@ optionArray =
 // }
 
 // test();
-
-
-// async function formatTest(email, testName, testType, chatgpt_response){
-//     try {
-//         const testID = await createNewTest(email, testName, testType);
-        
-//         if (!testID) { 
-//             return 'Could not store Test!'; 
-//         }
-
-//         let array_of_question_obj_strings = chatgpt_response.split('|||').slice(0, -1); // slice to remove last element of array because it is just an empty string
-//         // console.log(array_of_question_obj_strings);
-//         const [questionArray, optionArray] = await formatQuestionsAndOptions(array_of_question_obj_strings, testID, testType);
-//         // UNFINISHED, need to think of how to not return two arrays..
-
-//         // console.log(questionArray);
-//         addAllQuestionsForATest(questionArray); // have yet to test
-//         // console.log(optionArray);
-//         // PICK UP FROM HERE, RUN W testFormatTest() below to see output
-
-//         const everythingOk = true;
-//         return everythingOk;
-//     }
-//     catch (error) {
-//         throw new Error(`Error Test adding into database: ${error.message}`);
-//     }
-// }
-
-// async function formatQuestionsAndOptions(array_of_question_obj_strings, testID, testType){
-//     try{
-//         let questionArray = [];
-//         let allOptionsArray = [];
-//         const quiz='Q';
-
-//         for (let question_obj_string of array_of_question_obj_strings) {
-//             let question_obj = JSON.parse(question_obj_string); // this converts a string into a JSON
-//             const questionNo = question_obj["QuestionNumber"];
-//             const questionText = question_obj['ActualQuestion'];
-//             const elaboration = question_obj['Elaboration'];
-//             questionArray.push([testID, questionNo, questionText, elaboration]);
-            
-//             if (testType === quiz){
-//                 const array_of_option_objects = question_obj['Options'];
-//                 allOptionsArray.push(await getOptionsArray(array_of_option_objects, testID, questionNo));
-            
-//             }
-//         }
-//         // console.log(questionArray)
-//         // console.log(optionArray)
-//         return [questionArray, allOptionsArray]; // I don't like that its returning two arrays, but im tired its 1.58am LOL
-
-//     }catch(error){
-//         throw new Error(`${error.message}`);
-//     }
-// }
-
-// async function getOptionsArray(array_of_option_objects, testID, questionNo){
-//     try{
-//         const optionArray = [];
-//         const optionDict = {
-//             0: 'A', 
-//             1: 'B', 
-//             2: 'C',
-//             3: 'D'
-//         };
-//         let curCount = -1;
-//         for (let option_obj of array_of_option_objects) {
-//             curCount ++;
-//             const optionText = option_obj['Option'];
-//             const isCorrect = option_obj['IsCorrect?'];
-//             const optionLetter = optionDict[curCount];
-//             optionArray.push([testID, questionNo, optionLetter, optionText, isCorrect]);
-//         }
-//         return optionArray;
-
-//     } catch(error){
-//         throw new Error(`${error.message}`);
-//     }
-// }
