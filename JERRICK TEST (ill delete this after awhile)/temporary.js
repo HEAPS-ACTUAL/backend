@@ -1,8 +1,8 @@
-const CHATGPT_response = 
+const CHATGPT_response_quiz = 
 `{
     "QuestionNumber": 1,
     "ActualQuestion": "What is the purpose of the backend in this project?",
-    "Explanation": "The backend is responsible for providing JSON data to the frontend.",
+    "Elaboration": "The backend is responsible for providing JSON data to the frontend.",
     "Options" : 
         [
         {"Option": "Rendering dynamic elements on the frontend", "IsCorrect?": false},
@@ -15,7 +15,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 2,
     "ActualQuestion": "Which command is used to install express framework in the backend?",
-    "Explanation": "The command 'npm i express' is used to install the express framework.",
+    "Elaboration": "The command 'npm i express' is used to install the express framework.",
     "Options" : 
         [
         {"Option": "npm start", "IsCorrect?": false},
@@ -28,7 +28,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 3,
     "ActualQuestion": "What is the purpose of nodemon in the project setup?",
-    "Explanation": "Nodemon enables auto refreshing without manually killing and restarting the server to observe changes.",
+    "Elaboration": "Nodemon enables auto refreshing without manually killing and restarting the server to observe changes.",
     "Options" : 
         [
         {"Option": "To install node modules", "IsCorrect?": false},
@@ -41,7 +41,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 4,
     "ActualQuestion": "What is the purpose of creating a model file under the models folder?",
-    "Explanation": "The model file defines the schema required for tasks in the database.",
+    "Elaboration": "The model file defines the schema required for tasks in the database.",
     "Options" : 
         [
         {"Option": "To install mongoose module", "IsCorrect?": false},
@@ -54,7 +54,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 5,
     "ActualQuestion": "What is the purpose of axios in the project?",
-    "Explanation": "Axios is used to make HTTP requests from the frontend to the backend.",
+    "Elaboration": "Axios is used to make HTTP requests from the frontend to the backend.",
     "Options" : 
         [
         {"Option": "To define the schema for tasks", "IsCorrect?": false},
@@ -67,7 +67,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 6,
     "ActualQuestion": "What does the 'npm run devStart' command do?",
-    "Explanation": "The 'npm run devStart' command starts the backend server using nodemon.",
+    "Elaboration": "The 'npm run devStart' command starts the backend server using nodemon.",
     "Options" : 
         [
         {"Option": "Installs node modules", "IsCorrect?": false},
@@ -80,7 +80,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 7,
     "ActualQuestion": "What is the purpose of the 'status()' function in the backend?",
-    "Explanation": "The 'status()' function is used to return a status code in the response.",
+    "Elaboration": "The 'status()' function is used to return a status code in the response.",
     "Options" : 
         [
         {"Option": "To define the default endpoint", "IsCorrect?": false},
@@ -93,7 +93,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 8,
     "ActualQuestion": "What is the purpose of the 'json()' function in the backend?",
-    "Explanation": "The 'json()' function is used to return the response body in JSON format.",
+    "Elaboration": "The 'json()' function is used to return the response body in JSON format.",
     "Options" : 
         [
         {"Option": "To return a status code in the response", "IsCorrect?": false},
@@ -106,7 +106,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 9,
     "ActualQuestion": "What is the purpose of the 'async' keyword in the controller functions?",
-    "Explanation": "The 'async' keyword is used to make the function asynchronous.",
+    "Elaboration": "The 'async' keyword is used to make the function asynchronous.",
     "Options" : 
         [
         {"Option": "To define the default endpoint", "IsCorrect?": false},
@@ -119,7 +119,7 @@ const CHATGPT_response =
 {
     "QuestionNumber": 10,
     "ActualQuestion": "What is the purpose of the 'db.once' function in connecting to the database?",
-    "Explanation": "The 'db.once' function is used to run a function once the database connection is open.",
+    "Elaboration": "The 'db.once' function is used to run a function once the database connection is open.",
     "Options" : 
         [
         {"Option": "To run a function upon receiving an error", "IsCorrect?": false},
@@ -129,4 +129,4 @@ const CHATGPT_response =
         ]
 }|||`
 
-module.exports = CHATGPT_response;
+module.exports = CHATGPT_response_quiz;

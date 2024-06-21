@@ -46,12 +46,12 @@ CREATE TABLE Test (
     FOREIGN KEY (Email) REFERENCES User(Email) ON DELETE CASCADE,
     FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID)
 );
-
+    
 CREATE TABLE Quiz (
 	TestID INT PRIMARY KEY,
 	Difficulty VARCHAR(20),
     IsDone BOOLEAN DEFAULT false,
-    FOREIGN KEY (TestID) REFERENCES Test(TestID)
+    FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
 							   
 CREATE TABLE Question (
@@ -82,6 +82,18 @@ CREATE TABLE History (
     IsCorrect BOOLEAN,
     PRIMARY KEY (Email, DateTime)
 );
+
+# STORED PROCEDURES
+delimiter $$
+create procedure getTestInfo(in input_email varchar(100), in input_test_type char(1), in input_test_status boolean)
+begin
+	if input_test_type = 'Q' then
+		select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions from test t, quiz q, question qn where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID;
+    elseif input_test_type = 'F' then
+		select t.TestID, t.TestName, t.DateTimeCreated, count(*) as numOfQuestions from test t, question qn where (t.TestID = qn.TestID) and (Email = input_email) and (TestType = input_test_type) group by t.TestID;
+    end if;
+end $$
+delimiter ;
 
 # SAMPLE DATA TO TEST USER AUTHENTICATION
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');

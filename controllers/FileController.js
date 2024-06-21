@@ -1,5 +1,4 @@
 const PDFParser = require("pdf-parse");
-const TextStore = require("../models/TextStore");
 const con = require("../models/ConnectionManager");
 
 async function extractTextFromPDF(uploadedFile) {

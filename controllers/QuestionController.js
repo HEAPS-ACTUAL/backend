@@ -5,54 +5,36 @@ const query = require("../utils/PromisifyQuery");
 SQL DATABASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function addNewQuestion(email, quizID, questionText, elaboration) {
-    try {
-        const questionNo = (await countTotalNumberOfQuestions(null, null, email, quizID)) + 1;
-        const sqlQuery = "Insert into question (UserEmail, QuizID, QuestionNo, QuestionText, Elaboration) values (?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [email, quizID, questionNo, questionText, elaboration]);
 
-        if (insertOk) {
-            console.log(`Question ${questionNo} added!`);
-            return questionNo;
+async function addAllQuestionsForATest(arrayOfValues){
+    try{
+        const sqlQuery = "Insert into question (TestID, QuestionNo, QuestionText, Elaboration) values ?";
+        const insertOk = await query(sqlQuery, [arrayOfValues]);
+        
+        if(insertOk.affectedRows === arrayOfValues.length){
+            console.log('All questions for this test has been inserted!');
         }
-    } catch (error) {
-        const msg = `Error adding question ${questionNo} into database`;
+        else{
+            console.log('Not all questions have been inserted!');
+        }
+    }
+    catch(error){
+        const msg = `Error adding questions into database`;
         console.error(`${msg}: ${error.message}`);
         throw new Error(msg);
     }
 }
 
-async function countTotalNumberOfQuestions(req, res, email = null, quizID = null) {
-    try {
-        const sqlQuery = "select count(*) as numOfQuestions from question where UserEmail = ? and QuizID = ?";
-        
-        if(req && res){
-            const email = req.body.email;
-            const quizID = req.body.quizID;
-            const returnedData = await query(sqlQuery, [email, quizID]);
-            const numOfQuestions = returnedData[0].numOfQuestions;
-            return res.status(200).json(numOfQuestions);
-        }
-        else if(email && quizID){
-            const returnedData = await query(sqlQuery, [email, quizID]);
-            const numOfQuestions = returnedData[0].numOfQuestions;
-            return numOfQuestions;
-        }
-    } catch (error) {
-        console.error(`Error counting number of questions: ${error}`);
-    }
-}
-
-async function getLastTwoQuestions(email, quizID) {
+async function getLastTwoQuestions(testID) { // to change
     try {
         const sqlQuery = `
             SELECT *
             FROM Question
-            WHERE UserEmail = ? AND QuizID = ?
+            WHERE TestID = ?
             ORDER BY QuestionNo DESC
             LIMIT 2;
         `;
-        const results = await query(sqlQuery, [email, quizID]);
+        const results = await query(sqlQuery, [testID]);
         return results.reverse(); // Reverse to maintain the order of insertion when displaying
     }
     catch (error) {
@@ -61,10 +43,8 @@ async function getLastTwoQuestions(email, quizID) {
     }
 }
 
-async function getAllQuestionsAndOptionsFromAQuiz(req, res){
-    const email = req.body.email;
+async function getAllQuestionsAndOptionsFromAQuiz(req, res){ // to change
     const quizID = req.body.quizID;
-    // const email = 'jerricknsc@gmail.com';
     // const quizID = 1;
 
     try{
@@ -87,7 +67,7 @@ THESE ARE JUST HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-async function restructureQuestionsAndOptions(email, quizID, responseFromDatabase){
+async function restructureQuestionsAndOptions(email, quizID, responseFromDatabase){ // to change
     const questionsOfThisUser = 
     {
         email: email, 
@@ -130,4 +110,4 @@ async function restructureQuestionsAndOptions(email, quizID, responseFromDatabas
 // createNewQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
 // getAllQuestionsAndOptionsFromAQuiz('jerricknsc@gmail.com', 1);
 
-module.exports = { addNewQuestion, getLastTwoQuestions, countTotalNumberOfQuestions, getAllQuestionsAndOptionsFromAQuiz };
+module.exports = { addAllQuestionsForATest, getLastTwoQuestions, getAllQuestionsAndOptionsFromAQuiz };
