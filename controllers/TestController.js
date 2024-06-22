@@ -100,10 +100,8 @@ async function getTestInfo(req, res){
 }
 
 /*
-This function returns an array of row objects.
-Each row object has the keys: "QuestionNo", "QuestionText", "Elaboration" and "Options" (if test is a quiz). (if test is a flashcard, "Options" will be empty)
-"Options" is an array of option objects.
-Each option object has the keys: "OptionLetter", "OptionText" and "IsCorrect".
+Go to examples/testQuestionAndOptions.js to see an example of what this function returns.
+Take note: "Options" is a string, not an object.
 */
 async function getAllQuestionsAndOptionsFromATest(req, res){ 
     const testID = req.body.testID;
@@ -111,14 +109,13 @@ async function getAllQuestionsAndOptionsFromATest(req, res){
     try{
         const sqlQuery = 'call getAllQuestionsAndOptionsForATest(?)';
         const returnedData = await query(sqlQuery, [testID]);
+        const questionsOfThisTest = returnedData[0];
         
-        console.log(returnedData[0]);
-        
-        // res.status(200).json(questionsOfThisUser);
+        res.status(200).json(questionsOfThisTest);
     }
     catch(error){
         console.error(`Could not get questions and options: ${error}`);
-        // res.status(404).json({message: error});
+        res.status(404).json({message: error});
     }
 }
 
@@ -288,7 +285,7 @@ async function generateAndStoreTest(req, res) {
     }
 }
 
-module.exports = { generateAndStoreTest, deleteTest, getTestInfo };
+module.exports = { generateAndStoreTest, deleteTest, getTestInfo, getAllQuestionsAndOptionsFromATest };
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------

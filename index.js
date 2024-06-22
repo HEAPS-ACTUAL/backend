@@ -36,9 +36,6 @@ app.use("/quiz", require("./routers/QuizRouter"));
 // ROUTES FOR FLASHCARD
 app.use("/flashcardquestion", require('./routers/FlashcardRouter.js'));
 
-// ROUTES FOR QUESTIONS
-app.use("/question", require('./routers/QuestionRouter'));
-
 // ROUTES FOR SAMPLEQNS
 app.use("/sample", sampleQuestionRouter);
 

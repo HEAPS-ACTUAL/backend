@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
-const { generateAndStoreTest, deleteTest, getTestInfo } = require("../controllers/TestController");
+const { generateAndStoreTest, deleteTest, getTestInfo, getAllQuestionsAndOptionsFromATest } = require("../controllers/TestController");
 
 // Set up multer for in-memory file uploads
 const storage = multer.memoryStorage(); // creates a buffer storage
@@ -15,5 +15,8 @@ router.post('/deleteTest', deleteTest);
 
 // RETRIEVING TEST INFO
 router.post('/getTestInfo', getTestInfo);
+
+// GET QUESTIONS AND OPTIONS FOR A TEST
+router.post('/getQuestionsAndOptions', getAllQuestionsAndOptionsFromATest);
 
 module.exports = router;
