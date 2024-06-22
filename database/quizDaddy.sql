@@ -73,7 +73,7 @@ CREATE TABLE `Option` (
     FOREIGN KEY (TestID, QuestionNo) REFERENCES Question(TestID, QuestionNo) ON DELETE CASCADE
 );
 
-CREATE TABLE UserAnswers (
+CREATE TABLE UserQuizAnswers (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
     UserChoice CHAR(1),
