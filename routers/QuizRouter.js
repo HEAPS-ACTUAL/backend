@@ -1,17 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const multer = require('multer');
-// const { getToDoQuizzes, getCompletedQuizzes } = require("../controllers/QuizController");
 
-// Set up multer for in-memory file uploads
-const storage = multer.memoryStorage(); // creates a buffer storage
-const upload = multer({ storage: storage });
+// Functions
+const { markQuizAsDone } = require("../controllers/QuizController");
 
-// GET ALL UNDONE QUIZZES
-// router.post('/getToDoQuizzes', getToDoQuizzes);
-
-// GET ALL COMPLETED QUIZZES
-// router.post('/getCompletedQuizzes', getCompletedQuizzes);
-
+// MARK QUIZ AS DONE
+router.post('/markQuizAsDone', markQuizAsDone);
 
 module.exports = router;

@@ -21,4 +21,19 @@ async function createNewQuiz(testID, difficulty){
     }
 }
 
-module.exports = { createNewQuiz };
+async function markQuizAsDone(req, res){
+    const testID = req.body.testID;
+    try {
+        const sqlQuery = 'Update Quiz set IsDone = true where TestID = ?';
+        await query(sqlQuery, [testID]);
+
+        console.log(`TestID ${testID} has been marked as done!`);
+        res.status(200).json({message: `TestID ${testID} has been marked as done!`})
+    }
+    catch (error) {
+        console.error(error);
+        res.status(404).json({message: error});        
+    }
+}
+
+module.exports = { createNewQuiz, markQuizAsDone };
