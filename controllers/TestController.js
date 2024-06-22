@@ -73,7 +73,7 @@ async function deleteTest(req, res) {
 
 /*
 This function returns an array of row objects.
-The keys of each object are: "TestID", "TestName", "DateTimeCreated", "Difficulty" and "numOfQuestions".
+Each row object has the keys: "TestID", "TestName", "DateTimeCreated", "Difficulty" and "numOfQuestions".
 */
 async function getTestInfo(req, res){
     const email = req.body.email;
@@ -96,6 +96,29 @@ async function getTestInfo(req, res){
     catch(error){
         console.error(error.message);
         res.status(404).json({message: error.message});
+    }
+}
+
+/*
+This function returns an array of row objects.
+Each row object has the keys: "QuestionNo", "QuestionText", "Elaboration" and "Options" (if test is a quiz). (if test is a flashcard, "Options" will be empty)
+"Options" is an array of option objects.
+Each option object has the keys: "OptionLetter", "OptionText" and "IsCorrect".
+*/
+async function getAllQuestionsAndOptionsFromATest(req, res){ 
+    const testID = req.body.testID;
+
+    try{
+        const sqlQuery = 'call getAllQuestionsAndOptionsForATest(?)';
+        const returnedData = await query(sqlQuery, [testID]);
+        
+        console.log(returnedData[0]);
+        
+        // res.status(200).json(questionsOfThisUser);
+    }
+    catch(error){
+        console.error(`Could not get questions and options: ${error}`);
+        // res.status(404).json({message: error});
     }
 }
 
