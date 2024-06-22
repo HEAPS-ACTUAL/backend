@@ -10,8 +10,8 @@ const { addAllOptionsForAQuiz } = require('./OptionController');
 const { createNewQuiz } = require('./QuizController');
 
 const extractedText = require("../test_ISAIAH/testpdf");
-const CHATGPT_response_flashcard = require("../test_ISAIAH/test_GPT_response"); 
-const CHATGPT_response_quiz = require('../JERRICK TEST (ill delete this after awhile)/temporary');
+const CHATGPT_response_flashcard = require("../examples/chatgptResponseFlashcard"); 
+const CHATGPT_response_quiz = require('../examples/chatgptResponseQuiz');
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
