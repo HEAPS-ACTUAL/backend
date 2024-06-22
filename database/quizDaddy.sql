@@ -73,14 +73,13 @@ CREATE TABLE `Option` (
     FOREIGN KEY (TestID, QuestionNo) REFERENCES Question(TestID, QuestionNo) ON DELETE CASCADE
 );
 
-CREATE TABLE History (
-    Email VARCHAR(100) NOT NULL,
-    DateTime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+CREATE TABLE UserAnswers (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
     UserChoice CHAR(1),
-    IsCorrect BOOLEAN,
-    PRIMARY KEY (Email, DateTime)
+    AttemptNo INT NOT NULL,
+    DateTime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (TestID, QuestionNo, AttemptNo)
 );
 
 # STORED PROCEDURES
