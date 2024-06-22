@@ -95,6 +95,21 @@ begin
 end $$
 delimiter ;
 
+delimiter $$
+create procedure getAllQuestionsAndOptionsForATest(in input_test_id int)
+begin
+	declare test_type char(1);
+    
+    select TestType into test_type from test where TestID = input_test_id;
+
+    if test_type = 'Q' then
+		select qn.QuestionNo, qn.QuestionText, qn.Elaboration, json_arrayagg(json_object('OptionLetter', OptionLetter, 'OptionText', o.OptionText, 'IsCorrect', o.IsCorrect)) as 'Options' from question qn, `option` o where (qn.TestID = o.TestID) and (qn.QuestionNo = o.QuestionNo) and (qn.TestID = input_test_id) group by qn.QuestionNo;
+	elseif test_type = 'F' then
+		select QuestionNo, QuestionText, Elaboration from question where testID = input_test_id;
+    end if;
+end $$
+delimiter ;
+
 # SAMPLE DATA TO TEST USER AUTHENTICATION
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('bob@hotmail.com', 'bob1', 'Bob', 'Lim', 'M');
