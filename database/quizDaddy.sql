@@ -84,7 +84,7 @@ CREATE TABLE UserQuizAnswers (
 
 CREATE TABLE UserQuizScores (
     TestID INT NOT NULL,
-    NumOfCorrectQuestions INT NOT NULL,
+    NumOfCorrectAnswers INT NOT NULL,
     AttemptNo INT NOT NULL,
     DateTime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY (TestID, AttemptNo),
@@ -92,6 +92,11 @@ CREATE TABLE UserQuizScores (
 );
 
 # STORED PROCEDURES
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+TO DISPLAY THE TEST CARDS IN THE HOME PAGE
+-----------------------------------------------------------------------------------------------------------------------
+*/
 delimiter $$
 create procedure getTestInfo(in input_email varchar(100), in input_test_type char(1), in input_test_status boolean)
 begin
@@ -103,6 +108,12 @@ begin
 end $$
 delimiter ;
 
+
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+TO GET ALL QUESTIONS FOR A FLASHCARD OR ALL QUESTIONS AND OPTIONS FOR A QUIZ 
+-----------------------------------------------------------------------------------------------------------------------
+*/
 delimiter $$
 create procedure getAllQuestionsAndOptionsForATest(in input_test_id int)
 begin
@@ -117,6 +128,63 @@ begin
     end if;
 end $$
 delimiter ;
+
+
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+TO STORE USER'S QUIZ ANSWERS IN THE DATABASE
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+create procedure storeUserQuizAnswers(in input_test_id int, in user_answers json)
+begin
+	declare attempt_no int;
+	declare length_of_array int;
+    declare counter int;
+    declare current_question_no int;
+    declare current_user_choice char(1);
+    
+    set attempt_no = (select count(*) from UserQuizScores where testID = input_test_id) + 1;
+    
+    set counter = 0;
+    set length_of_array = (select json_length(user_answers));
+    
+    while counter < length_of_array do
+		set current_question_no = json_extract(user_answers, concat('$[', counter, '].QuestionNo'));
+        set current_user_choice = json_unquote(json_extract(user_answers, concat('$[', counter, '].UserChoice')));
+		
+        insert into UserQuizAnswers values (input_test_id, current_question_no, current_user_choice, attempt_no);
+        
+        set counter = counter + 1;
+    end while;
+end $$
+delimiter ;
+
+
+# TRIGGERS
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+INSERT USER'S QUIZ SCORE AFTER USER SUBMITS QUIZ
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+create trigger after_insert_UserQuizAnswers after insert on UserQuizAnswers for each row
+begin 
+    declare total_num_of_questions_in_quiz int;
+    declare num_rows_added int;
+    declare num_of_correct_ans int;
+    
+	set total_num_of_questions_in_quiz = (select count(*) from question where TestID = new.TestID);
+    set num_rows_added = (select count(*) from UserQuizAnswers where TestID = new.TestID and AttemptNo = new.AttemptNo);
+    
+    if total_num_of_questions_in_quiz = num_rows_added then
+		set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
+        
+        insert into UserQuizScores (TestID, NumOfCorrectAnswers, AttemptNo) values (new.TestID, num_of_correct_ans, new.AttemptNo);
+    end if;
+end $$
+delimiter ;
+
 
 # SAMPLE DATA TO TEST USER AUTHENTICATION
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');
