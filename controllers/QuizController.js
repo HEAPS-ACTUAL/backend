@@ -65,18 +65,18 @@ function formatUserAnswers(userAnswers){
     return (JSON.stringify(returnedArray));
 }
 
-const x = {
-    "1": "A",
-    "2": "B",
-    "3": "B",
-    "4": "C",
-    "5": "C",
-    "6": "C",
-    "7": "C",
-    "8": "C",
-    "9": "C",
-    "10": "C"
-}
+// const x = {
+//     "1": "A",
+//     "2": "B",
+//     "3": "B",
+//     "4": "C",
+//     "5": "C",
+//     "6": "C",
+//     "7": "C",
+//     "8": "C",
+//     "9": "C",
+//     "10": "C"
+// }
 
 // formatUserAnswers(x);
 
