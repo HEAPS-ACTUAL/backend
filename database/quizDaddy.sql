@@ -78,8 +78,17 @@ CREATE TABLE UserQuizAnswers (
     QuestionNo INT NOT NULL,
     UserChoice CHAR(1),
     AttemptNo INT NOT NULL,
+    PRIMARY KEY (TestID, QuestionNo, AttemptNo),
+    FOREIGN KEY (TestID) REFERENCES Question(TestID) ON DELETE CASCADE
+);
+
+CREATE TABLE UserQuizScores (
+    TestID INT NOT NULL,
+    NumOfCorrectQuestions INT NOT NULL,
+    AttemptNo INT NOT NULL,
     DateTime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    PRIMARY KEY (TestID, QuestionNo, AttemptNo)
+    PRIMARY KEY (TestID, AttemptNo),
+    FOREIGN KEY (TestID) REFERENCES Quiz(TestID) ON DELETE CASCADE
 );
 
 # STORED PROCEDURES
