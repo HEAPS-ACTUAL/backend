@@ -1,6 +1,6 @@
-drop database if exists heap2;
-create database heap2;
-use heap2;   
+DROP DATABASE IF EXISTS heap2;
+CREATE DATABASE heap2;
+USE heap2;
 
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Schedule;
@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS Quiz;
 DROP TABLE IF EXISTS Question;
 DROP TABLE IF EXISTS `Option`;
 DROP TABLE IF EXISTS History;
-
 
 -- Creating the User table
 CREATE TABLE User (
@@ -22,20 +21,23 @@ CREATE TABLE User (
     DateTimeJoined DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating the Schedule table with auto-increment ScheduleID
 CREATE TABLE Schedule (
-	ScheduleID INT PRIMARY KEY,
+    ScheduleID INT AUTO_INCREMENT PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
     ExamName VARCHAR(100)
 );
 
+-- Creating the RevisionDates table
 CREATE TABLE RevisionDates (
-	ScheduleID INT NOT NULL,
+    ScheduleID INT NOT NULL,
     RevisionDate DATE NOT NULL,
     PRIMARY KEY (ScheduleID, RevisionDate),
     FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID) ON DELETE CASCADE
 );
 
+-- Creating the Test table
 CREATE TABLE Test (
     Email VARCHAR(100) NOT NULL,
     TestID INT PRIMARY KEY,
@@ -46,14 +48,16 @@ CREATE TABLE Test (
     FOREIGN KEY (Email) REFERENCES User(Email) ON DELETE CASCADE,
     FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID)
 );
-    
+
+-- Creating the Quiz table
 CREATE TABLE Quiz (
-	TestID INT PRIMARY KEY,
-	Difficulty VARCHAR(20),
+    TestID INT PRIMARY KEY,
+    Difficulty VARCHAR(20),
     IsDone BOOLEAN DEFAULT false,
     FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
-							   
+
+-- Creating the Question table
 CREATE TABLE Question (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
@@ -63,6 +67,7 @@ CREATE TABLE Question (
     FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
 
+-- Creating the Option table
 CREATE TABLE `Option` (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
@@ -73,6 +78,7 @@ CREATE TABLE `Option` (
     FOREIGN KEY (TestID, QuestionNo) REFERENCES Question(TestID, QuestionNo) ON DELETE CASCADE
 );
 
+-- Creating the UserQuizAnswers table
 CREATE TABLE UserQuizAnswers (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
@@ -82,33 +88,20 @@ CREATE TABLE UserQuizAnswers (
     PRIMARY KEY (TestID, QuestionNo, AttemptNo)
 );
 
-# STORED PROCEDURES
-delimiter $$
-create procedure getTestInfo(in input_email varchar(100), in input_test_type char(1), in input_test_status boolean)
-begin
-	if input_test_type = 'Q' then
-		select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions from test t, quiz q, question qn where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID;
-    elseif input_test_type = 'F' then
-		select t.TestID, t.TestName, t.DateTimeCreated, count(*) as numOfQuestions from test t, question qn where (t.TestID = qn.TestID) and (Email = input_email) and (TestType = input_test_type) group by t.TestID;
-    end if;
-end $$
-delimiter ;
+-- Stored Procedures
+DELIMITER $$
 
-delimiter $$
-create procedure getAllQuestionsAndOptionsForATest(in input_test_id int)
-begin
-	declare test_type char(1);
-    
-    select TestType into test_type from test where TestID = input_test_id;
-
-    if test_type = 'Q' then
-		select qn.QuestionNo, qn.QuestionText, qn.Elaboration, json_arrayagg(json_object('OptionLetter', OptionLetter, 'OptionText', o.OptionText, 'IsCorrect', o.IsCorrect)) as 'Options' from question qn, `option` o where (qn.TestID = o.TestID) and (qn.QuestionNo = o.QuestionNo) and (qn.TestID = input_test_id) group by qn.QuestionNo;
-	elseif test_type = 'F' then
-		select QuestionNo, QuestionText, Elaboration from question where testID = input_test_id;
-    end if;
-end $$
-delimiter ;
-
-# SAMPLE DATA TO TEST USER AUTHENTICATION
-insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');
-insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('bob@hotmail.com', 'bob1', 'Bob', 'Lim', 'M');
+CREATE PROCEDURE getTestInfo(
+    IN input_email VARCHAR(100),
+    IN input_test_type CHAR(1),
+    IN input_test_status BOOLEAN
+)
+BEGIN
+    IF input_test_type = 'Q' THEN
+        SELECT t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, COUNT(*) AS numOfQuestions
+        FROM Test t
+        JOIN Quiz q ON t.TestID = q.TestID
+        JOIN Question qn ON t.TestID = qn.TestID
+        WHERE Email = input_email AND IsDone = input_test_status
+        GROUP BY t.TestID;
+    ELSEIF input_test_type = '
