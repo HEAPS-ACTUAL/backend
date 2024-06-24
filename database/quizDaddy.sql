@@ -1,6 +1,6 @@
-drop database if exists heap2;
-create database heap2;
-use heap2;   
+DROP DATABASE IF EXISTS heap2;
+CREATE DATABASE heap2;
+USE heap2;
 
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Schedule;
@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS Quiz;
 DROP TABLE IF EXISTS Question;
 DROP TABLE IF EXISTS `Option`;
 DROP TABLE IF EXISTS History;
-
 
 -- Creating the User table
 CREATE TABLE User (
@@ -22,20 +21,23 @@ CREATE TABLE User (
     DateTimeJoined DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating the Schedule table with auto-increment ScheduleID
 CREATE TABLE Schedule (
-	ScheduleID INT PRIMARY KEY,
+    ScheduleID INT AUTO_INCREMENT PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
     ExamName VARCHAR(100)
 );
 
+-- Creating the RevisionDates table
 CREATE TABLE RevisionDates (
-	ScheduleID INT NOT NULL,
+    ScheduleID INT NOT NULL,
     RevisionDate DATE NOT NULL,
     PRIMARY KEY (ScheduleID, RevisionDate),
     FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID) ON DELETE CASCADE
 );
 
+-- Creating the Test table
 CREATE TABLE Test (
     Email VARCHAR(100) NOT NULL,
     TestID INT PRIMARY KEY,
@@ -46,14 +48,16 @@ CREATE TABLE Test (
     FOREIGN KEY (Email) REFERENCES User(Email) ON DELETE CASCADE,
     FOREIGN KEY (ScheduleID) REFERENCES Schedule(ScheduleID)
 );
-    
+
+-- Creating the Quiz table
 CREATE TABLE Quiz (
-	TestID INT PRIMARY KEY,
-	Difficulty VARCHAR(20),
+    TestID INT PRIMARY KEY,
+    Difficulty VARCHAR(20),
     IsDone BOOLEAN DEFAULT false,
     FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
-							   
+
+-- Creating the Question table
 CREATE TABLE Question (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
@@ -63,6 +67,7 @@ CREATE TABLE Question (
     FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
 
+-- Creating the Option table
 CREATE TABLE `Option` (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
@@ -73,6 +78,7 @@ CREATE TABLE `Option` (
     FOREIGN KEY (TestID, QuestionNo) REFERENCES Question(TestID, QuestionNo) ON DELETE CASCADE
 );
 
+-- Creating the UserQuizAnswers table
 CREATE TABLE UserQuizAnswers (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
@@ -90,6 +96,7 @@ CREATE TABLE UserQuizScores (
     PRIMARY KEY (TestID, AttemptNo),
     FOREIGN KEY (TestID) REFERENCES Quiz(TestID) ON DELETE CASCADE
 );
+
 
 # STORED PROCEDURES
 /* 
