@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
-const sampleQuestionRouter = require("./routers/SampleQuestionRouter"); // i think  can delete eventually
+
 const revisionSchedulerRouter = require("./routers/revisionSchedulerRouter");
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
@@ -34,14 +34,9 @@ app.use("/test", require("./routers/TestRouter"));
 // ROUTES FOR QUIZ
 app.use("/quiz", require("./routers/QuizRouter"));
 
-// ROUTES FOR FLASHCARD
-app.use("/flashcardquestion", require("./routers/FlashcardRouter.js"));
-
-// ROUTES FOR SAMPLEQNS
-app.use("/sample", sampleQuestionRouter);
-
 // ROUTES FOR REVISION SCHEDULER
 app.use("/api", revisionSchedulerRouter);
+
 
 // Start server
 app.listen(PORT, () => {
