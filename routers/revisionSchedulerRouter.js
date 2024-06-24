@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models/ConnectionManager"); // Import the database connection
 
+// ARIN's CODE
+
 // spaced repetition function 
 // set default value of endDate as null
 endDate = null;
@@ -86,6 +88,8 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
           
       return reviewDates;
 };
+
+// SH's CODE
 
 router.post("/schedules", (req, res) => {
   const { startDate, endDate, examName } = req.body;
