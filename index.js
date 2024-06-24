@@ -1,10 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
-const queryController = require("./controllers/QueryController");
-const sampleQuestionRouter = require("./routers/SampleQuestionRouter");
-
-// const fileRouter = require("./routers/FileRouter"); // Import the fileRouter
+const sampleQuestionRouter = require("./routers/SampleQuestionRouter"); // i think  can delete eventually
+const revisionSchedulerRouter = require("./routers/revisionSchedulerRouter");
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
@@ -30,29 +28,20 @@ app.get("/", (req, res) => {
 // ROUTES FOR USER
 app.use("/user", require("./routers/UserRouter"));
 
-// ROUTES FOR FILE
-app.use("/file", require("./routers/FileRouter"));
-
-// ROUTES FOR QUERY
-app.post("/query", (req, res) => {
-  queryController.handleQuery(req, res);
-});
+// ROUTES FOR TEST
+app.use("/test", require("./routers/TestRouter"));
 
 // ROUTES FOR QUIZ
 app.use("/quiz", require("./routers/QuizRouter"));
 
+// ROUTES FOR FLASHCARD
+app.use("/flashcardquestion", require("./routers/FlashcardRouter.js"));
+
 // ROUTES FOR SAMPLEQNS
 app.use("/sample", sampleQuestionRouter);
 
-// ROUTES FOR QUESTIONS
-app.use("/question", require('./routers/QuestionRouter'));
-
-// ROUTES FOR FLASHCARDS
-app.use("/flashcard", require('./routers/FlashcardRouter'));
-
-// ROUTES FOR FLASHCARD QUESTIONS
-app.use("/flashcardquestion", require('./routers/FlashcardQuestionRouter.js'));
-
+// ROUTES FOR REVISION SCHEDULER
+app.use("/api", revisionSchedulerRouter);
 
 // Start server
 app.listen(PORT, () => {
