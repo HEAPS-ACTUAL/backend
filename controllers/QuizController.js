@@ -40,7 +40,7 @@ async function storeUserQuizAnswers(req, res){
     const testID = req.body.testID
     const userAnswers = req.body.userAnswers;
 
-    const formattedUserAnswers = formatUserAnswers(userAnswers);
+    const formattedUserAnswers = formatUserAnswers(userAnswers); // FUNCTION DEFINED BELOW
 
     try{
         const sqlQuery = 'Call storeUserQuizAnswers(?, ?)';
@@ -54,6 +54,20 @@ async function storeUserQuizAnswers(req, res){
 }
 
 function formatUserAnswers(userAnswers){
+    const this_is_how_userAnswers_looks_like = 
+    {
+        "1": "A",
+        "2": "B",
+        "3": "B",
+        "4": "C",
+        "5": "C",
+        "6": "C",
+        "7": "C",
+        "8": "C",
+        "9": "C",
+        "10": "C"
+    }
+    
     const returnedArray = [];
     
     for(let questionNo in userAnswers){
@@ -65,19 +79,18 @@ function formatUserAnswers(userAnswers){
     return (JSON.stringify(returnedArray));
 }
 
-// const x = {
-//     "1": "A",
-//     "2": "B",
-//     "3": "B",
-//     "4": "C",
-//     "5": "C",
-//     "6": "C",
-//     "7": "C",
-//     "8": "C",
-//     "9": "C",
-//     "10": "C"
-// }
+async function reviewQuiz(req, res){
+    const testID = req.body.testID;
 
-// formatUserAnswers(x);
+    try{
+        const sqlQuery = 'call reviewQuiz(?)';
+        const returnedData = await query(sqlQuery, [testID]); // Go to 'example/reviewQuiz.js' to see how returnedData looks like
+        res.status(200).json(returnedData);
+    }
+    catch(error){
+        console.error(error);
+        res.status(404).json({message: error});
+    }
+}
 
-module.exports = { createNewQuiz, markQuizAsDone, storeUserQuizAnswers };
+module.exports = { createNewQuiz, markQuizAsDone, storeUserQuizAnswers, reviewQuiz };
