@@ -184,6 +184,7 @@ begin
 end $$
 delimiter ;
 
+
 /* 
 -----------------------------------------------------------------------------------------------------------------------
 FOR THE QUIZ RESULTS PAGE
@@ -223,6 +224,7 @@ INSERT USER'S QUIZ SCORE AFTER USER SUBMITS QUIZ
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
+
 drop trigger if exists after_insert_UserQuizAnswers;
 create trigger after_insert_UserQuizAnswers after insert on UserQuizAnswers for each row
 begin 
@@ -234,7 +236,7 @@ begin
     set num_rows_added = (select count(*) from UserQuizAnswers where TestID = new.TestID and AttemptNo = new.AttemptNo);
     
     if total_num_of_questions_in_quiz = num_rows_added then
-		set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = new.TestID) and (ua.AttemptNo = new.AttemptNo) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
+		    set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = new.TestID) and (ua.AttemptNo = new.AttemptNo) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
         
         insert into UserQuizScores (TestID, NumOfCorrectAnswers, AttemptNo) values (new.TestID, num_of_correct_ans, new.AttemptNo);
     end if;
