@@ -1,5 +1,4 @@
-const express = require("express");
-const router = express.Router();
+const query = require("../utils/PromisifyQuery");
 const db = require("../models/ConnectionManager"); // Import the database connection
 
 // ARIN's CODE
@@ -119,5 +118,3 @@ router.post("/revision-dates", (req, res) => {
     }
   });
 });
-
-module.exports = router;

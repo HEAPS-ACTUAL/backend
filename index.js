@@ -2,8 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
 
-const revisionSchedulerRouter = require("./routers/revisionSchedulerRouter");
-
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
 app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
@@ -35,7 +33,7 @@ app.use("/test", require("./routers/TestRouter"));
 app.use("/quiz", require("./routers/QuizRouter"));
 
 // ROUTES FOR REVISION SCHEDULER
-app.use("/api", revisionSchedulerRouter);
+app.use("/schedule", require("./routers/SchedulerRouter"));
 
 
 // Start server
