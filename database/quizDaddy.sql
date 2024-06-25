@@ -105,12 +105,27 @@ TO DISPLAY THE TEST CARDS IN THE HOME PAGE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
+drop procedure if exists getTestInfo;
 create procedure getTestInfo(in input_email varchar(100), in input_test_type char(1), in input_test_status boolean)
 begin
-	if input_test_type = 'Q' then
-		select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions from test t, quiz q, question qn where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID;
-    elseif input_test_type = 'F' then
-		select t.TestID, t.TestName, t.DateTimeCreated, count(*) as numOfQuestions from test t, question qn where (t.TestID = qn.TestID) and (Email = input_email) and (TestType = input_test_type) group by t.TestID;
+	if (input_test_type = 'Q') then
+		if (input_test_status = true) then
+			select t1.*, json_arrayagg(json_object("AttemptNo", us.AttemptNo, "NumOfCorrectAnswers", us.NumOfCorrectAnswers)) as Attempts from 
+				(select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions 
+					from test t, quiz q, question qn 
+					where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID
+				) t1,
+				UserQuizScores us where (t1.TestID = us.TestID)
+                group by TestID;
+		elseif (input_test_status = false) then
+			select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions 
+				from test t, quiz q, question qn 
+				where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID;
+        end if;
+    elseif (input_test_type = 'F') then
+		select t.TestID, t.TestName, t.DateTimeCreated, count(*) as numOfQuestions 
+			from test t, question qn 
+			where (t.TestID = qn.TestID) and (Email = input_email) and (TestType = input_test_type) group by t.TestID;
     end if;
 end $$
 delimiter ;
@@ -122,6 +137,7 @@ TO GET ALL QUESTIONS FOR A FLASHCARD OR ALL QUESTIONS AND OPTIONS FOR A QUIZ
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
+drop procedure if exists getAllQuestionsAndOptionsForATest;
 create procedure getAllQuestionsAndOptionsForATest(in input_test_id int)
 begin
 	declare test_type char(1);
@@ -143,6 +159,7 @@ TO STORE USER'S QUIZ ANSWERS IN THE DATABASE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
+drop procedure if exists storeUserQuizAnswers;
 create procedure storeUserQuizAnswers(in input_test_id int, in user_answers json)
 begin
 	declare attempt_no int;
@@ -168,6 +185,38 @@ end $$
 delimiter ;
 
 
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+FOR THE QUIZ RESULTS PAGE
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+drop procedure if exists reviewQuiz;
+create procedure reviewQuiz(in input_test_id int, in input_attempt_no int)
+begin
+	select t4.*, json_arrayagg(json_object("QuestionNo", t5.QuestionNo, "QuestionText", t5.QuestionText, "Elaboration", t5.Elaboration, "UserChoice", t5.UserChoice, "CorrectOption", t5.CorrectOption, "Options", t5.Options)) as QuestionsAndAnswers from 
+		(select us.TestID, us.NumOfCorrectAnswers, count(qn.QuestionNo) as TotalNumOfQuestions from UserQuizScores us, Question qn 
+			where (us.TestID = qn.TestID) and (us.TestID = input_test_id) and (us.AttemptNo = input_attempt_no) 
+			group by us.TestID
+		) t4,
+		(select t2.*, t3.Options from
+			(select t1.*, o.OptionLetter as CorrectOption from 
+				(select qn.*, ua.UserChoice from Question qn, UserQuizAnswers ua 
+					where (qn.testID = ua.TestID) and (qn.QuestionNo = ua.QuestionNo) and (qn.TestID = input_test_id) and (ua.AttemptNo = input_attempt_no)
+				) t1,
+				`Option` o 
+					where (t1.TestID = o.TestID) and (t1.QuestionNo = o.QuestionNo) and (o.IsCorrect = true)
+			) t2,
+			(select TestID, QuestionNo, json_arrayagg(json_object("OptionLetter", OptionLetter, "OptionText", OptionText)) as 'Options' from `Option` 
+				where (TestID = input_test_id) group by QuestionNo
+			) t3
+			where (t2.QuestionNo = t3.QuestionNo)
+		) t5
+	group by t4.TestID;
+end $$
+delimiter ;
+
+
 # TRIGGERS
 /* 
 -----------------------------------------------------------------------------------------------------------------------
@@ -175,6 +224,8 @@ INSERT USER'S QUIZ SCORE AFTER USER SUBMITS QUIZ
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
+
+drop trigger if exists after_insert_UserQuizAnswers;
 create trigger after_insert_UserQuizAnswers after insert on UserQuizAnswers for each row
 begin 
     declare total_num_of_questions_in_quiz int;
@@ -185,7 +236,7 @@ begin
     set num_rows_added = (select count(*) from UserQuizAnswers where TestID = new.TestID and AttemptNo = new.AttemptNo);
     
     if total_num_of_questions_in_quiz = num_rows_added then
-		set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.AttemptNo = new.AttemptNo) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
+		    set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = new.TestID) and (ua.AttemptNo = new.AttemptNo) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
         
         insert into UserQuizScores (TestID, NumOfCorrectAnswers, AttemptNo) values (new.TestID, num_of_correct_ans, new.AttemptNo);
     end if;
