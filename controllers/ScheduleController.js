@@ -79,9 +79,18 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             IntervalIndex++;
         }
     }
-
+    console.log(reviewDates);
     return reviewDates;
+    
 };
+
+
+const start = '2004-04-22';
+const end = null; 
+CalculateSpacedRepetitionDates(start, end);
+
+
+
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -139,7 +148,7 @@ TO TEST THE ABOVE FUNCTIONS
 */
 
 const startDate = '2004-04-22';
-const endDate = null; 
+const endDate = null
 const examName = 'my birthday';
 
 async function setupNewEvent() {
@@ -163,12 +172,6 @@ async function setupNewEvent() {
 
 
 setupNewEvent();
-
-// Test this minimal call to see if the query function itself has issues
-const testValues = [[2, "2022-01-02"], [2, "2022-01-03"]];
-query('INSERT INTO RevisionDates (ScheduleID, RevisionDate) VALUES ? ON DUPLICATE KEY UPDATE RevisionDate=VALUES(RevisionDate)', [testValues])
-    .then(result => console.log("Test insert result:", result))
-    .catch(error => console.error("Test insert error:", error));
 
 
 
