@@ -42,7 +42,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
         // ensure start date is before end date
         if (currentDate >= end) {
-            throw new Error('Start date must be before End date'); // window alert for this
+            throw new Error('Start date must be before End date'); // window alert for this (unable to do this yet)
         }
 
         // Calculate the number of days between start date and end date
@@ -89,7 +89,7 @@ FUNCTIONS TO STORE DATA INTO DB
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-async function storeUserInputFields(StartDate, EndDate, ExamName){
+async function createNewSchedule(StartDate, EndDate, ExamName){ // startDate, enddate, examName comes frm the FE
     try {
         const sqlQuery = 'Insert into Schedule (StartDate, EndDate, ExamName) values (?, ?, ?)';
         const insertOk = await query(sqlQuery, [StartDate, EndDate, ExamName]);
@@ -138,9 +138,9 @@ TO TEST THE ABOVE FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-const startDate = '2022-01-02';
-const endDate = '2024-06-01'; 
-const examName = 'Final Exam';
+const startDate = '2004-04-22';
+const endDate = null; 
+const examName = 'my birthday';
 
 async function setupNewEvent() {
     try {
@@ -148,7 +148,7 @@ async function setupNewEvent() {
         const revisionDates = CalculateSpacedRepetitionDates(startDate, endDate);
 
         // Insert the exam into the Schedule table
-        await storeUserInputFields(startDate, endDate, examName);
+        await createNewSchedule(startDate, endDate, examName);
 
         const scheduleId = 1;
 
@@ -172,4 +172,4 @@ query('INSERT INTO RevisionDates (ScheduleID, RevisionDate) VALUES ? ON DUPLICAT
 
 
 
-module.export = {CalculateSpacedRepetitionDates, storeUserInputFields, storeRevisionDates};
+module.export = {CalculateSpacedRepetitionDates, createNewSchedule, storeRevisionDates};

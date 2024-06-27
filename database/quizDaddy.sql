@@ -25,7 +25,7 @@ CREATE TABLE User (
 CREATE TABLE Schedule (
     ScheduleID INT AUTO_INCREMENT PRIMARY KEY,
     StartDate DATE NOT NULL,
-    EndDate DATE NOT NULL,
+    EndDate DATE,
     ExamName VARCHAR(100)
 );
 
@@ -247,3 +247,5 @@ delimiter ;
 # SAMPLE DATA TO TEST USER AUTHENTICATION
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');
 insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('bob@hotmail.com', 'bob1', 'Bob', 'Lim', 'M');
+
+select * from schedule;
