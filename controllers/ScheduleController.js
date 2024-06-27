@@ -1,16 +1,12 @@
 const query = require("../utils/PromisifyQuery");
 const db = require("../models/ConnectionManager"); // Import the database connection
 
-// ARIN's CODE
 
-// spaced repetition function 
-// set default value of endDate as null
-endDate = null;
-
-// from FE, ask user if they want to input endDate
-// if user wants to input endDate, get the endDate from user
-
-// if user does not want to input endDate, endDate = null
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND
+------------------------------------------------------------------------------------------------------------------------------------
+*/
 const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
     const currentDate = new Date(startDate); // DONT CHANGE THIS, need this for the while loop calculation
@@ -87,33 +83,93 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
     return reviewDates;
 };
 
-// SH's CODE
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+FUNCTIONS TO STORE DATA INTO DB 
+------------------------------------------------------------------------------------------------------------------------------------
+*/
 
-router.post("/schedules", (req, res) => {
-    const { startDate, endDate, examName } = req.body;
-    console.log("Received schedule data:", req.body); // Log the received data
-    const query =
-        "INSERT INTO Schedule (StartDate, EndDate, ExamName) VALUES (?, ?, ?)";
-    db.query(query, [startDate, endDate, examName], (err, results) => {
-        if (err) {
-            console.error("Error inserting schedule:", err);
-            res.status(500).send("Error inserting schedule");
-        } else {
-            res.send({ scheduleId: results.insertId });
-        }
-    });
-});
+async function storeUserInputFields(StartDate, EndDate, ExamName){
+    try {
+        const sqlQuery = 'Insert into Schedule (StartDate, EndDate, ExamName) values (?, ?, ?)';
+        const insertOk = await query(sqlQuery, [StartDate, EndDate, ExamName]);
 
-router.post("/revision-dates", (req, res) => {
-    const { scheduleId, revisionDates } = req.body;
-    const query = "INSERT INTO RevisionDates (ScheduleID, RevisionDate) VALUES ?";
-    const values = revisionDates.map((date) => [scheduleId, date]);
-    db.query(query, [values], (err) => {
-        if (err) {
-            console.error("Error inserting revision dates:", err);
-            res.status(500).send("Error inserting revision dates");
-        } else {
-            res.send("Revision dates inserted successfully");
+        if(insertOk) {
+            console.log('exam has been added into database!');
         }
-    });
-});
+    }
+    catch (error) {
+        const msg = 'Error adding exam into database'
+        console.error(`${msg}: ${error.message}`);
+        throw new Error(`${msg}`);
+    }
+}
+
+
+async function storeRevisionDates(scheduleId, revisionDates) {
+    try {
+        const values = revisionDates.map(date => [scheduleId, date]);  
+        console.log("Prepared values for insertion:", JSON.stringify(values));
+
+        const sqlQuery = 'INSERT INTO RevisionDates (ScheduleID, RevisionDate) VALUES ? ON DUPLICATE KEY UPDATE RevisionDate=VALUES(RevisionDate)';
+        const [insertOk] = await query(sqlQuery, [values]);  
+
+       
+        if (insertOk) {
+            console.log(`Successfully inserted/updated revision dates. Affected rows: ${insertOk.affectedRows}`);
+        } else {
+            console.log('No new dates were added or updated in the database.');
+        }
+    } 
+    catch (error) {
+        const msg = 'Error adding revision dates into database';
+        console.error(msg + ': ' + error.message);
+        throw new Error(msg);
+    }
+}
+
+
+
+
+
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+TO TEST THE ABOVE FUNCTIONS
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+const startDate = '2022-01-02';
+const endDate = '2024-06-01'; 
+const examName = 'Final Exam';
+
+async function setupNewEvent() {
+    try {
+        // Calculate spaced repetition dates based on the start and end date
+        const revisionDates = CalculateSpacedRepetitionDates(startDate, endDate);
+
+        // Insert the exam into the Schedule table
+        await storeUserInputFields(startDate, endDate, examName);
+
+        const scheduleId = 1;
+
+        // Insert the revision dates into the RevisionDates table
+        await storeRevisionDates(scheduleId, revisionDates);
+
+        console.log('Exam and revision dates setup completed successfully.');
+    } catch (error) {
+        console.error('Failed to setup exam and revision dates:', error);
+    }
+}
+
+
+setupNewEvent();
+
+// Test this minimal call to see if the query function itself has issues
+const testValues = [[2, "2022-01-02"], [2, "2022-01-03"]];
+query('INSERT INTO RevisionDates (ScheduleID, RevisionDate) VALUES ? ON DUPLICATE KEY UPDATE RevisionDate=VALUES(RevisionDate)', [testValues])
+    .then(result => console.log("Test insert result:", result))
+    .catch(error => console.error("Test insert error:", error));
+
+
+
+module.export = {CalculateSpacedRepetitionDates, storeUserInputFields, storeRevisionDates};

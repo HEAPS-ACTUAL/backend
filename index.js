@@ -33,7 +33,7 @@ app.use("/test", require("./routers/TestRouter"));
 app.use("/quiz", require("./routers/QuizRouter"));
 
 // ROUTES FOR REVISION SCHEDULER
-app.use("/schedule", require("./routers/SchedulerRouter"));
+app.use("/schedule", require("./routers/ScheduleRouter"));
 
 
 // Start server
