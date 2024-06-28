@@ -14,7 +14,7 @@ CREATE TABLE User (
 
 -- Creating the Schedule table with auto-increment ScheduleID
 CREATE TABLE Schedule (
-    ScheduleID INT NOT NULL,
+    ScheduleID INT PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE,
     ExamName VARCHAR(100)
