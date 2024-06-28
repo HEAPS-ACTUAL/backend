@@ -135,6 +135,7 @@ async function setupNewEvent(req, res) {
     const endDate = req.body.endDate;
     const eventName = req.body.eventName;
 
+<<<<<<< Updated upstream
     try {
         // Calculate spaced repetition dates based on the start and end date
         const arrayOfReviewDates = CalculateSpacedRepetitionDates(startDate, endDate);       
@@ -163,3 +164,62 @@ async function setupNewEvent(req, res) {
 // )
 
 module.exports = { setupNewEvent };
+=======
+
+async function storeRevisionDates(scheduleId, revisionDates) {
+    try {
+        const values = revisionDates.map(date => [scheduleId, date]);  
+        console.log("Prepared values for insertion:", JSON.stringify(values));
+
+        const sqlQuery = '';
+        const [insertOk] = await query(sqlQuery, [values]);  
+
+       
+        if (insertOk) {
+            console.log(`Successfully inserted/updated revision dates. Affected rows: ${insertOk.affectedRows}`);
+        } else {
+            console.log('No new dates were added or updated in the database.');
+        }
+    } 
+    catch (error) {
+        const msg = 'Error adding revision dates into database';
+        console.error(msg + ': ' + error.message);
+        throw new Error(msg);
+    }
+};
+
+
+
+
+
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+TO TEST THE ABOVE FUNCTIONS
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+// const startDate = '2004-04-22';
+// const endDate = null
+// const examName = 'my birthday';
+
+async function setupNewEvent() {
+    try {
+        // Calculate spaced repetition dates based on the start and end date
+        const revisionDates = CalculateSpacedRepetitionDates(startDate, endDate);
+
+        // Insert the revision dates into the RevisionDates table
+        await storeRevisionDates(scheduleId, revisionDates);
+
+        console.log('Exam and revision dates setup completed successfully.');
+    } catch (error) {
+        console.error('Failed to setup exam and revision dates:', error);
+    }
+}
+
+
+setupNewEvent();
+
+
+
+module.exports = { CalculateSpacedRepetitionDates, createNewSchedule, storeRevisionDates };
+>>>>>>> Stashed changes
