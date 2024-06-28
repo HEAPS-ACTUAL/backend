@@ -12,12 +12,13 @@ CREATE TABLE User (
     DateTimeJoined DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Creating the Schedule table with auto-increment ScheduleID
+-- Creating the Schedule table
 CREATE TABLE Schedule (
     ScheduleID INT PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE,
-    ExamName VARCHAR(100) -- does this ExamName correspond to the flashcard names?
+    ExamName VARCHAR(100),
+    Colour VARCHAR(50)
 );
 
 -- Creating the RevisionDates table
@@ -224,7 +225,7 @@ end $$
 delimiter ;
 
 delimiter $$
-create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(100), in array_of_dates json)
+create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(100), in input_colour varchar(50), in array_of_dates json)
 begin
 	declare next_schedule_id int;
     declare counter int;
@@ -232,7 +233,7 @@ begin
     declare currentDate date;
     
 	call determineNextScheduleID(next_schedule_id); # PROCEDURE DEFINE ABOVE
-    insert into Schedule (ScheduleID, StartDate, EndDate, ExamName) values (next_schedule_id, input_start_date, input_end_date, input_exam_name);
+    insert into Schedule (ScheduleID, StartDate, EndDate, ExamName, Colour) values (next_schedule_id, input_start_date, input_end_date, input_exam_name, input_colour);
     
     set counter = 0;
     set length_of_array = json_length(array_of_dates);
