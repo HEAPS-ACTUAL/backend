@@ -17,7 +17,7 @@ CREATE TABLE Schedule (
     ScheduleID INT PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE,
-    ExamName VARCHAR(100)
+    ExamName VARCHAR(100) -- does this ExamName correspond to the flashcard names?
 );
 
 -- Creating the RevisionDates table
