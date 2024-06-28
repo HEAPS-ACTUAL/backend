@@ -130,7 +130,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function setupNewEvent(req, res) {
+async function createNewEvent(req, res) {
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
     const eventName = req.body.eventName;
@@ -141,15 +141,17 @@ async function setupNewEvent(req, res) {
 
         // Insert into both Schedule and RevisionDates table
         await storeRevisionSchedule(startDate, endDate, eventName, arrayOfReviewDates);
+        res.status(200).json({ message: 'Exam and revision dates added' });
+        console.log('Exam and revision dates created completed successfully.');
 
-        console.log('Exam and revision dates setup completed successfully.');
     } catch (error) {
-        console.error('Failed to setup exam and revision dates:', error);
+        console.error('Failed to create exam and revision dates:', error);
+        res.status(404).json({message: error})
     }
 }
 
 // TO TEST THE ABOVE FUNCTION
-// setupNewEvent(
+// createNewEvent(
 //     req = 
 //         {
 //             body:
@@ -162,4 +164,4 @@ async function setupNewEvent(req, res) {
 //     res = null
 // )
 
-module.exports = { setupNewEvent };
+module.exports = { createNewEvent };
