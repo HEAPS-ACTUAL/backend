@@ -1,16 +1,29 @@
 const query = require("../utils/PromisifyQuery");
 const db = require("../models/ConnectionManager"); // Import the database connection
 
-// ARIN's CODE
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+FUNCTIONS TO STORE DATA INTO DB 
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+async function storeRevisionSchedule(startDate, endDate, eventName, arrayOfReviewDates) {
+    try {
+        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?)';
+        const returnedData = await query(sqlQuery, [startDate, endDate, eventName, arrayOfReviewDates]);
+        console.log(returnedData);
+    } 
+    catch (error) {
+        const msg = 'Error adding revision dates into database';
+        console.error(msg + ': ' + error.message);
+        throw new Error(msg);
+    }
+};
 
-// spaced repetition function 
-// set default value of endDate as null
-endDate = null;
-
-// from FE, ask user if they want to input endDate
-// if user wants to input endDate, get the endDate from user
-
-// if user does not want to input endDate, endDate = null
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+HELPER FUNCTIONS
+------------------------------------------------------------------------------------------------------------------------------------
+*/
 const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
     const currentDate = new Date(startDate); // DONT CHANGE THIS, need this for the while loop calculation
@@ -21,10 +34,10 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
     if (endDate === null) {
         let intervalDays = 1;
-        const factor = 1.5; // multiply intervals by 1.5
+        const factor = 1.2; // multiply intervals by 1.2
         const endDate = new Date(startDate); // Copy start date to calculate the end date
+        
         endDate.setMonth(endDate.getMonth() + 6); // Set end date to 6 months after the start date
-
 
         while (currentDate < endDate) {
             currentDate.setDate(currentDate.getDate() + Math.round(intervalDays));
@@ -34,7 +47,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
                 break;
             }
 
-            reviewDates.push(currentDate.toISOString().split('T')[0]); // Store the formatted date
+            reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
             intervalDays *= factor; // Increase the interval by the factor
         }
 
@@ -46,13 +59,12 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
         // ensure start date is before end date
         if (currentDate >= end) {
-            throw new Error('Start date must be before End date'); // window alert for this
+            throw new Error('Start date must be before End date'); // window alert for this (unable to do this yet)
         }
 
         // Calculate the number of days between start date and end date
         const daysBetween = Math.ceil((end - currentDate) / (1000 * 60 * 60 * 24));
 
-        console.log(daysBetween);
 
         // set the intervals based on the number of days btwn startDate and endDate
         if (daysBetween <= 7) {
@@ -70,8 +82,33 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
         else if (daysBetween <= 35) {
             intervals = [1, 3, 4, 6, 6, 7, 8];
         }
+        else if (daysBetween <= 42) {
+            intervals = [1, 3, 4, 6, 6, 7, 7, 8];
+        }
+        else if (daysBetween <= 49) {
+            intervals = [1, 3, 4, 6, 6, 7, 7, 7, 8];
+        }
+        else if (daysBetween <= 56) {
+            intervals = [1, 3, 4, 6, 6, 7, 7, 7, 7, 8, 8];
+        }
         else {
-            intervals = [7, 14, 28];
+            // intervals = [];
+            let intervalDays = 1; // starting interval
+            const factor = 1.2; // x1.5 to calculate the next interval days
+            const endDate = new Date(startDate);
+          
+
+            while (currentDate < end) {
+                currentDate.setDate(currentDate.getDate() + Math.round(intervalDays)); // set the current date as the next review date
+
+                // stop if the next review date is beyond the end date
+                if (currentDate >= end) {
+                    break;
+                }
+
+                reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
+                intervalDays *= factor;
+            }   
         }
 
         let IntervalIndex = 0;
@@ -83,37 +120,48 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             IntervalIndex++;
         }
     }
-
-    return reviewDates;
+    // console.log(reviewDates);
+    return JSON.stringify(reviewDates);
 };
 
-// SH's CODE
 
-router.post("/schedules", (req, res) => {
-    const { startDate, endDate, examName } = req.body;
-    console.log("Received schedule data:", req.body); // Log the received data
-    const query =
-        "INSERT INTO Schedule (StartDate, EndDate, ExamName) VALUES (?, ?, ?)";
-    db.query(query, [startDate, endDate, examName], (err, results) => {
-        if (err) {
-            console.error("Error inserting schedule:", err);
-            res.status(500).send("Error inserting schedule");
-        } else {
-            res.send({ scheduleId: results.insertId });
-        }
-    });
-});
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+async function createNewEvent(req, res) {
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const eventName = req.body.eventName;
 
-router.post("/revision-dates", (req, res) => {
-    const { scheduleId, revisionDates } = req.body;
-    const query = "INSERT INTO RevisionDates (ScheduleID, RevisionDate) VALUES ?";
-    const values = revisionDates.map((date) => [scheduleId, date]);
-    db.query(query, [values], (err) => {
-        if (err) {
-            console.error("Error inserting revision dates:", err);
-            res.status(500).send("Error inserting revision dates");
-        } else {
-            res.send("Revision dates inserted successfully");
-        }
-    });
-});
+    try {
+        // Calculate spaced repetition dates based on the start and end date
+        const arrayOfReviewDates = CalculateSpacedRepetitionDates(startDate, endDate);       
+
+        // Insert into both Schedule and RevisionDates table
+        await storeRevisionSchedule(startDate, endDate, eventName, arrayOfReviewDates);
+        res.status(200).json({ message: 'Exam and revision dates added' });
+        console.log('Exam and revision dates created completed successfully.');
+
+    } catch (error) {
+        console.error('Failed to create exam and revision dates:', error);
+        res.status(404).json({message: error})
+    }
+}
+
+// TO TEST THE ABOVE FUNCTION
+// createNewEvent(
+//     req = 
+//         {
+//             body:
+//                 {
+//                     startDate: '2024-05-06',
+//                     endDate: '2024-09-10',
+//                     eventName:'testing exam 3'
+//                 }
+//         },
+//     res = null
+// )
+
+module.exports = { createNewEvent };
