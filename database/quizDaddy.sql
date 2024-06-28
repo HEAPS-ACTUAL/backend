@@ -2,15 +2,6 @@ DROP DATABASE IF EXISTS heap2;
 CREATE DATABASE heap2;
 USE heap2;
 
-DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS Schedule;
-DROP TABLE IF EXISTS RevisionDates;
-DROP TABLE IF EXISTS Test;
-DROP TABLE IF EXISTS Quiz;
-DROP TABLE IF EXISTS Question;
-DROP TABLE IF EXISTS `Option`;
-DROP TABLE IF EXISTS History;
-
 -- Creating the User table
 CREATE TABLE User (
     Email VARCHAR(100) PRIMARY KEY,
@@ -23,7 +14,7 @@ CREATE TABLE User (
 
 -- Creating the Schedule table with auto-increment ScheduleID
 CREATE TABLE Schedule (
-    ScheduleID INT AUTO_INCREMENT PRIMARY KEY,
+    ScheduleID INT NOT NULL,
     StartDate DATE NOT NULL,
     EndDate DATE,
     ExamName VARCHAR(100)
@@ -105,7 +96,6 @@ TO DISPLAY THE TEST CARDS IN THE HOME PAGE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-drop procedure if exists getTestInfo;
 create procedure getTestInfo(in input_email varchar(100), in input_test_type char(1), in input_test_status boolean)
 begin
 	if (input_test_type = 'Q') then
@@ -137,7 +127,6 @@ TO GET ALL QUESTIONS FOR A FLASHCARD OR ALL QUESTIONS AND OPTIONS FOR A QUIZ
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-drop procedure if exists getAllQuestionsAndOptionsForATest;
 create procedure getAllQuestionsAndOptionsForATest(in input_test_id int)
 begin
 	declare test_type char(1);
@@ -159,7 +148,6 @@ TO STORE USER'S QUIZ ANSWERS IN THE DATABASE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-drop procedure if exists storeUserQuizAnswers;
 create procedure storeUserQuizAnswers(in input_test_id int, in user_answers json)
 begin
 	declare attempt_no int;
@@ -191,7 +179,6 @@ FOR THE QUIZ RESULTS PAGE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-drop procedure if exists reviewQuiz;
 create procedure reviewQuiz(in input_test_id int, in input_attempt_no int)
 begin
 	select t4.*, json_arrayagg(json_object("QuestionNo", t5.QuestionNo, "QuestionText", t5.QuestionText, "Elaboration", t5.Elaboration, "UserChoice", t5.UserChoice, "CorrectOption", t5.CorrectOption, "Options", t5.Options)) as QuestionsAndAnswers from 
@@ -216,6 +203,49 @@ begin
 end $$
 delimiter ;
 
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+ADDING A REVISION SCHEDULE
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+create procedure determineNextScheduleID(out next_schedule_id int)
+begin
+	declare current_largest_schedule_id int;
+    
+    set current_largest_schedule_id = (select ScheduleID from schedule order by ScheduleID desc limit 1);
+    
+    if isnull(current_largest_schedule_id) then
+		set next_schedule_id = 1;
+	else
+		set next_schedule_id = current_largest_schedule_id + 1;
+    end if;
+end $$
+delimiter ;
+
+delimiter $$
+create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(100), in array_of_dates json)
+begin
+	declare next_schedule_id int;
+    declare counter int;
+    declare length_of_array int;
+    declare currentDate date;
+    
+	call determineNextScheduleID(next_schedule_id); # PROCEDURE DEFINE ABOVE
+    insert into Schedule (ScheduleID, StartDate, EndDate, ExamName) values (next_schedule_id, input_start_date, input_end_date, input_exam_name);
+    
+    set counter = 0;
+    set length_of_array = json_length(array_of_dates);
+    
+    while counter < length_of_array do
+		set currentDate = json_unquote(json_extract(array_of_dates, concat('$[', counter, ']')));
+        insert into RevisionDates (ScheduleID, RevisionDate) values (next_schedule_id, currentDate);
+        
+        set counter = counter + 1;
+    end while;
+end $$
+delimiter ;
+
 
 # TRIGGERS
 /* 
@@ -224,8 +254,6 @@ INSERT USER'S QUIZ SCORE AFTER USER SUBMITS QUIZ
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-
-drop trigger if exists after_insert_UserQuizAnswers;
 create trigger after_insert_UserQuizAnswers after insert on UserQuizAnswers for each row
 begin 
     declare total_num_of_questions_in_quiz int;
@@ -242,10 +270,3 @@ begin
     end if;
 end $$
 delimiter ;
-
-
-# SAMPLE DATA TO TEST USER AUTHENTICATION
-insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('alice@gmail.com', 'alice1', 'Alice', 'Tan', 'F');
-insert into user (Email, HashedPassword, FirstName, LastName, Gender) values ('bob@hotmail.com', 'bob1', 'Bob', 'Lim', 'M');
-
-select * from schedule;
