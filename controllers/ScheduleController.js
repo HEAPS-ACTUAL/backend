@@ -19,8 +19,8 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
         let intervalDays = 1;
         const factor = 1.5; // multiply intervals by 1.5
         const endDate = new Date(startDate); // Copy start date to calculate the end date
+        
         endDate.setMonth(endDate.getMonth() + 6); // Set end date to 6 months after the start date
-
 
         while (currentDate < endDate) {
             currentDate.setDate(currentDate.getDate() + Math.round(intervalDays));
@@ -30,7 +30,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
                 break;
             }
 
-            reviewDates.push(currentDate.toISOString().split('T')[0]); // Store the formatted date
+            reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
             intervalDays *= factor; // Increase the interval by the factor
         }
 
@@ -48,7 +48,6 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
         // Calculate the number of days between start date and end date
         const daysBetween = Math.ceil((end - currentDate) / (1000 * 60 * 60 * 24));
 
-        console.log(daysBetween);
 
         // set the intervals based on the number of days btwn startDate and endDate
         if (daysBetween <= 7) {
@@ -66,8 +65,33 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
         else if (daysBetween <= 35) {
             intervals = [1, 3, 4, 6, 6, 7, 8];
         }
+        else if (daysBetween <= 42) {
+            intervals = [1, 3, 4, 6, 6, 7, 7, 8];
+        }
+        else if (daysBetween <= 49) {
+            intervals = [1, 3, 4, 6, 6, 7, 7, 7, 8];
+        }
+        else if (daysBetween <= 56) {
+            intervals = [1, 3, 4, 6, 6, 7, 7, 7, 7, 8, 8];
+        }
         else {
-            intervals = [7, 14, 28];
+            // intervals = [];
+            let intervalDays = 1; // starting interval
+            const factor = 1.2; // x1.5 to calculate the next interval days
+            const endDate = new Date(startDate);
+          
+
+            while (currentDate < end) {
+                currentDate.setDate(currentDate.getDate() + Math.round(intervalDays)); // set the current date as the next review date
+
+                // stop if the next review date is beyond the end date
+                if (currentDate >= end) {
+                    break;
+                }
+
+                reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
+                intervalDays *= factor;
+            }   
         }
 
         let IntervalIndex = 0;
@@ -76,6 +100,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             currentDate.setDate(currentDate.getDate() + intervals[IntervalIndex]);
             const formattedDate = currentDate.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
             reviewDates.push(formattedDate); // Store the formatted date
+            console.log(reviewDates);
             IntervalIndex++;
         }
     }
@@ -84,13 +109,17 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
     
 };
 
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+TO TEST THE SPACE REP FUNCTION
+------------------------------------------------------------------------------------------------------------------------------------
+*/
 
 const start = '2004-04-22';
+// const end = '2004-05-22';
 const end = null; 
 CalculateSpacedRepetitionDates(start, end);
-
-
-
+CalculateSpacedRepetitionDates('2022-01-02', '2024-06-01') 
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -135,7 +164,7 @@ async function storeRevisionDates(scheduleId, revisionDates) {
         console.error(msg + ': ' + error.message);
         throw new Error(msg);
     }
-}
+};
 
 
 
@@ -147,32 +176,32 @@ TO TEST THE ABOVE FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-const startDate = '2004-04-22';
-const endDate = null
-const examName = 'my birthday';
+// const startDate = '2004-04-22';
+// const endDate = null
+// const examName = 'my birthday';
 
-async function setupNewEvent() {
-    try {
-        // Calculate spaced repetition dates based on the start and end date
-        const revisionDates = CalculateSpacedRepetitionDates(startDate, endDate);
+// async function setupNewEvent() {
+//     try {
+//         // Calculate spaced repetition dates based on the start and end date
+//         const revisionDates = CalculateSpacedRepetitionDates(startDate, endDate);
 
-        // Insert the exam into the Schedule table
-        await createNewSchedule(startDate, endDate, examName);
+//         // Insert the exam into the Schedule table
+//         await createNewSchedule(startDate, endDate, examName);
 
-        const scheduleId = 1;
+//         const scheduleId = 1;
 
-        // Insert the revision dates into the RevisionDates table
-        await storeRevisionDates(scheduleId, revisionDates);
+//         // Insert the revision dates into the RevisionDates table
+//         await storeRevisionDates(scheduleId, revisionDates);
 
-        console.log('Exam and revision dates setup completed successfully.');
-    } catch (error) {
-        console.error('Failed to setup exam and revision dates:', error);
-    }
-}
-
-
-setupNewEvent();
+//         console.log('Exam and revision dates setup completed successfully.');
+//     } catch (error) {
+//         console.error('Failed to setup exam and revision dates:', error);
+//     }
+// }
 
 
+// setupNewEvent();
 
-module.export = {CalculateSpacedRepetitionDates, createNewSchedule, storeRevisionDates};
+
+
+module.exports = { CalculateSpacedRepetitionDates, createNewSchedule, storeRevisionDates };
