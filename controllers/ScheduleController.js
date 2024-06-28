@@ -146,7 +146,7 @@ async function createNewEvent(req, res) {
 
     } catch (error) {
         console.error('Failed to create exam and revision dates:', error);
-        res.status(500).json({message: error})
+        res.status(404).json({message: error})
     }
 }
 
@@ -158,7 +158,7 @@ async function createNewEvent(req, res) {
 //                 {
 //                     startDate: '2024-05-06',
 //                     endDate: '2024-09-10',
-//                     eventName:'testing exam 2'
+//                     eventName:'testing exam 3'
 //                 }
 //         },
 //     res = null
