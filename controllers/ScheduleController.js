@@ -205,16 +205,17 @@ FUNCTION TO DELETE EXAM DETAILS FROM DB
 // ask jerrick to check
 
 async function DeleteExistingExam(req, res) {
-    const ScheduleId = req.body.scheduleID
+    const input_ScheduleId = req.body.scheduleID
 
     try{
-        const sqlQuery = 'Call DeleteExistingExam(?)';
-        const returnedData = await query(sqlQuery, ScheduleId)
+        const sqlQuery = 'delete from Schedule where ScheduleID = ?;'
+        const returnedData = await query(sqlQuery, [input_ScheduleId]);
+        res.status(200).json('ok');
     }
     catch (error){
         const msg = 'error deleting data from db';
         console.error(msg + ': ' + error.message);
-        throw new Error(msg);
+        res.status(404).json({message: error});
     }
 }
 
