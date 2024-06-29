@@ -194,6 +194,30 @@ async function GetExamDetailsForCalendar() {
 }
 
 // TEST CODE
-GetExamDetailsForCalendar()
+// GetExamDetailsForCalendar()
 
-module.exports = { createNewExam };
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+FUNCTION TO DELETE EXAM DETAILS FROM DB 
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+// ask jerrick to check
+
+async function DeleteExistingExam(req, res) {
+    const ScheduleId = req.body.scheduleID
+
+    try{
+        const sqlQuery = 'Call DeleteExistingExam(?)';
+        const returnedData = await query(sqlQuery, ScheduleId)
+    }
+    catch (error){
+        const msg = 'error deleting data from db';
+        console.error(msg + ': ' + error.message);
+        throw new Error(msg);
+    }
+}
+
+
+
+module.exports = { createNewExam, GetExamDetailsForCalendar, DeleteExistingExam};
