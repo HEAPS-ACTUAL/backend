@@ -6,10 +6,10 @@ const db = require("../models/ConnectionManager"); // Import the database connec
 FUNCTIONS TO STORE DATA INTO DB 
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function storeRevisionSchedule(startDate, endDate, eventName, arrayOfReviewDates) {
+async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates) {
     try {
-        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?)';
-        const returnedData = await query(sqlQuery, [startDate, endDate, eventName, arrayOfReviewDates]);
+        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?, ?)';
+        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfReviewDates]);
         console.log(returnedData);
     } 
     catch (error) {
@@ -127,20 +127,21 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
-THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND
+THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND. THIS FUNCTION IS TO STORE DATA INTO DB
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function createNewEvent(req, res) {
+async function createNewExam(req, res) {
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
-    const eventName = req.body.eventName;
+    const examName = req.body.examName;
+    const examColour = req.body.examColour;
 
     try {
         // Calculate spaced repetition dates based on the start and end date
         const arrayOfReviewDates = CalculateSpacedRepetitionDates(startDate, endDate);       
 
         // Insert into both Schedule and RevisionDates table
-        await storeRevisionSchedule(startDate, endDate, eventName, arrayOfReviewDates);
+        await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates);
         res.status(200).json({ message: 'Exam and revision dates added' });
         console.log('Exam and revision dates created completed successfully.');
 
@@ -150,18 +151,21 @@ async function createNewEvent(req, res) {
     }
 }
 
+
 // TO TEST THE ABOVE FUNCTION
-// createNewEvent(
+// createNewExam(
 //     req = 
 //         {
 //             body:
 //                 {
 //                     startDate: '2024-05-06',
 //                     endDate: '2024-09-10',
-//                     eventName:'testing exam 3'
+//                     examName:'testing exam 3'
 //                 }
 //         },
 //     res = null
 // )
 
-module.exports = { createNewEvent };
+
+
+module.exports = { createNewExam};
