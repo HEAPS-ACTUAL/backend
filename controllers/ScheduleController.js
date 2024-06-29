@@ -6,10 +6,10 @@ const db = require("../models/ConnectionManager"); // Import the database connec
 DATA BASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function storeRevisionSchedule(startDate, endDate, eventName, eventColour, arrayOfReviewDates) {
+async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates) {
     try {
         const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?, ?)';
-        const returnedData = await query(sqlQuery, [startDate, endDate, eventName, eventColour, arrayOfReviewDates]);
+        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfReviewDates]);
         // console.log(returnedData);
     } 
     catch (error) {
@@ -134,18 +134,18 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function createNewEvent(req, res) {
+async function createNewExam(req, res) {
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
-    const eventName = req.body.eventName;
-    const eventColour = req.body.eventColour;
+    const examName = req.body.examName;
+    const examColour = req.body.examColour;
 
     try {
         // Calculate spaced repetition dates based on the start and end date
         const arrayOfReviewDates = CalculateSpacedRepetitionDates(startDate, endDate);       
 
         // Insert into both Schedule and RevisionDates table
-        await storeRevisionSchedule(startDate, endDate, eventName, eventColour, arrayOfReviewDates);
+        await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates);
         res.status(200).json({ message: 'Exam and revision dates added' });
         console.log('Exam and revision dates created completed successfully.');
 
@@ -156,17 +156,44 @@ async function createNewEvent(req, res) {
 }
 
 // TO TEST THE ABOVE FUNCTION
-// createNewEvent(
+// createNewExam(
 //     req = 
 //         {
 //             body:
 //                 {
 //                     startDate: '2024-05-06',
 //                     endDate: '2024-09-10',
-//                     eventName:'testing exam 3'
+//                     examName:'testing exam 3'
 //                 }
 //         },
 //     res = null
 // )
 
-module.exports = { createNewEvent };
+/*
+------------------------------------------------------------------------------------------------------------------------------------
+FUNCTIONS TO RETRIEVE EXAM DETAILS FROM DB 
+------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+async function GetExamDetailsForCalendar() {
+    try {
+        const sqlQuery = 'Call GetExamDetailsForCalendar()';
+
+        // const returnedData = await query(sqlQuery);
+        // console.log(returnedData);
+
+        const [rows, fields] = await query(sqlQuery);  // i asked chatgpt how to get rid of the 'okPacket' in the output. can uncomment the two lines above to see what i mean
+        console.log(rows); 
+        
+    }
+    catch (error){
+        const msg = 'error retrieving data from db';
+        console.error(msg + ': ' + error.message);
+        throw new Error(msg);
+    }
+}
+
+// TEST CODE
+GetExamDetailsForCalendar()
+
+module.exports = { createNewExam };
