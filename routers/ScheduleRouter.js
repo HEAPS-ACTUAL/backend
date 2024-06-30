@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 // Functions
-const { createNewExam, GetExamDetailsForCalendar, DeleteExistingExam, DeleteSpecificRevisionDate } = require("../controllers/ScheduleController");
+const { createNewExam, retrieveAllRevisionDatesByUser, DeleteExistingExam, DeleteSpecificRevisionDate } = require("../controllers/ScheduleController");
 
 // CREATE NEW EVENT IN THE DB (SCHEDULE & REVISIONDATES TABLE)
 router.post('/createNewExam', createNewExam);
 
 // RETRIEVE EXAM DETAILS FROM DB 
-router.post('/GetExamDetailsForCalendar', GetExamDetailsForCalendar)
+router.post('/retrieveAllRevisionDates', retrieveAllRevisionDatesByUser);
 
 // DELETE EXAM FROM DB 
 router.post('/DeleteExistingExam', DeleteExistingExam);
@@ -17,4 +17,3 @@ router.post('/DeleteExistingExam', DeleteExistingExam);
 router.post('/DeleteSpecificRevisionDate', DeleteSpecificRevisionDate)
 
 module.exports = router;
-

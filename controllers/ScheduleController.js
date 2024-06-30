@@ -19,8 +19,51 @@ async function storeRevisionSchedule(startDate, endDate, examName, examColour, a
     }
 }
 
-async function retrieveAllRevisionDatesByUser(email){
-    
+async function retrieveAllRevisionDatesByUser(req, res){
+    const email = req.body.email;
+
+    try {
+        const sqlQuery = 'Call retrieveAllRevisionDatesByUser(?)';
+        const returnedData = await query(sqlQuery, [email]);
+        res.status(200).json(returnedData[0]);
+    }
+    catch (error){
+        const msg = 'Error retrieving dates from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: msg});
+    }
+}
+
+async function DeleteExistingExam(req, res) {
+    const input_ScheduleId = req.body.scheduleID
+
+    try{
+        const sqlQuery = 'delete from Schedule where ScheduleID = ?;'
+        const returnedData = await query(sqlQuery, [input_ScheduleId]);
+
+        res.status(200).json('ok deleted entire exam from db');
+    }
+    catch (error){
+        const msg = 'error deleting data from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: error});
+    }
+}
+
+async function DeleteSpecificRevisionDate (req, res) {
+    const input_ScheduleId = req.body.scheduleID
+    const input_RevisionDate = req.body.revisionDate
+
+    try{
+        const sqlQuery = 'delete from RevisionDates where ScheduleID = ? and RevisionDate = ?;'
+        const returnedData = await query(sqlQuery, [input_ScheduleId, input_RevisionDate]);
+        res.status(200).json('ok deleted specific date from db');
+    }
+    catch (error){
+        const msg = 'error deleting data from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: error});
+    }
 }
 
 /*
@@ -167,72 +210,4 @@ async function createNewExam(req, res) {
 //     res = null
 // )
 
-/*
-------------------------------------------------------------------------------------------------------------------------------------
-FUNCTIONS TO RETRIEVE EXAM DETAILS FROM DB 
-------------------------------------------------------------------------------------------------------------------------------------
-*/
-
-async function GetExamDetailsForCalendar() {
-    try {
-        const sqlQuery = 'Call GetExamDetailsForCalendar()';
-
-        // const returnedData = await query(sqlQuery);
-        // console.log(returnedData);
-
-        const [rows, fields] = await query(sqlQuery);  // i asked chatgpt how to get rid of the 'okPacket' in the output. can uncomment the two lines above to see what i mean
-        console.log(rows); 
-        
-    }
-    catch (error){
-        const msg = 'error retrieving data from db';
-        console.error(msg + ': ' + error.message);
-        throw new Error(msg);
-    }
-}
-
-// TEST CODE
-// GetExamDetailsForCalendar()
-
-/*
-------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION TO DELETE EXAM DETAILS FROM DB 
-------------------------------------------------------------------------------------------------------------------------------------
-*/
-
-// ask jerrick to check
-
-async function DeleteExistingExam(req, res) {
-    const input_ScheduleId = req.body.scheduleID
-
-    try{
-        const sqlQuery = 'delete from Schedule where ScheduleID = ?;'
-        const returnedData = await query(sqlQuery, [input_ScheduleId]);
-        res.status(200).json('ok deleted entire exam from db');
-    }
-    catch (error){
-        const msg = 'error deleting data from db';
-        console.error(msg + ': ' + error.message);
-        res.status(404).json({message: error});
-    }
-}
-
-async function DeleteSpecificRevisionDate (req, res) {
-    const input_ScheduleId = req.body.scheduleID
-    const input_RevisionDate = req.body.revisionDate
-
-    try{
-        const sqlQuery = 'delete from RevisionDates where ScheduleID = ? and RevisionDate = ?;'
-        const returnedData = await query(sqlQuery, [input_ScheduleId, input_RevisionDate]);
-        res.status(200).json('ok deleted specific date from db');
-    }
-    catch (error){
-        const msg = 'error deleting data from db';
-        console.error(msg + ': ' + error.message);
-        res.status(404).json({message: error});
-    }
-}
-
-
-
-module.exports = { createNewExam, GetExamDetailsForCalendar, DeleteExistingExam, DeleteSpecificRevisionDate};
+module.exports = { createNewExam, retrieveAllRevisionDatesByUser, DeleteExistingExam, DeleteSpecificRevisionDate};
