@@ -267,7 +267,7 @@ async function generateAndStoreTest(req, res) {
         console.log('Extracting text now...');
         const extractedText = await extractTextFromPDF(uploadedFile); // FUNCTION IMPORTED FROM FILE CONTROLLER
 
-        console.log('Querying chatgpt for test now...');
+        console.log(`Querying chatgpt for ${testType === 'F' ? 'flashcard' : 'quiz'} now...`);
         const chatgptResponse = await queryChatgptForTest(extractedText, testType, difficulty); // FUNCTION DEFINED ABOVE
 
         console.log('Questions obtained! Storing them into the database now...');
