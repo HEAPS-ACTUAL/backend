@@ -6,3 +6,5 @@ const { getAllFlashcardsWithoutSchedule } = require("../controllers/FlashcardCon
 
 // GET ALL FLASHCARDS WITHOUT A SCHEDULE
 router.post('/getAllFlashcardsWithoutSchedule', getAllFlashcardsWithoutSchedule);
+
+module.exports = router;
