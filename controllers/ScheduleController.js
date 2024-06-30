@@ -56,7 +56,6 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
         }
 
     }
-
     else {
 
         const end = new Date(endDate);
@@ -148,7 +147,6 @@ async function createNewExam(req, res) {
         await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates);
         res.status(200).json({ message: 'Exam and revision dates added' });
         console.log('Exam and revision dates created completed successfully.');
-
     } catch (error) {
         console.error('Failed to create exam and revision dates:', error);
         res.status(404).json({message: error})
@@ -210,7 +208,23 @@ async function DeleteExistingExam(req, res) {
     try{
         const sqlQuery = 'delete from Schedule where ScheduleID = ?;'
         const returnedData = await query(sqlQuery, [input_ScheduleId]);
-        res.status(200).json('ok');
+        res.status(200).json('ok deleted entire exam from db');
+    }
+    catch (error){
+        const msg = 'error deleting data from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: error});
+    }
+}
+
+async function DeleteSpecificRevisionDate (req, res) {
+    const input_ScheduleId = req.body.scheduleID
+    const input_RevisionDate = req.body.revisionDate
+
+    try{
+        const sqlQuery = 'delete from RevisionDates where ScheduleID = ? and RevisionDate = ?;'
+        const returnedData = await query(sqlQuery, [input_ScheduleId, input_RevisionDate]);
+        res.status(200).json('ok deleted specific date from db');
     }
     catch (error){
         const msg = 'error deleting data from db';
@@ -221,4 +235,4 @@ async function DeleteExistingExam(req, res) {
 
 
 
-module.exports = { createNewExam, GetExamDetailsForCalendar, DeleteExistingExam};
+module.exports = { createNewExam, GetExamDetailsForCalendar, DeleteExistingExam, DeleteSpecificRevisionDate};
