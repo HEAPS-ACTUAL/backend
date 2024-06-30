@@ -18,7 +18,7 @@ CREATE TABLE Schedule (
     StartDate DATE NOT NULL,
     EndDate DATE,
     ExamName VARCHAR(100),
-    Colour VARCHAR(50)
+    ExamColour VARCHAR(50)
 );
 
 -- Creating the RevisionDates table
@@ -225,15 +225,16 @@ end $$
 delimiter ;
 
 delimiter $$
-create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(100), in input_colour varchar(50), in array_of_dates json)
+create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(100), in input_exam_colour varchar(50), in array_of_test_IDs json, in array_of_dates json)
 begin
 	declare next_schedule_id int;
     declare counter int;
     declare length_of_array int;
     declare currentDate date;
+    declare current_test_id int;
     
 	call determineNextScheduleID(next_schedule_id); # PROCEDURE DEFINE ABOVE
-    insert into Schedule (ScheduleID, StartDate, EndDate, ExamName, Colour) values (next_schedule_id, input_start_date, input_end_date, input_exam_name, input_colour);
+    insert into Schedule (ScheduleID, StartDate, EndDate, ExamName, ExamColour) values (next_schedule_id, input_start_date, input_end_date, input_exam_name, input_exam_colour);
     
     set counter = 0;
     set length_of_array = json_length(array_of_dates);
@@ -244,9 +245,35 @@ begin
         
         set counter = counter + 1;
     end while;
+    
+    set counter = 0;
+    set length_of_array = json_length(array_of_test_IDs);
+    
+    while counter < length_of_array do
+		set current_test_id = json_unquote(json_extract(array_of_test_IDs, concat('$[', counter, ']')));
+        update Test set ScheduleID = next_schedule_id where TestID = current_test_id;
+        
+        set counter = counter + 1;
+    end while;
 end $$
 delimiter ;
 
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+RETRIEVE REVISION DATES TO SHOW IN THE CALENDAR
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+create procedure retrieveAllRevisionDatesByUser(in input_email varchar(100))
+begin
+	select * from
+		(select ScheduleID, json_arrayagg(json_object("TestID", TestID, "TestName", TestName)) as Flashcards from Test where Email = input_email and not isnull(ScheduleID) group by ScheduleID
+		) t1,
+		(select s.ScheduleID, s.ExamName, s.ExamColour, json_arrayagg(r.RevisionDate) as RevisionDates from Schedule s, RevisionDates r where (s.ScheduleID = r.ScheduleID) group by ScheduleID
+		) t2
+	where (t1.ScheduleID = t2.ScheduleID);
+end $$
+delimiter ;
 
 # TRIGGERS
 /* 

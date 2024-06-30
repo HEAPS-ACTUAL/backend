@@ -6,10 +6,12 @@ const db = require("../models/ConnectionManager"); // Import the database connec
 DATA BASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates) {
+async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates) {
+    arrayOfTestIDs = JSON.stringify(arrayOfTestIDs);
+
     try {
-        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?, ?)';
-        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfReviewDates]);
+        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?, ?, ?)';
+        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates]);
         // console.log(returnedData);
     } 
     catch (error) {
@@ -166,7 +168,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             IntervalIndex++;
         }
     }
-    // console.log(reviewDates);
+    console.log(reviewDates);
     return JSON.stringify(reviewDates);
 }
 
@@ -181,15 +183,16 @@ async function createNewExam(req, res) {
     const endDate = req.body.endDate;
     const examName = req.body.examName;
     const examColour = req.body.examColour;
+    const arrayOfTestIDs = req.body.arrayOfTestIDs;
 
     try {
         // Calculate spaced repetition dates based on the start and end date
         const arrayOfReviewDates = CalculateSpacedRepetitionDates(startDate, endDate);       
 
         // Insert into both Schedule and RevisionDates table
-        await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates);
+        await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates);
         res.status(200).json({ message: 'Exam and revision dates added' });
-        console.log('Exam and revision dates created completed successfully.');
+        console.log('Exam and revision dates created successfully.');
     } catch (error) {
         console.error('Failed to create exam and revision dates:', error);
         res.status(404).json({message: error})
