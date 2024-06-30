@@ -32,7 +32,10 @@ app.use("/test", require("./routers/TestRouter"));
 // ROUTES FOR QUIZ
 app.use("/quiz", require("./routers/QuizRouter"));
 
-// ROUTES FOR REVISION SCHEDULER
+// ROUTES FOR FLASHCARD
+app.use("/flashcard", require("./routers/FlashcardRouter"));
+
+// ROUTES FOR SCHEDULE
 app.use("/schedule", require("./routers/ScheduleRouter"));
 
 
