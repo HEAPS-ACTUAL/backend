@@ -298,3 +298,15 @@ begin
     end if;
 end $$
 delimiter ;
+
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+MAKE SCHEDULE ID IN TEST TABLE BECOME NIL WHEN SCHEDULE IS DELETED 
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+create trigger before_delete_schedule before delete on Schedule for each row
+begin 
+	update Test set ScheduleID = null where ScheduleID = old.ScheduleID;
+end $$
+delimiter ;
