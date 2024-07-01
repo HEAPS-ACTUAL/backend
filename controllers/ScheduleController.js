@@ -3,21 +3,71 @@ const db = require("../models/ConnectionManager"); // Import the database connec
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
-FUNCTIONS TO STORE DATA INTO DB 
+DATA BASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates) {
+
+async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates) {
+    arrayOfTestIDs = JSON.stringify(arrayOfTestIDs);
+
     try {
-        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?, ?)';
-        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfReviewDates]);
-        console.log(returnedData);
+        const sqlQuery = 'Call addRevisionSchedule(?, ?, ?, ?, ?, ?)';
+        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates]);
+        // console.log(returnedData);
     } 
     catch (error) {
         const msg = 'Error adding revision dates into database';
         console.error(msg + ': ' + error.message);
         throw new Error(msg);
     }
-};
+}
+
+async function retrieveAllRevisionDatesByUser(req, res){
+    const email = req.body.email;
+
+    try {
+        const sqlQuery = 'Call retrieveAllRevisionDatesByUser(?)';
+        const returnedData = await query(sqlQuery, [email]);
+        res.status(200).json(returnedData[0]);
+    }
+    catch (error){
+        const msg = 'Error retrieving dates from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: msg});
+    }
+}
+
+async function DeleteExistingExam(req, res) {
+    const input_ScheduleId = req.body.scheduleID
+
+    try{
+        const sqlQuery = 'delete from Schedule where ScheduleID = ?;'
+        const returnedData = await query(sqlQuery, [input_ScheduleId]);
+
+        res.status(200).json('ok deleted entire exam from db');
+    }
+    catch (error){
+        const msg = 'error deleting data from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: error});
+    }
+}
+
+async function DeleteSpecificRevisionDate (req, res) {
+    const input_ScheduleId = req.body.scheduleID
+    const input_RevisionDate = req.body.revisionDate
+
+    try{
+        const sqlQuery = 'delete from RevisionDates where ScheduleID = ? and RevisionDate = ?;'
+        const returnedData = await query(sqlQuery, [input_ScheduleId, input_RevisionDate]);
+        res.status(200).json('ok deleted specific date from db');
+    }
+    catch (error){
+        const msg = 'error deleting data from db';
+        console.error(msg + ': ' + error.message);
+        res.status(404).json({message: error});
+    }
+}
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -52,7 +102,6 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
         }
 
     }
-
     else {
 
         const end = new Date(endDate);
@@ -120,9 +169,9 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             IntervalIndex++;
         }
     }
-    // console.log(reviewDates);
+    console.log(reviewDates);
     return JSON.stringify(reviewDates);
-};
+}
 
 
 /*
@@ -135,16 +184,17 @@ async function createNewExam(req, res) {
     const endDate = req.body.endDate;
     const examName = req.body.examName;
     const examColour = req.body.examColour;
+    const arrayOfTestIDs = req.body.arrayOfTestIDs;
+
 
     try {
         // Calculate spaced repetition dates based on the start and end date
         const arrayOfReviewDates = CalculateSpacedRepetitionDates(startDate, endDate);       
 
         // Insert into both Schedule and RevisionDates table
-        await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfReviewDates);
+        await storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates);
         res.status(200).json({ message: 'Exam and revision dates added' });
-        console.log('Exam and revision dates created completed successfully.');
-
+        console.log('Exam and revision dates created successfully.');
     } catch (error) {
         console.error('Failed to create exam and revision dates:', error);
         res.status(404).json({message: error})
@@ -166,6 +216,4 @@ async function createNewExam(req, res) {
 //     res = null
 // )
 
-
-
-module.exports = { createNewExam};
+module.exports = { createNewExam, retrieveAllRevisionDatesByUser, DeleteExistingExam, DeleteSpecificRevisionDate};
