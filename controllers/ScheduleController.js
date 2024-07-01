@@ -6,6 +6,7 @@ const db = require("../models/ConnectionManager"); // Import the database connec
 DATA BASE RELATED FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
+
 async function storeRevisionSchedule(startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates) {
     arrayOfTestIDs = JSON.stringify(arrayOfTestIDs);
 
@@ -175,7 +176,7 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
-THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND
+THIS FUNCTION WILL BE CALLED WHEN USER CLICKS 'GENERATE SCHEDULE' ON THE FRONTEND. THIS FUNCTION IS TO STORE DATA INTO DB
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 async function createNewExam(req, res) {
@@ -184,6 +185,7 @@ async function createNewExam(req, res) {
     const examName = req.body.examName;
     const examColour = req.body.examColour;
     const arrayOfTestIDs = req.body.arrayOfTestIDs;
+
 
     try {
         // Calculate spaced repetition dates based on the start and end date
@@ -198,6 +200,7 @@ async function createNewExam(req, res) {
         res.status(404).json({message: error})
     }
 }
+
 
 // TO TEST THE ABOVE FUNCTION
 // createNewExam(
