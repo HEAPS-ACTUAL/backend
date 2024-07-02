@@ -225,7 +225,7 @@ const JerrickCalculateSpacedRepetitionDates = (startDateString, endDateString) =
 // JerrickCalculateSpacedRepetitionDates('2024-10-08', null);
 // CalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
 // JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-12-10');
-// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-18');
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-15');
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
