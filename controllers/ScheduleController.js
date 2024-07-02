@@ -75,7 +75,6 @@ HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 const CalculateSpacedRepetitionDates = (startDate, endDate) => {
-
     const currentDate = new Date(startDate); // DONT CHANGE THIS, need this for the while loop calculation
     const currentDateCorrectFormat = currentDate.toISOString().split('T')[0]; // Format date to YYYY-MM-DD to push into reviewDates array
     const reviewDates = [currentDateCorrectFormat];
@@ -100,10 +99,8 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
             intervalDays *= factor; // Increase the interval by the factor
         }
-
     }
     else {
-
         const end = new Date(endDate);
 
         // ensure start date is before end date
@@ -113,7 +110,6 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
 
         // Calculate the number of days between start date and end date
         const daysBetween = Math.ceil((end - currentDate) / (1000 * 60 * 60 * 24));
-
 
         // set the intervals based on the number of days btwn startDate and endDate
         if (daysBetween <= 7) {
@@ -145,7 +141,6 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
             let intervalDays = 1; // starting interval
             const factor = 1.2; // x1.5 to calculate the next interval days
             const endDate = new Date(startDate);
-          
 
             while (currentDate < end) {
                 currentDate.setDate(currentDate.getDate() + Math.round(intervalDays)); // set the current date as the next review date
@@ -173,6 +168,64 @@ const CalculateSpacedRepetitionDates = (startDate, endDate) => {
     return JSON.stringify(reviewDates);
 }
 
+/* 
+!! MESSAGE TO ARIN: 
+I CAME UP WITH AN ALETERNATIVE WITH REFERNCE TO YOUR SPACE REPETITION FUNCTION ABOVE. OTHER THAN RENAMING SOME OF THE VARIABLES AND MAKING THE CODE MORE CONCISE,
+THE METHOD OF CALCULATING THE REVISION DATES ARE SIMILAR.
+
+MAIN DIFFERENCE IS THAT I DIDN'T TAKE INTO ACCOUNT THE NUMBER OF DAYS BETWEEN START DATE AND END DATE BUT USED A FIXED FACTOR OF 1.5 TO GET THE INTERVALS FOR EVERYTHING.
+
+YOU CAN USE YOURS OR A MIX OF BOTH FOR THE ACTUAL FUNCTION.
+
+DELETE ACCORDINGLY WHEN U ARE DONE. THANKS :)
+*/
+const JerrickCalculateSpacedRepetitionDates = (startDateString, endDateString) => {
+    var reviewDatesArray = [startDateString];
+
+    if (endDateString === null) {
+        var endDate = new Date(startDateString); // Initialise end date as the start date so that we can add 6 months to the start date
+        var endMonth = endDate.getMonth() + 6; // Set end date to be 6 months after start date
+        endDate.setMonth(endMonth);
+    }
+    else{
+        var endDate = new Date(endDateString);
+    }
+
+    var reviewDate = new Date(startDateString);
+    var intervalDays = 1;
+    var factor = 1.5; // multiply intervals by 1.2
+    
+    while (reviewDate < endDate) {
+        reviewDate.setDate(reviewDate.getDate() + Math.round(intervalDays));
+
+        // Stop if the next review date exceeds the end date
+        if (reviewDate >= endDate) {
+            break;
+        }
+        
+        var reviewDateString = reviewDate.toISOString().split('T')[0];
+        reviewDatesArray.push(reviewDateString); // append the formatted date into review dates array 
+        intervalDays *= factor; // Increase the interval by the factor
+    }
+
+    // MAKE SURE THE VERY LAST REVISION DATE IS ALWAYS ONE DAY BEFORE THE EXAM
+    var oneDayBeforeEndDate = endDate.getDate() - 1;
+    endDate.setDate(oneDayBeforeEndDate);
+    var oneDayBeforeEndDateString = endDate.toISOString().split('T')[0];
+
+    if (!reviewDatesArray.includes(oneDayBeforeEndDateString)){
+        reviewDatesArray.push(oneDayBeforeEndDateString);
+    }
+    
+    console.log(reviewDatesArray);
+    return JSON.stringify(reviewDatesArray);
+}
+
+// TO TEST THE SPACE REPETITON FUNCTIONS
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', null);
+// CalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-12-10');
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-18');
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -185,7 +238,6 @@ async function createNewExam(req, res) {
     const examName = req.body.examName;
     const examColour = req.body.examColour;
     const arrayOfTestIDs = req.body.arrayOfTestIDs;
-
 
     try {
         // Calculate spaced repetition dates based on the start and end date
@@ -200,20 +252,5 @@ async function createNewExam(req, res) {
         res.status(404).json({message: error})
     }
 }
-
-
-// TO TEST THE ABOVE FUNCTION
-// createNewExam(
-//     req = 
-//         {
-//             body:
-//                 {
-//                     startDate: '2024-05-06',
-//                     endDate: '2024-09-10',
-//                     examName:'testing exam 3'
-//                 }
-//         },
-//     res = null
-// )
 
 module.exports = { createNewExam, retrieveAllRevisionDatesByUser, DeleteExistingExam, DeleteSpecificRevisionDate};
