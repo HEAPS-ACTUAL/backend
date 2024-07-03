@@ -74,7 +74,7 @@ async function DeleteSpecificRevisionDate (req, res) {
 HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-const JerrickCalculateSpacedRepetitionDates = (startDateString, endDateString) => {
+const CalculateSpacedRepetitionDates = (startDateString, endDateString) => {
     var reviewDatesArray = [startDateString];
 
     if (endDateString === null) {
@@ -117,10 +117,10 @@ const JerrickCalculateSpacedRepetitionDates = (startDateString, endDateString) =
 }
 
 // TO TEST THE SPACE REPETITON FUNCTIONS
-// JerrickCalculateSpacedRepetitionDates('2024-10-08', null);
+// CalculateSpacedRepetitionDates('2024-10-08', null);
 // CalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
-// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
-// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-15');
+// CalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
+// CalculateSpacedRepetitionDates('2024-10-08', '2024-10-15');
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
