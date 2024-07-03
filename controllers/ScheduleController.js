@@ -74,105 +74,53 @@ async function DeleteSpecificRevisionDate (req, res) {
 HELPER FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
 */
-const CalculateSpacedRepetitionDates = (startDate, endDate) => {
+const JerrickCalculateSpacedRepetitionDates = (startDateString, endDateString) => {
+    var reviewDatesArray = [startDateString];
 
-    const currentDate = new Date(startDate); // DONT CHANGE THIS, need this for the while loop calculation
-    const currentDateCorrectFormat = currentDate.toISOString().split('T')[0]; // Format date to YYYY-MM-DD to push into reviewDates array
-    const reviewDates = [currentDateCorrectFormat];
+    if (endDateString === null) {
+        var endDate = new Date(startDateString); // Initialise end date as the start date so that we can add 6 months to the start date
+        var endMonth = endDate.getMonth() + 6; // Set end date to be 6 months after start date
+        endDate.setMonth(endMonth);
+    }
+    else{
+        var endDate = new Date(endDateString);
+    }
 
-    let intervals;
+    var reviewDate = new Date(startDateString);
+    var intervalDays = 1;
+    var factor = 1.5; // multiply intervals by 1.2
+    
+    while (reviewDate < endDate) {
+        reviewDate.setDate(reviewDate.getDate() + Math.round(intervalDays));
 
-    if (endDate === null) {
-        let intervalDays = 1;
-        const factor = 1.2; // multiply intervals by 1.2
-        const endDate = new Date(startDate); // Copy start date to calculate the end date
+        // Stop if the next review date exceeds the end date
+        if (reviewDate >= endDate) {
+            break;
+        }
         
-        endDate.setMonth(endDate.getMonth() + 6); // Set end date to 6 months after the start date
-
-        while (currentDate < endDate) {
-            currentDate.setDate(currentDate.getDate() + Math.round(intervalDays));
-
-            // Stop if the next review date is beyond six months
-            if (currentDate >= endDate) {
-                break;
-            }
-
-            reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
-            intervalDays *= factor; // Increase the interval by the factor
-        }
-
+        var reviewDateString = reviewDate.toISOString().split('T')[0];
+        reviewDatesArray.push(reviewDateString); // append the formatted date into review dates array 
+        intervalDays *= factor; // Increase the interval by the factor
     }
-    else {
 
-        const end = new Date(endDate);
+    // MAKE SURE THE VERY LAST REVISION DATE IS ALWAYS ONE DAY BEFORE THE EXAM
+    var oneDayBeforeEndDate = endDate.getDate() - 1;
+    endDate.setDate(oneDayBeforeEndDate);
+    var oneDayBeforeEndDateString = endDate.toISOString().split('T')[0];
 
-        // ensure start date is before end date
-        if (currentDate >= end) {
-            throw new Error('Start date must be before End date'); // window alert for this (unable to do this yet)
-        }
-
-        // Calculate the number of days between start date and end date
-        const daysBetween = Math.ceil((end - currentDate) / (1000 * 60 * 60 * 24));
-
-
-        // set the intervals based on the number of days btwn startDate and endDate
-        if (daysBetween <= 7) {
-            intervals = [1, 1, 1, 1];
-        }
-        else if (daysBetween <= 14) {
-            intervals = [1, 3, 5, 5];
-        }
-        else if (daysBetween <= 21) {
-            intervals = [2, 5, 9, 14, 21];
-        }
-        else if (daysBetween <= 28) {
-            intervals = [2, 4, 7, 7, 7];
-        }
-        else if (daysBetween <= 35) {
-            intervals = [1, 3, 4, 6, 6, 7, 8];
-        }
-        else if (daysBetween <= 42) {
-            intervals = [1, 3, 4, 6, 6, 7, 7, 8];
-        }
-        else if (daysBetween <= 49) {
-            intervals = [1, 3, 4, 6, 6, 7, 7, 7, 8];
-        }
-        else if (daysBetween <= 56) {
-            intervals = [1, 3, 4, 6, 6, 7, 7, 7, 7, 8, 8];
-        }
-        else {
-            // intervals = [];
-            let intervalDays = 1; // starting interval
-            const factor = 1.2; // x1.5 to calculate the next interval days
-            const endDate = new Date(startDate);
-          
-
-            while (currentDate < end) {
-                currentDate.setDate(currentDate.getDate() + Math.round(intervalDays)); // set the current date as the next review date
-
-                // stop if the next review date is beyond the end date
-                if (currentDate >= end) {
-                    break;
-                }
-
-                reviewDates.push(currentDate.toISOString().split('T')[0]); // store the formatted date into review dates array 
-                intervalDays *= factor;
-            }   
-        }
-
-        let IntervalIndex = 0;
-
-        while (currentDate < end && IntervalIndex < intervals.length) {
-            currentDate.setDate(currentDate.getDate() + intervals[IntervalIndex]);
-            const formattedDate = currentDate.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
-            reviewDates.push(formattedDate); // Store the formatted date
-            IntervalIndex++;
-        }
+    if (!reviewDatesArray.includes(oneDayBeforeEndDateString)){
+        reviewDatesArray.push(oneDayBeforeEndDateString);
     }
-    console.log(reviewDates);
-    return JSON.stringify(reviewDates);
+    
+    console.log(reviewDatesArray);
+    return JSON.stringify(reviewDatesArray);
 }
 
+// TO TEST THE SPACE REPETITON FUNCTIONS
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', null);
+// CalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-30');
+// JerrickCalculateSpacedRepetitionDates('2024-10-08', '2024-10-15');
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -185,7 +133,6 @@ async function createNewExam(req, res) {
     const examName = req.body.examName;
     const examColour = req.body.examColour;
     const arrayOfTestIDs = req.body.arrayOfTestIDs;
-
 
     try {
         // Calculate spaced repetition dates based on the start and end date
@@ -200,20 +147,5 @@ async function createNewExam(req, res) {
         res.status(404).json({message: error})
     }
 }
-
-
-// TO TEST THE ABOVE FUNCTION
-// createNewExam(
-//     req = 
-//         {
-//             body:
-//                 {
-//                     startDate: '2024-05-06',
-//                     endDate: '2024-09-10',
-//                     examName:'testing exam 3'
-//                 }
-//         },
-//     res = null
-// )
 
 module.exports = { createNewExam, retrieveAllRevisionDatesByUser, DeleteExistingExam, DeleteSpecificRevisionDate};
