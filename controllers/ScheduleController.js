@@ -88,7 +88,7 @@ const CalculateSpacedRepetitionDates = (startDateString, endDateString) => {
 
     var reviewDate = new Date(startDateString);
     var intervalDays = 1;
-    var factor = 1.5; // multiply intervals by 1.2
+    var factor = 1.2; // multiply intervals by 1.2
     
     while (reviewDate < endDate) {
         reviewDate.setDate(reviewDate.getDate() + Math.round(intervalDays));
