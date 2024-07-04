@@ -4,7 +4,7 @@ async function getAllFlashcardsWithoutSchedule(req, res){
     const email = req.body.email;
 
     try {
-        const sqlQuery = 'Select TestID, TestName from Test where (Email = ?) and (TestType = "F") and isnull(ScheduleID)';
+        const sqlQuery = 'Select TestID as value, TestName as label from Test where (Email = ?) and (TestType = "F") and isnull(ScheduleID)';
         const returnedData = await query(sqlQuery, [email]);
         res.status(200).json(returnedData);
     }
