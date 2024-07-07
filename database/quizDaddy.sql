@@ -103,19 +103,19 @@ begin
 		if (input_test_status = true) then
 			select t1.*, json_arrayagg(json_object("AttemptNo", us.AttemptNo, "NumOfCorrectAnswers", us.NumOfCorrectAnswers)) as Attempts from 
 				(select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions 
-					from test t, quiz q, question qn 
+					from Test t, Quiz q, Question qn 
 					where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID
 				) t1,
 				UserQuizScores us where (t1.TestID = us.TestID)
                 group by TestID;
 		elseif (input_test_status = false) then
 			select t.TestID, t.TestName, t.DateTimeCreated, q.Difficulty, count(*) as numOfQuestions 
-				from test t, quiz q, question qn 
+				from Test t, Quiz q, Question qn 
 				where (t.TestID = q.TestID) and (t.testID = qn.TestID) and (Email = input_email) and (IsDone = input_test_status) group by t.TestID;
         end if;
     elseif (input_test_type = 'F') then
 		select t.TestID, t.TestName, t.DateTimeCreated, count(*) as numOfQuestions 
-			from test t, question qn 
+			from Test t, Question qn 
 			where (t.TestID = qn.TestID) and (Email = input_email) and (TestType = input_test_type) group by t.TestID;
     end if;
 end $$
@@ -132,12 +132,12 @@ create procedure getAllQuestionsAndOptionsForATest(in input_test_id int)
 begin
 	declare test_type char(1);
     
-    select TestType into test_type from test where TestID = input_test_id;
+    select TestType into test_type from Test where TestID = input_test_id;
 
     if test_type = 'Q' then
-		select qn.QuestionNo, qn.QuestionText, qn.Elaboration, json_arrayagg(json_object('OptionLetter', OptionLetter, 'OptionText', o.OptionText, 'IsCorrect', o.IsCorrect)) as 'Options' from question qn, `option` o where (qn.TestID = o.TestID) and (qn.QuestionNo = o.QuestionNo) and (qn.TestID = input_test_id) group by qn.QuestionNo;
+		select qn.QuestionNo, qn.QuestionText, qn.Elaboration, json_arrayagg(json_object('OptionLetter', OptionLetter, 'OptionText', o.OptionText, 'IsCorrect', o.IsCorrect)) as 'Options' from Question qn, `Option` o where (qn.TestID = o.TestID) and (qn.QuestionNo = o.QuestionNo) and (qn.TestID = input_test_id) group by qn.QuestionNo;
 	elseif test_type = 'F' then
-		select QuestionNo, QuestionText, Elaboration from question where testID = input_test_id;
+		select QuestionNo, QuestionText, Elaboration from Question where testID = input_test_id;
     end if;
 end $$
 delimiter ;
@@ -227,7 +227,7 @@ create procedure determineNextScheduleID(out next_schedule_id int)
 begin
 	declare current_largest_schedule_id int;
     
-    set current_largest_schedule_id = (select ScheduleID from schedule order by ScheduleID desc limit 1);
+    set current_largest_schedule_id = (select ScheduleID from Schedule order by ScheduleID desc limit 1);
     
     if isnull(current_largest_schedule_id) then
 		set next_schedule_id = 1;
@@ -311,7 +311,7 @@ create procedure deleteOneRevisionDate(in input_schedule_id int, in input_date d
 begin
 	declare number_of_existing_dates int;
     
-    set number_of_existing_dates = (select count(*) from revisionDates where ScheduleID = input_schedule_id);
+    set number_of_existing_dates = (select count(*) from RevisionDates where ScheduleID = input_schedule_id);
     
     if number_of_existing_dates = 1 then
 		call deleteEntireSchedule(input_schedule_id); # PROCEDURE DEFINED ABOVE
