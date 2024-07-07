@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS heap2;
-CREATE DATABASE heap2;
-USE heap2;
+DROP DATABASE IF EXISTS heap;
+CREATE DATABASE heap;
+USE heap;
 
 -- Creating the User table
 CREATE TABLE User (
@@ -170,9 +170,22 @@ begin
         
         set counter = counter + 1;
     end while;
+    
+    call storeUserQuizScore(input_test_id, attempt_no); # PROCEDURE DEFINED BELOW
 end $$
 delimiter ;
 
+
+delimiter $$
+create procedure storeUserQuizScore(in input_test_id int, in input_attempt_no int)
+begin
+    declare num_of_correct_ans int;
+        
+	set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = input_test_id) and (ua.AttemptNo = input_attempt_no) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
+        
+	insert into UserQuizScores (TestID, NumOfCorrectAnswers, AttemptNo) values (input_test_id, num_of_correct_ans, input_attempt_no);
+end $$
+delimiter ;
 
 /* 
 -----------------------------------------------------------------------------------------------------------------------
@@ -275,38 +288,35 @@ begin
 end $$
 delimiter ;
 
-# TRIGGERS
 /* 
 -----------------------------------------------------------------------------------------------------------------------
-INSERT USER'S QUIZ SCORE AFTER USER SUBMITS QUIZ
+DELETE ENTIRE REVISION SCHEDULE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-create trigger after_insert_UserQuizAnswers after insert on UserQuizAnswers for each row
-begin 
-    declare total_num_of_questions_in_quiz int;
-    declare num_rows_added int;
-    declare num_of_correct_ans int;
-    
-	set total_num_of_questions_in_quiz = (select count(*) from question where TestID = new.TestID);
-    set num_rows_added = (select count(*) from UserQuizAnswers where TestID = new.TestID and AttemptNo = new.AttemptNo);
-    
-    if total_num_of_questions_in_quiz = num_rows_added then
-		set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = new.TestID) and (ua.AttemptNo = new.AttemptNo) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
-        
-        insert into UserQuizScores (TestID, NumOfCorrectAnswers, AttemptNo) values (new.TestID, num_of_correct_ans, new.AttemptNo);
-    end if;
+create procedure deleteEntireSchedule(in input_schedule_id int)
+begin
+	update Test set ScheduleID = null where ScheduleID = input_schedule_id;
+	delete from Schedule where ScheduleID = input_schedule_id;
 end $$
 delimiter ;
 
 /* 
 -----------------------------------------------------------------------------------------------------------------------
-MAKE SCHEDULE ID IN TEST TABLE BECOME NIL WHEN SCHEDULE IS DELETED 
+DELETE ONE REVISION DATE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-create trigger before_delete_schedule before delete on Schedule for each row
-begin 
-	update Test set ScheduleID = null where ScheduleID = old.ScheduleID;
+create procedure deleteOneRevisionDate(in input_schedule_id int, in input_date date)
+begin
+	declare number_of_existing_dates int;
+    
+    set number_of_existing_dates = (select count(*) from revisionDates where ScheduleID = input_schedule_id);
+    
+    if number_of_existing_dates = 1 then
+		call deleteEntireSchedule(input_schedule_id); # PROCEDURE DEFINED ABOVE
+    else 
+		delete from RevisionDates where ScheduleID = input_schedule_id and RevisionDate = input_date;
+    end if;
 end $$
 delimiter ;

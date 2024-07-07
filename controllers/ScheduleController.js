@@ -41,7 +41,7 @@ async function DeleteExistingExam(req, res) {
     const input_ScheduleId = req.body.scheduleID
 
     try{
-        const sqlQuery = 'delete from Schedule where ScheduleID = ?;'
+        const sqlQuery = 'call deleteEntireSchedule(?)';
         const returnedData = await query(sqlQuery, [input_ScheduleId]);
 
         res.status(200).json('ok deleted entire exam from db');
@@ -58,7 +58,7 @@ async function DeleteSpecificRevisionDate (req, res) {
     const input_RevisionDate = req.body.revisionDate
 
     try{
-        const sqlQuery = 'delete from RevisionDates where ScheduleID = ? and RevisionDate = ?;'
+        const sqlQuery = 'call deleteOneRevisionDate(?, ?)'
         const returnedData = await query(sqlQuery, [input_ScheduleId, input_RevisionDate]);
         res.status(200).json('ok deleted specific date from db');
     }
