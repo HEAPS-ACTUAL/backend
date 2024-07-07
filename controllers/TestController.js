@@ -21,7 +21,7 @@ SQL DATABASE RELATED FUNCTIONS
 async function createNewTest(email, testName, testType) {
     try {
         const testID = await determineTheNextTestID(); // FUNCTION DEFINED BELOW
-        const sqlQuery = 'Insert into Test (email, testID, testName, testType) values (?, ?, ?, ?)';
+        const sqlQuery = 'Insert into Test (Email, TestID, TestName, TestType) values (?, ?, ?, ?)';
         const insertOk = await query(sqlQuery, [email, testID, testName, testType]);
 
         if (insertOk) {
@@ -38,7 +38,7 @@ async function createNewTest(email, testName, testType) {
 
 async function determineTheNextTestID() {
     try {
-        const sqlQuery = 'Select testID from Test order by testID desc limit 1';
+        const sqlQuery = 'Select TestID from Test order by TestID desc limit 1';
         const returnedData = await query(sqlQuery);
         
         if (returnedData.length == 0) {
@@ -286,60 +286,3 @@ async function generateAndStoreTest(req, res) {
 }
 
 module.exports = { generateAndStoreTest, deleteTest, getTestInfo, getAllQuestionsAndOptionsFromATest };
-
-/*
-------------------------------------------------------------------------------------------------------------------------------------
-TO TEST THE ABOVE FUNCTIONS
-------------------------------------------------------------------------------------------------------------------------------------
-*/
-
-// To test the insert functions
-// formatAndStoreTest('jerricknsc@gmail.com', 'jerrick flashcard', 'F', 'Hard', CHATGPT_response_quiz);
-
-
-/* Expected Output for testFormatTest():
-questionArray =
-[ 
-    [testID, questionNo, questionText, elaboration],
-    [5, 1, 'What is the purpose of the backend in this project?', 'The backend is responsible for providing JSON data to the frontend.'],
-    [5, 2, 'Which command is used to install express framework in the backend?', "The command 'npm i express' is used to install the express framework."] ...
-]
-optionArray =
-[
-    [ testID, questionNo, optionLetter, optionText, isCorrect ],
-    [ 5, 6, 'B', 'Starts the frontend server', false ],
-    [ 5, 6, 'C', 'Starts the backend server using nodemon', true ],
-    [ 5, 6, 'D', 'Defines the MongoDB path', false ]
-  ],
-    [ 5, 6, 'A', 'Installs node modules', false ],
-    [ 5, 6, 'B', 'Starts the frontend server', false ],
-    [ 5, 6, 'C', 'Starts the backend server using nodemon', true ],
-    [ 5, 6, 'D', 'Defines the MongoDB path', false ]
-  ],
-  [
-    [ 5, 7, 'A', 'To define the default endpoint', false ],
-    [ 5, 7, 'B', 'To return a status code in the response', true ],
-    [ 5, 7, 'C', 'To create a new task', false ],
-    [ 5, 7, 'D', 'To connect to the database', false ]
-  ]
-
-*/
-
-// async function testQueryChatgptForTest(){
-//     const testType = 'F';
-//     const difficulty = "hard";
-//     const result = await queryChatgptForTest(extractedText, testType, difficulty)
-    
-// }
-// testQueryChatgptForTest()
-
-// createNewTest('alice@gmail.com', 'Test1', "F");
-// // countTotalNumberOfFlashcardQuestions('isaiah@gmail.com');
-
-// // To test formatAndStoreQuiz function
-// async function test() {
-//     const result = await formatAndStoreFlashcard('isaiah@gmail.com', 'jp', CHATGPT_response_flashcard);
-//     console.log(result);
-// }
-
-// test();

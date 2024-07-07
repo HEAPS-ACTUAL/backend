@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
-    const sqlQuery = 'Select * from user';
+    const sqlQuery = 'Select * from User';
     const allUsers = await query(sqlQuery);
 
     return res.status(200).json(allUsers);
@@ -22,7 +22,7 @@ differently depending on who is calling it (see if statement below).
 
 async function getUserByEmail(req, res = null){
     const inputEmail = req.body.email;
-    const sqlQuery = 'Select * from user where email = ?';
+    const sqlQuery = 'Select * from User where Email = ?';
 
     userFound = await query(sqlQuery, [inputEmail]);
     userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
@@ -78,7 +78,7 @@ async function createNewUser(req, res){
     const hashedPassword = await bcrypt.hash(inputPassword, salt);
 
     try{
-        const sqlQuery = "Insert into user (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
         const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
         
         if(insertOk){

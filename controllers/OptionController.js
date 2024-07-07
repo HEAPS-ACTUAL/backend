@@ -2,7 +2,7 @@ const query = require('../utils/PromisifyQuery');
 
 async function addAllOptionsForAQuiz(arrayOfValues){
     try{
-        const sqlQuery = 'Insert into `option` (TestID, QuestionNo, OptionLetter, OptionText, IsCorrect) values ?';
+        const sqlQuery = 'Insert into `Option` (TestID, QuestionNo, OptionLetter, OptionText, IsCorrect) values ?';
         const insertOk = await query(sqlQuery, [arrayOfValues]);
         
         if(insertOk.affectedRows === arrayOfValues.length){
