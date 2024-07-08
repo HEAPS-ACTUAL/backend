@@ -23,9 +23,9 @@ router.post("/DeleteExistingExam", DeleteExistingExam);
 router.post("/DeleteSpecificRevisionDate", DeleteSpecificRevisionDate);
 
 // FETCH FLASHCARDS BY SCHEDULE ID AND DATE
-router.get(
-  "/fetchTestsByScheduleIdAndDate/:scheduleId/:date",
-  fetchTestsByScheduleIdAndDate
-);
+router.get("/fetchTestsByScheduleIdAndDate/:scheduleId/:date", (req, res) => {
+  console.log("Route hit: fetchTestsByScheduleIdAndDate");
+  fetchTestsByScheduleIdAndDate(req, res);
+});
 
 module.exports = router;
