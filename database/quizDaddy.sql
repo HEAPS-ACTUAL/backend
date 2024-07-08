@@ -181,7 +181,7 @@ create procedure storeUserQuizScore(in input_test_id int, in input_attempt_no in
 begin
     declare num_of_correct_ans int;
         
-	set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `option` o where (ua.TestID = input_test_id) and (ua.AttemptNo = input_attempt_no) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
+	set num_of_correct_ans = (select count(*) from UserQuizAnswers ua, `Option` o where (ua.TestID = input_test_id) and (ua.AttemptNo = input_attempt_no) and (ua.TestID = o.TestID) and (ua.QuestionNo = o.QuestionNo) and (ua.UserChoice = o.OptionLetter) and (o.IsCorrect = true));
         
 	insert into UserQuizScores (TestID, NumOfCorrectAnswers, AttemptNo) values (input_test_id, num_of_correct_ans, input_attempt_no);
 end $$

@@ -1,7 +1,7 @@
 // MODULES
 const query = require('../utils/PromisifyQuery');
 const openAI = require('openai');
-require('dotenv').config({ path: '../.env' }); // this makes .env undetected for some reason
+require('dotenv').config({ path: '../.env' });
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
@@ -40,12 +40,12 @@ async function determineTheNextTestID() {
     try {
         const sqlQuery = 'Select TestID from Test order by TestID desc limit 1';
         const returnedData = await query(sqlQuery);
-        
+
         if (returnedData.length == 0) {
             return 1; // IF NO TEST HAS BEEN CREATED BEFORE, USE NUMBER 1 AS THE NEXT Test ID
         }
 
-        const previousTestID = returnedData[0].testID
+        const previousTestID = returnedData[0].TestID
         const nextTestID = previousTestID + 1;
         return nextTestID;
     }
