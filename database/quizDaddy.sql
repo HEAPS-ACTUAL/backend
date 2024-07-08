@@ -320,3 +320,30 @@ begin
     end if;
 end $$
 delimiter ;
+
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+GET FLASHCARD DETAILS BY WHEN YOU CLICK ON EVENT ON A SPECIFIC DATE
+-----------------------------------------------------------------------------------------------------------------------
+*/
+drop procedure if exists getTestsByScheduleIdAndDate;
+DELIMITER $$
+CREATE PROCEDURE getTestsByScheduleIdAndDate(
+    IN input_schedule_id INT,
+    IN input_date DATE
+)
+BEGIN
+    SELECT 
+        t.TestID AS id,
+        t.TestName AS name,
+        t.TestType,
+        t.DateTimeCreated
+    FROM 
+        Test t
+        JOIN Schedule s ON t.ScheduleID = s.ScheduleID
+        JOIN RevisionDates rd ON s.ScheduleID = rd.ScheduleID
+    WHERE 
+        rd.RevisionDate = input_date 
+        AND s.ScheduleID = input_schedule_id;
+END $$
+DELIMITER ;
