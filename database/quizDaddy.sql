@@ -326,7 +326,6 @@ delimiter ;
 GET FLASHCARD DETAILS BY WHEN YOU CLICK ON EVENT ON A SPECIFIC DATE
 -----------------------------------------------------------------------------------------------------------------------
 */
-drop procedure if exists getTestsByScheduleIdAndDate;
 DELIMITER $$
 CREATE PROCEDURE getTestsByScheduleIdAndDate(
     IN input_schedule_id INT,
