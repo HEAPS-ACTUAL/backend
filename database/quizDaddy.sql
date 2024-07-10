@@ -4,10 +4,10 @@ USE heap;
 
 -- Creating the User table
 CREATE TABLE User (
-    Email VARCHAR(100) PRIMARY KEY,
-    HashedPassword VARCHAR(100) NOT NULL,
-    FirstName VARCHAR(100),
-    LastName VARCHAR(100),
+    Email VARCHAR(255) PRIMARY KEY,
+    HashedPassword VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(255),
+    LastName VARCHAR(255),
     Gender CHAR(1),
     DateTimeJoined DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -17,8 +17,8 @@ CREATE TABLE Schedule (
     ScheduleID INT PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE,
-    ExamName VARCHAR(100),
-    ExamColour VARCHAR(50)
+    ExamName VARCHAR(255),
+    ExamColour VARCHAR(255)
 );
 
 -- Creating the RevisionDates table
@@ -31,9 +31,9 @@ CREATE TABLE RevisionDates (
 
 -- Creating the Test table
 CREATE TABLE Test (
-    Email VARCHAR(100) NOT NULL,
+    Email VARCHAR(255) NOT NULL,
     TestID INT PRIMARY KEY,
-    TestName VARCHAR(100),
+    TestName VARCHAR(255),
     DateTimeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
     TestType CHAR(1),
     ScheduleID INT,
@@ -44,7 +44,7 @@ CREATE TABLE Test (
 -- Creating the Quiz table
 CREATE TABLE Quiz (
     TestID INT PRIMARY KEY,
-    Difficulty VARCHAR(20),
+    Difficulty VARCHAR(255),
     IsDone BOOLEAN DEFAULT false,
     FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
@@ -53,8 +53,8 @@ CREATE TABLE Quiz (
 CREATE TABLE Question (
     TestID INT NOT NULL,
     QuestionNo INT NOT NULL,
-    QuestionText VARCHAR(255) NOT NULL,
-    Elaboration VARCHAR(255),
+    QuestionText TEXT NOT NULL,
+    Elaboration TEXT,
     PRIMARY KEY (TestID, QuestionNo),
     FOREIGN KEY (TestID) REFERENCES Test(TestID) ON DELETE CASCADE
 );
@@ -97,7 +97,7 @@ TO DISPLAY THE TEST CARDS IN THE HOME PAGE
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-create procedure getTestInfo(in input_email varchar(100), in input_test_type char(1), in input_test_status boolean)
+create procedure getTestInfo(in input_email varchar(255), in input_test_type char(1), in input_test_status boolean)
 begin
 	if (input_test_type = 'Q') then
 		if (input_test_status = true) then
@@ -238,7 +238,7 @@ end $$
 delimiter ;
 
 delimiter $$
-create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(100), in input_exam_colour varchar(50), in array_of_test_IDs json, in array_of_dates json)
+create procedure addRevisionSchedule(in input_start_date date, in input_end_date date, in input_exam_name varchar(255), in input_exam_colour varchar(255), in array_of_test_IDs json, in array_of_dates json)
 begin
 	declare next_schedule_id int;
     declare counter int;
@@ -277,7 +277,7 @@ RETRIEVE REVISION DATES TO SHOW IN THE CALENDAR
 -----------------------------------------------------------------------------------------------------------------------
 */
 delimiter $$
-create procedure retrieveAllRevisionDatesByUser(in input_email varchar(100))
+create procedure retrieveAllRevisionDatesByUser(in input_email varchar(255))
 begin
 	select * from
 		(select ScheduleID, json_arrayagg(json_object("TestID", TestID, "TestName", TestName)) as Flashcards from Test where Email = input_email and not isnull(ScheduleID) group by ScheduleID
