@@ -15,4 +15,19 @@ async function getAllFlashcardsWithoutSchedule(req, res){
     }
 }
 
-module.exports = {getAllFlashcardsWithoutSchedule};
+async function getFlashcardsByScheduleID(req, res) {
+    const scheduleID = req.body.scheduleID;
+
+    try {
+        const sqlQuery = "Select TestID, TestName from Test where ScheduleID = ?";
+        const returnedData = await query(sqlQuery, [scheduleID]);
+
+        res.status(200).json(returnedData);
+    } 
+    catch (error) {
+        console.error("Failed to fetch tests:", error);
+        res.status(404).json({ message: error});
+    }
+}
+
+module.exports = {getAllFlashcardsWithoutSchedule, getFlashcardsByScheduleID};
