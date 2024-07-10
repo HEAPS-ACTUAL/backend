@@ -94,7 +94,21 @@ async function reviewQuiz(req, res){
     }
 }
 
+async function getLatestAttempt(req, res){
+    const testID = req.body.testID;
+
+    try{
+        const sqlQuery = 'Select max(AttemptNo) as LatestAttempt from UserQuizScores where TestID = ?';
+        const returnedData = await query(sqlQuery, [testID]);
+        res.status(200).json(returnedData[0]);
+    }
+    catch(error){
+        console.error(error);
+        res.status(404).json({message: error});
+    }
+}
+
 // reviewQuiz(req = {body: {testID: 8, attemptNo: 1}}, res = null);
+// getLatestAttempt(req = {body: {testID: 4}}, res = null)
 
-
-module.exports = { createNewQuiz, markQuizAsDone, storeUserQuizAnswers, reviewQuiz };
+module.exports = { createNewQuiz, markQuizAsDone, storeUserQuizAnswers, reviewQuiz, getLatestAttempt };
