@@ -1,6 +1,9 @@
 const query = require('../utils/PromisifyQuery');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
+// FUNCTIONS AND VARIABLES
+const { sendVerificationEmail } = require("./EmailController");
+
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
     const sqlQuery = 'Select * from User';
@@ -82,6 +85,7 @@ async function createNewUser(req, res){
         const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
         
         if(insertOk){
+            sendVerificationEmail(inputEmail);
             return res.status(200).json({message: "Account created! Click ok to sign in"});
         }
     }

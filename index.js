@@ -38,6 +38,8 @@ app.use("/flashcard", require("./routers/FlashcardRouter"));
 // ROUTES FOR SCHEDULE
 app.use("/schedule", require("./routers/ScheduleRouter"));
 
+// ROUTES FOR EMAIL
+app.use("/email", require("./routers/EmailRouter"));
 
 // Start server
 app.listen(PORT, () => {
