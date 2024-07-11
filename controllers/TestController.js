@@ -9,7 +9,6 @@ const { addAllQuestionsForATest } = require('./QuestionController');
 const { addAllOptionsForAQuiz } = require('./OptionController');
 const { createNewQuiz } = require('./QuizController');
 
-const extractedText = require("../test_ISAIAH/testpdf");
 const CHATGPT_response_flashcard = require("../examples/chatgptResponseFlashcard"); 
 const CHATGPT_response_quiz = require('../examples/chatgptResponseQuiz');
 
