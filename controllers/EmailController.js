@@ -23,7 +23,7 @@ transporter.verify(function (error, success) {
 if (error) {
     console.log(error);
 } else {
-    console.log("Server is ready to take our emails");
+    console.log("Server is ready to send out emails");
     // sendVerificationEmail();
 }
 });
