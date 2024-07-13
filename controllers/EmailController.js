@@ -1,4 +1,3 @@
-const query = require('../utils/PromisifyQuery');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
