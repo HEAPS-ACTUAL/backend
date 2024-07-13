@@ -1,8 +1,12 @@
 const query = require('../utils/PromisifyQuery');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
+const jwt = require('jsonwebtoken'); // THIS PACKAGE IS FOR THE TOKEN
+require('dotenv').config();
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+
 
 // FUNCTIONS AND VARIABLES
-const { sendVerificationEmail } = require("./EmailController");
+const { sendVerificationEmail, generateVerificationToken } = require("./EmailController");
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
@@ -76,16 +80,17 @@ async function createNewUser(req, res){
     const inputFirstName = req.body.firstName;
     const inputLastName = req.body.lastName;
     const inputGender = req.body.gender;
+    const isVerified = false;
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(inputPassword, salt);
-
+    const pass_salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
+    const verificationToken = await generateVerificationToken(inputEmail);
     try{
-        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender, IsVerified, VerificationToken ) values (?, ?, ?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender, isVerified, verificationToken]);
         
         if(insertOk){
-            sendVerificationEmail(inputEmail);
+            sendVerificationEmail(inputEmail, verificationToken);
             return res.status(200).json({message: "Account created! Click ok to sign in"});
         }
     }
@@ -94,5 +99,73 @@ async function createNewUser(req, res){
     }
 }
 
+
+async function verifyToken(req, res){
+    const token = req.body.token
+    try{
+        const decoded = jwt.verify(token, JWT_SECRET_KEY);
+        const email = decoded.email;
+
+        const userFound = await getUserByEmailOnly(email);
+
+        if (userFound) {
+            // Update the user's email verification status in the database
+            await updateUserVerificationStatus(email);
+
+            return res.status(200).json({message: "Verification Successful!"});
+        } else {
+            return res.status(401).json({message: "User not found. Verification failed!"});
+        }
+    } catch(error){
+        console.error('Error verifying token:', error);
+        return res.status(400).json({ success: false, message: 'Invalid token' });
+    }
+}
+
+
+async function getUserByEmailOnly(email, res=null){ // NEED TO FIX THIS FUNCTION
+    const inputEmail = email;
+    const sqlQuery = 'Select * from User where Email = ?';
+
+    userFound = await query(sqlQuery, [inputEmail]);
+    userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
+    
+    /*
+    If the function is called without the "res" parameter, return a user object.
+    Else, return a response to the frontend.
+    */
+    
+    if(res == null){
+        return userFound; 
+        
+    }
+    else{
+        if(userFound){
+            return res.status(200).json(userFound);
+        }
+        else{
+            return res.status(401).json(userFound);
+        }
+    }
+}
+
+async function updateUserVerificationStatus(inputEmail){
+    try{
+        const sqlQuery = "Update User set isVerified = true, VerificationToken = null where email = ?";
+        const updateOk = await query(sqlQuery, [inputEmail]);
+        console.log("Verification Status Updated Successfully!");
+    }
+    catch(error){
+        console.error("Verification Update was Unsuccessful!");
+    }
+}
+// async function generateTokenExpiry(){
+//     const duration = 3600000 // 1-hour in miliseconds
+//     const localDateString = new Date().toLocaleDateString("en-GB").split("/");
+//     const localTimeString = new Date(Date.now() + duration).toLocaleTimeString("en-GB");
+//     const tokenExpiry = localDateString[2] + "-" + localDateString[1] +"-"+ localDateString[0] + ", " + localTimeString;
+//     return tokenExpiry;
+// }
+
 // EXPORT ALL THE FUNCTIONS 
-module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser};
+module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser, verifyToken};

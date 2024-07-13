@@ -1,9 +1,14 @@
 const query = require('../utils/PromisifyQuery');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const HOST = "localhost";
+const PORT = 3000;
+const app_email = process.env.app_email;
+const app_email_password = process.env.app_email_password;
+const JWT_SECRET_KEY= process.env.JWT_SECRET_KEY;
 
-app_email = process.env.app_email;
-app_email_password = process.env.app_email_password;
+// FUNCTIONS AND VARIABLES
 
 /*
 creates the SMTP service that will be used to send emails
@@ -28,14 +33,23 @@ if (error) {
 }
 });
 
-async function sendVerificationEmail(inputEmail){
+
+
+const generateVerificationToken = (email) => {
+    const token = jwt.sign({ email }, JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
+    return token;
+};
+
+
+async function sendVerificationEmail(inputEmail, token){
     try{
+        const verificationLink = `http://${HOST}:${PORT}/verify-email?token=${token}`
         const info = await transporter.sendMail({
-            from: '"quizDaddy" <${app_email}>', // sender address
+            from: `"quizDaddy" <${app_email}>`, // sender address
             to: inputEmail, // list of receivers
             subject: "Email Verification", // Subject line
-            text: "Please verify your email using this link: ", // plain text body
-            html: "<b>Please verify your email using this link: </b>", // html body
+            text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
+            html: `<a href="${verificationLink}"><H2>Click on this</H2></a>`, // html body
           });
         
           console.log("Verification Email Sent Successfully: %s", info.messageId);
@@ -49,4 +63,4 @@ async function sendVerificationEmail(inputEmail){
     }
 
 
-module.exports = { sendVerificationEmail };
+module.exports = { sendVerificationEmail, generateVerificationToken};
