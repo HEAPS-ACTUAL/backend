@@ -20,16 +20,17 @@ const transporter = nodemailer.createTransport({
         user: app_email,
         pass: app_email_password,
     },
-  });
+});
 
 //  Tests whether quizDaddy email is connected
-transporter.verify(function (error, success) {
-if (error) {
-    console.log(error);
-} else {
-    console.log("Server is ready to send out emails");
-    // sendVerificationEmail();
-}
+transporter.verify((error, success) => {
+    if (error) {
+        console.log(error);
+    } 
+    else {
+        console.log("Server is ready to send out emails");
+        // sendVerificationEmail();
+    }
 });
 
 
@@ -53,13 +54,13 @@ async function sendVerificationEmail(inputEmail, token){
         
           console.log("Verification Email Sent Successfully: %s", info.messageId);
           // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-        }
+    }
     catch(error){
         const msg = `Error sending verification email`;
         console.error(`${msg}: ${error.message}`);
         res.status(404).json({ message: msg });
     }
-    }
+}
 
 
 module.exports = { sendVerificationEmail, generateVerificationToken};
