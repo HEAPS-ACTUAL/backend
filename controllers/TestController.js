@@ -1,7 +1,8 @@
 // MODULES
 const query = require('../utils/PromisifyQuery');
 const openAI = require('openai');
-require('dotenv').config({ path: '../.env' });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
