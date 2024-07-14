@@ -63,6 +63,7 @@ async function deleteTest(req, res) {
         
         await query(sqlQuery, [testID]);
         
+        console.log(`${testName} has been deleted!`);
         res.status(200).json({ message: `${testName} has been deleted!` });
     }
     catch (error) {
