@@ -1,135 +1,94 @@
-import axiosInstance from "../utility/axiosInstance";
+const query = require('../utils/PromisifyQuery');
+const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
-async function authenticate(email, password) {
-  try {
-    const response = await axiosInstance.post("/user/authenticate/", {
-      email,
-      password,
-    });
-    return response.data.message;
-  } catch (error) {
-    if (error.response) {
-      return error.response.data.message;
+// FUNCTIONS RELATED TO USER
+async function getAllUsers(req, res){
+    const sqlQuery = 'Select * from User';
+    const allUsers = await query(sqlQuery);
+
+    return res.status(200).json(allUsers);
+}
+
+
+/*
+WHY IS "RES" SET TO NULL BY DEFAULT FOR THE getUserByEmail FUNCTION?
+
+Because both the frontend and the function authenticate (as seen below) will call getUserByEmail.
+When it is called directly by the frontend, the "res" parameter will be provided automatically
+by router.get() (i think... HAHAHA), but when it is called by authenticate, the "res" parameter 
+will not be provided and "res" will take on its default null value. We want the function to perform
+differently depending on who is calling it (see if statement below).
+*/
+
+async function getUserByEmail(req, res = null){
+    const inputEmail = req.body.email;
+    const sqlQuery = 'Select * from User where Email = ?';
+
+    userFound = await query(sqlQuery, [inputEmail]);
+    userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
+    
+    /*
+    If the function is called without the "res" parameter, return a user object.
+    Else, return a response to the frontend.
+    */
+    
+    if(res == null){
+        return userFound; 
+        
     }
-  }
-}
-
-async function createNewUser(email, password, firstName, lastName, gender) {
-  try {
-    const response = await axiosInstance.post("/user/register/", {
-      email,
-      password,
-      firstName,
-      lastName,
-      gender,
-    });
-    return response.data.message;
-  } catch (error) {
-    if (error.response) {
-      return error.response.data.message;
+    else{
+        if(userFound){
+            return res.status(200).json(userFound);
+        }
+        else{
+            return res.status(401).json(userFound);
+        }
     }
-  }
 }
 
-async function getUserByEmail(email) {
-  try {
-    const response = await axiosInstance.post("/user/profile/", { email });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      return error.message;
+async function authenticate(req, res){
+    const userFound = await getUserByEmail(req);
+    
+    if(userFound == undefined){
+        return res.status(401).json({message: "Email does not exist. Please create an account."});
     }
-  }
-}
+    else{
+        const hashedPassword = userFound.HashedPassword;
+        const inputPassword = req.body.password;
 
-async function getUserFirstName(email) {
-  const userFound = await getUserByEmail(email);
-  return userFound.FirstName;
-}
-
-async function getSalutation(email) {
-  const userFound = await getUserByEmail(email);
-  const gender = userFound.Gender;
-
-  if (gender === "F") {
-    return "Ms";
-  } else {
-    return "Mr";
-  }
-}
-async function updateUser(req, res) {
-  const { email, firstName, lastName } = req.body;
-
-  // Log the entire request body for debugging purposes
-  console.log("Request body:", req.body);
-
-  // Log the received parameters for debugging purposes
-  console.log("Received parameters:", { email, firstName, lastName });
-
-  if (!email || !firstName || !lastName) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
-
-  const sqlQuery =
-    "UPDATE User SET firstName = ?, lastName = ? WHERE email = ?";
-
-  try {
-    const updateResult = await query(sqlQuery, [firstName, lastName, email]);
-    console.log("SQL Query Executed:", sqlQuery);
-    console.log("Update Result:", updateResult);
-
-    if (updateResult.affectedRows) {
-      return res.status(200).json({ message: "User updated successfully." });
-    } else {
-      return res.status(404).json({ message: "User not found." });
+        const comparePassword = await bcrypt.compare(inputPassword, hashedPassword);
+        
+        if(comparePassword == true){
+            return res.status(200).json({message: "Authentication Successful!"});
+        }
+        else{
+            return res.status(401).json({message: "Wrong password. Login failed!"});
+        }
     }
-  } catch (error) {
-    console.error("Failed to update user:", error);
-    return res.status(500).json({ message: "Failed to update user." });
-  }
 }
 
-async function deleteUser(req, res) {
-  const { email } = req.body;
+async function createNewUser(req, res){
+    const inputEmail = req.body.email;
+    const inputPassword = req.body.password;
+    const inputFirstName = req.body.firstName;
+    const inputLastName = req.body.lastName;
+    const inputGender = req.body.gender;
 
-  const sqlQuery = "DELETE FROM User WHERE email = ?";
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(inputPassword, salt);
 
-  try {
-    const deleteResult = await query(sqlQuery, [email]);
-    console.log("SQL Query Executed:", sqlQuery);
-    console.log("Delete Result:", deleteResult);
-
-    if (deleteResult.affectedRows) {
-      return res.status(200).json({ message: "User deleted successfully." });
-    } else {
-      return res.status(404).json({ message: "User not found." });
+    try{
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
+        
+        if(insertOk){
+            return res.status(200).json({message: "Account created! Click ok to sign in"});
+        }
     }
-  } catch (error) {
-    console.error("Failed to delete user:", error);
-    return res.status(500).json({ message: "Failed to delete user." });
-  }
-}
-
-async function verifyToken(token) {
-  try {
-    const response = await axiosInstance.post("/email/verify-email/", {
-      token,
-    });
-    return response.data.message;
-  } catch (error) {
-    if (error.response) {
-      return error.response.data.message;
+    catch(error){
+        return res.status(401).json({message: "Email already exists!"});
     }
-  }
 }
 
-export {
-  authenticate,
-  createNewUser,
-  getUserByEmail,
-  getUserFirstName,
-  getSalutation,
-  verifyToken,
-  updateUser,
-  deleteUser,
-};
+// EXPORT ALL THE FUNCTIONS 
+module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser};
