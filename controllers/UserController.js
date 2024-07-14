@@ -106,15 +106,13 @@ async function verifyToken(req, res){
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const email = decoded.email;
 
-        const userFound = await getUserByEmailOnly(email);
+        const updateOk = await updateUserVerificationStatus(email); // Update the user's email verification status in the database
 
-        if (userFound) {
-            // Update the user's email verification status in the database
-            await updateUserVerificationStatus(email);
-
+        if (updateOk){
             return res.status(200).json({message: "Verification Successful!"});
-        } else {
-            return res.status(401).json({message: "User not found. Verification failed!"});
+        }
+        else {
+            return res.status(401).json({message: "Verification Failed!"});
         }
     } catch(error){
         console.error('Error verifying token:', error);
@@ -122,41 +120,14 @@ async function verifyToken(req, res){
     }
 }
 
-
-async function getUserByEmailOnly(email, res=null){ // NEED TO FIX THIS FUNCTION
-    const inputEmail = email;
-    const sqlQuery = 'Select * from User where Email = ?';
-
-    userFound = await query(sqlQuery, [inputEmail]);
-    userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
-    
-    /*
-    If the function is called without the "res" parameter, return a user object.
-    Else, return a response to the frontend.
-    */
-    
-    if(res == null){
-        return userFound; 
-        
-    }
-    else{
-        if(userFound){
-            return res.status(200).json(userFound);
-        }
-        else{
-            return res.status(401).json(userFound);
-        }
-    }
-}
-
 async function updateUserVerificationStatus(inputEmail){
     try{
         const sqlQuery = "Update User set isVerified = true, VerificationToken = null where email = ?";
         const updateOk = await query(sqlQuery, [inputEmail]);
-        console.log("Verification Status Updated Successfully!");
+        return updateOk;
     }
     catch(error){
-        console.error("Verification Update was Unsuccessful!");
+        console.error("Update was Unsuccessful!");
     }
 }
 // async function generateTokenExpiry(){

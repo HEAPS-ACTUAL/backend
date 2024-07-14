@@ -41,7 +41,11 @@ const generateVerificationToken = (email) => {
 };
 
 
-async function sendVerificationEmail(inputEmail, token){
+async function sendVerificationEmail(inputEmail, token=null){
+    console.log(inputEmail);
+    if (token == null){
+        let token = generateVerificationToken(inputEmail);
+    }
     try{
         const verificationLink = `http://${HOST}:${PORT}/verify-email?token=${token}`
         const info = await transporter.sendMail({
