@@ -284,7 +284,7 @@ begin
 	select * from
 		(select ScheduleID, json_arrayagg(json_object("TestID", TestID, "TestName", TestName)) as Flashcards from Test where Email = input_email and not isnull(ScheduleID) group by ScheduleID
 		) t1,
-		(select s.ScheduleID, s.ExamName, s.ExamColour, json_arrayagg(r.RevisionDate) as RevisionDates from Schedule s, RevisionDates r where (s.ScheduleID = r.ScheduleID) group by ScheduleID
+		(select s.ScheduleID, convert(s.EndDate, char) as EndDate, s.ExamName, s.ExamColour, json_arrayagg(r.RevisionDate) as RevisionDates from Schedule s, RevisionDates r where (s.ScheduleID = r.ScheduleID) group by ScheduleID
 		) t2
 	where (t1.ScheduleID = t2.ScheduleID);
 end $$
