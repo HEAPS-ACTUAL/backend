@@ -1,6 +1,10 @@
 const query = require('../utils/PromisifyQuery');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
+
+// FUNCTIONS AND VARIABLES
+const { sendVerificationEmail } = require("./EmailController");
+
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res) {
     const sqlQuery = 'Select * from User';
@@ -73,16 +77,17 @@ async function createNewUser(req, res) {
     const inputFirstName = req.body.firstName;
     const inputLastName = req.body.lastName;
     const inputGender = req.body.gender;
+    const isVerified = false;
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(inputPassword, salt);
-
-    try {
-        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
-
-        if (insertOk) {
-            return res.status(200).json({ message: "Account created! Click ok to sign in" });
+    const pass_salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
+    try{
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender, IsVerified ) values (?, ?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender, isVerified]);
+        
+        if(insertOk){
+            sendVerificationEmail(req, res);
+            return res.status(200).json({message: "Account created! Click ok to sign in"});
         }
     }
     catch (error) {
@@ -90,5 +95,25 @@ async function createNewUser(req, res) {
     }
 }
 
+async function checkUserIsVerified(req, res){
+    const inputEmail = req.body.email;
+    const sqlQuery = 'Select IsVerified from User where Email = ?';
+
+    userFound = await query(sqlQuery, [inputEmail]);
+
+    if(userFound){
+        return res.status(200).json(userFound[0]["IsVerified"]);
+    }
+    else{
+        return res.status(401).json(userFound[0]["IsVerified"]);
+    }
+}
+
 // EXPORT ALL THE FUNCTIONS 
-module.exports = { getAllUsers, getUserByEmail, authenticate, createNewUser };
+module.exports = {
+    getAllUsers, 
+    getUserByEmail, 
+    authenticate, 
+    createNewUser,
+    checkUserIsVerified };
+
