@@ -42,7 +42,6 @@ async function getUserByEmail(email) {
   }
 }
 
-
 async function getUserFirstName(email) {
   const userFound = await getUserByEmail(email);
   return userFound.FirstName;
@@ -58,13 +57,6 @@ async function getSalutation(email) {
     return "Mr";
   }
 }
-
-
-async function getDateJoined(email) {
-    const userFound = await getUserByEmail(email);
-    return userFound.DateTimeJoined;
-  }
-
 async function updateUser(req, res) {
   const { email, firstName, lastName } = req.body;
 
@@ -140,5 +132,4 @@ export {
   verifyToken,
   updateUser,
   deleteUser,
-  getDateJoined
 };
