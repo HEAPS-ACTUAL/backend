@@ -1,12 +1,9 @@
 const query = require('../utils/PromisifyQuery');
 const bcrypt = require('bcrypt'); // THIS PACKAGE IS FOR HASHING THE PASSWORD
-const jwt = require('jsonwebtoken'); // THIS PACKAGE IS FOR THE TOKEN
-require('dotenv').config();
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 
 // FUNCTIONS AND VARIABLES
-const { sendVerificationEmail, generateVerificationToken } = require("./EmailController");
+const { sendVerificationEmail } = require("./EmailController");
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res){
@@ -84,13 +81,12 @@ async function createNewUser(req, res){
 
     const pass_salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
-    const verificationToken = await generateVerificationToken(inputEmail);
     try{
-        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender, IsVerified, VerificationToken ) values (?, ?, ?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender, isVerified, verificationToken]);
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender, IsVerified ) values (?, ?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender, isVerified]);
         
         if(insertOk){
-            sendVerificationEmail(inputEmail, verificationToken);
+            sendVerificationEmail(req, res);
             return res.status(200).json({message: "Account created! Click ok to sign in"});
         }
     }
@@ -99,44 +95,24 @@ async function createNewUser(req, res){
     }
 }
 
+async function checkUserIsVerified(req, res){
+    const inputEmail = req.body.email;
+    const sqlQuery = 'Select IsVerified from User where Email = ?';
 
-async function verifyToken(req, res){
-    const token = req.body.token
-    try{
-        const decoded = jwt.verify(token, JWT_SECRET_KEY);
-        const email = decoded.email;
+    userFound = await query(sqlQuery, [inputEmail]);
 
-        const updateOk = await updateUserVerificationStatus(email); // Update the user's email verification status in the database
-
-        if (updateOk){
-            return res.status(200).json({message: "Verification Successful!"});
-        }
-        else {
-            return res.status(401).json({message: "Verification Failed!"});
-        }
-    } catch(error){
-        console.error('Error verifying token:', error);
-        return res.status(400).json({ success: false, message: 'Invalid token' });
+    if(userFound){
+        return res.status(200).json(userFound[0]["IsVerified"]);
+    }
+    else{
+        return res.status(401).json(userFound[0]["IsVerified"]);
     }
 }
-
-async function updateUserVerificationStatus(inputEmail){
-    try{
-        const sqlQuery = "Update User set isVerified = true, VerificationToken = null where email = ?";
-        const updateOk = await query(sqlQuery, [inputEmail]);
-        return updateOk;
-    }
-    catch(error){
-        console.error("Update was Unsuccessful!");
-    }
-}
-// async function generateTokenExpiry(){
-//     const duration = 3600000 // 1-hour in miliseconds
-//     const localDateString = new Date().toLocaleDateString("en-GB").split("/");
-//     const localTimeString = new Date(Date.now() + duration).toLocaleTimeString("en-GB");
-//     const tokenExpiry = localDateString[2] + "-" + localDateString[1] +"-"+ localDateString[0] + ", " + localTimeString;
-//     return tokenExpiry;
-// }
 
 // EXPORT ALL THE FUNCTIONS 
-module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser, verifyToken};
+module.exports = {
+    getAllUsers, 
+    getUserByEmail, 
+    authenticate, 
+    createNewUser,
+    checkUserIsVerified };

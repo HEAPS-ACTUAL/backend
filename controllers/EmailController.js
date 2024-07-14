@@ -1,13 +1,13 @@
-const nodemailer = require('nodemailer');
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const HOST = "localhost";
 const PORT = 3000;
 const app_email = process.env.app_email;
 const app_email_password = process.env.app_email_password;
-const JWT_SECRET_KEY= process.env.JWT_SECRET_KEY;
+// ABOVE SHOULD MOVE TO .env MOSTLY
 
 // FUNCTIONS AND VARIABLES
+const { generateVerificationToken } = require("./TokenController");
 
 /*
 creates the SMTP service that will be used to send emails
@@ -33,19 +33,9 @@ transporter.verify((error, success) => {
     }
 });
 
-
-
-const generateVerificationToken = (email) => {
-    const token = jwt.sign({ email }, JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
-    return token;
-};
-
-
-async function sendVerificationEmail(inputEmail, token=null){
-    console.log(inputEmail);
-    if (token == null){
-        let token = generateVerificationToken(inputEmail);
-    }
+async function sendVerificationEmail(req, res){ 
+    const inputEmail = req.body.email;   
+    const token = generateVerificationToken(inputEmail);
     try{
         const verificationLink = `http://${HOST}:${PORT}/verify-email?token=${token}`
         const info = await transporter.sendMail({
@@ -58,13 +48,14 @@ async function sendVerificationEmail(inputEmail, token=null){
         
           console.log("Verification Email Sent Successfully: %s", info.messageId);
           // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+          return res.status(200).json({message: "Verification Email sent Successfully"})
     }
     catch(error){
         const msg = `Error sending verification email`;
         console.error(`${msg}: ${error.message}`);
-        res.status(404).json({ message: msg });
+        return res.status(404).json({ message: msg });
     }
 }
 
 
-module.exports = { sendVerificationEmail, generateVerificationToken};
+module.exports = { sendVerificationEmail};
