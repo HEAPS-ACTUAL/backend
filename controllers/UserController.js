@@ -21,7 +21,7 @@ differently depending on who is calling it (see if statement below).
 
 async function getUserByEmail(req, res = null) {
     const inputEmail = req.body.email;
-    const sqlQuery = "Select Email, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined from User where Email = ?";
+    const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined from User where Email = ?";
 
     userFound = await query(sqlQuery, [inputEmail]);
     userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
@@ -53,7 +53,7 @@ async function authenticate(req, res) {
     else {
         const hashedPassword = userFound.HashedPassword;
         const inputPassword = req.body.password;
-
+        
         const comparePassword = await bcrypt.compare(inputPassword, hashedPassword);
 
         if (comparePassword == true) {
