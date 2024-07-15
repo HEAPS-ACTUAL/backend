@@ -43,6 +43,7 @@ async function sendVerificationEmail(req, res = null) {
 
     try {
         const verificationLink = `http://${HOST}:${PORT}/verify-email?token=${token}`
+
         const info = await transporter.sendMail({
             from: `"quizDaddy" <${app_email}>`, // sender address
             to: inputEmail, // list of receivers
@@ -50,10 +51,8 @@ async function sendVerificationEmail(req, res = null) {
             // text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
             html: `<p>Hello! <br><br> Thank you for choosing quizDaddy. <br><br> To complete your registration, please <a href="${verificationLink}">verify your email.<p> </a>Best regards, <br> The Quizdaddy Team`, // html body
         });
-        console.log(info);
-        const msg = `Verification Email Sent Successfully to ${inputEmail}`;
-        console.log(`${msg}: ${info.messageId}`);
-        // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+
+        console.log(`Verification email sent successfully to ${inputEmail}. The message ID is: ${info.messageId}`);
         
         if (res == null){
             return msg;

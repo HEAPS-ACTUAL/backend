@@ -9,7 +9,6 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const generateVerificationToken = (email) => {
     const token = jwt.sign({ email }, JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
-    console.log(token);
     return token;
 };
 
