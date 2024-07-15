@@ -82,10 +82,8 @@ async function createNewUser(req, res) {
         const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
 
         if (insertOk) {
-            
             sendVerificationEmail(req);
-            return res.status(200).json({ message: "Account created! Please CHECK YOUR EMAIL to verify your account." });
-            sendVerificationEmail(inputEmail);   
+            return res.status(200).json({ message: "Account created! Please CHECK YOUR EMAIL to verify your account." }); 
         }
     } 
     catch (error) {
