@@ -42,9 +42,9 @@ async function sendVerificationEmail(inputEmail) {
         const info = await transporter.sendMail({
             from: `"quizDaddy" <${app_email}>`, // sender address
             to: inputEmail, // list of receivers
-            subject: "Email Verification", // Subject line
-            text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
-            html: `<a href="${verificationLink}"><H2>Verify your email through this link</H2></a>`, // html body
+            subject: "Email Verification for QuizDaddy", // Subject line
+            // text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
+            html: `<p>Hello! <br><br> Thank you for choosing quizDaddy. <br><br> To complete your registration, please <a href="${verificationLink}">verify your email.<p> </a>Best regards, <br> The Quizdaddy Team`, // html body
         });
         
         const msg = "Verification Email Sent Successfully";
