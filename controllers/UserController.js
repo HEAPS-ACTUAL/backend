@@ -74,13 +74,12 @@ async function createNewUser(req, res) {
     const inputFirstName = req.body.firstName;
     const inputLastName = req.body.lastName;
     const inputGender = req.body.gender;
-    const isVerified = false;
 
     const pass_salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
     try {
-        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender, IsVerified ) values (?, ?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender, isVerified,]);
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender ) values (?, ?, ?, ?, ?)";
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
 
         if (insertOk) {
             sendVerificationEmail(req, res);

@@ -44,7 +44,7 @@ async function sendVerificationEmail(req, res){
             to: inputEmail, // list of receivers
             subject: "Email Verification", // Subject line
             text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
-            html: `<a href="${verificationLink}"><H2>Click on this</H2></a>`, // html body
+            html: `<a href="${verificationLink}"><H2>Verify your email through this link</H2></a>`, // html body
           });
         
           console.log("Verification Email Sent Successfully: %s", info.messageId);
