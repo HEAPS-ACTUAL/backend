@@ -35,4 +35,5 @@ router.delete("/delete", deleteUser);
 
 // UPDATE USER
 router.put("/update", updateUser);
+
 module.exports = router;
