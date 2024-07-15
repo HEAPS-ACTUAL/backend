@@ -1,8 +1,15 @@
 // MODULES
-const query = require('../utils/PromisifyQuery');
-const openAI = require('openai');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const query = require('../utils/PromisifyQuery');
+const openAI = require('openai');
+
+// .env VARIABLES 
+const CHATGPT_MODEL = process.env.CHATGPT_MODEL;
+const CHATGPT_ROLE = process.env.CHATGPT_ROLE;
+const CHATGPT_TEMP = parseFloat(process.env.CHATGPT_TEMP);
+const CHATGPT_MAX_TOKENS = Number(process.env.CHATGPT_MAX_TOKENS);
+const CHATGPT_NUM_OF_QUESTIONS = Number(process.env.CHATGPT_NUM_OF_QUESTIONS);
 
 // FUNCTIONS AND VARIABLES
 const { extractTextFromPDF } = require("./FileController");
@@ -10,8 +17,8 @@ const { addAllQuestionsForATest } = require('./QuestionController');
 const { addAllOptionsForAQuiz } = require('./OptionController');
 const { createNewQuiz } = require('./QuizController');
 
-const CHATGPT_response_flashcard = require("../examples/chatgptResponseFlashcard"); 
-const CHATGPT_response_quiz = require('../examples/chatgptResponseQuiz');
+const CHATGPT_response_flashcard = require("../test_format_examples/chatgptResponseFlashcard"); 
+const CHATGPT_response_quiz = require('../test_format_examples/chatgptResponseQuiz');
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -170,7 +177,7 @@ function getPrompt(testType, difficulty, numOfQuestions=12){
 
 async function queryChatgptForTest(extractedText, testType, difficulty) {
     const chatgpt = new openAI({ apiKey: process.env.OPENAI_API_KEY });
-    const prompt = getPrompt(testType, difficulty, numOfQuestions=12); // contains key-value for appropriate Test prompt
+    const prompt = getPrompt(testType, difficulty, CHATGPT_NUM_OF_QUESTIONS); // contains key-value for appropriate Test prompt
     // console.log(prompt);
     
     try {
@@ -178,10 +185,10 @@ async function queryChatgptForTest(extractedText, testType, difficulty) {
             `${extractedText} \n\n` + prompt;
         
         const response = await chatgpt.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: query }],
-            temperature: 0.7,
-            max_tokens: 3000,
+            model: CHATGPT_MODEL,
+            messages: [{ role: CHATGPT_ROLE, content: query }],
+            temperature: CHATGPT_TEMP,
+            max_tokens: CHATGPT_MAX_TOKENS,
         })
 
         console.log(response.choices[0].finish_reason); // ensure that the generation of questions doesnt not stop prematurely

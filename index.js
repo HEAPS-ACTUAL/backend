@@ -1,3 +1,4 @@
+require('dotenv').config(); // MUST BE FIRST TO READ PORT NUMBERS
 const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
@@ -7,7 +8,7 @@ app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
 app.use(cors()); // IM NOT VERY SURE WHAT THIS DOES LOL, HAVE TO FIND OUT 😅
 app.use(express.urlencoded({ extended: true })); // you can parse incoming Request Object if object, with nested objects, or generally any type.
 
-const PORT = 8001; // Defining our port as 8001
+const BE_PORT = Number(process.env.BE_PORT) // Defining our port as 8001
 
 // Establishing connection with SQL Database
 con.connect((error) => {
@@ -42,6 +43,6 @@ app.use("/schedule", require("./routers/ScheduleRouter"));
 app.use("/email", require("./routers/EmailRouter"));
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+app.listen(BE_PORT, () => {
+  console.log(`Server is listening on port ${BE_PORT}`);
 });
