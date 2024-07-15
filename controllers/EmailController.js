@@ -1,14 +1,12 @@
-const nodemailer = require('nodemailer');
-
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const nodemailer = require('nodemailer');
 
-const HOST = "localhost";
-const PORT = 3000;
-// ABOVE SHOULD MOVE TO .env MOSTLY
-
-const app_email = process.env.app_email;
-const app_email_password = process.env.app_email_password;
+// .env CONFIGS
+const HOSTNAME = process.env.HOSTNAME;
+const FE_PORT = Number(process.env.FE_PORT);
+const APP_EMAIL = process.env.APP_EMAIL;
+const APP_EMAIL_PASSWORD = process.env.APP_EMAIL_PASSWORD;
 
 // FUNCTIONS AND VARIABLES
 const { generateVerificationToken } = require("./TokenController");
@@ -21,8 +19,8 @@ const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         type: "login",
-        user: app_email,
-        pass: app_email_password,
+        user: APP_EMAIL,
+        pass: APP_EMAIL_PASSWORD,
     },
 });
 
@@ -42,9 +40,9 @@ async function sendVerificationEmail(req, res = null) {
     const token = generateVerificationToken(inputEmail);
 
     try {
-        const verificationLink = `http://${HOST}:${PORT}/verify-email?token=${token}`
+        const verificationLink = `http://${HOSTNAME}:${FE_PORT}/verify-email?token=${token}`
         const info = await transporter.sendMail({
-            from: `"quizDaddy" <${app_email}>`, // sender address
+            from: `"quizDaddy" <${APP_EMAIL}>`, // sender address
             to: inputEmail, // list of receivers
             subject: "Email Verification for QuizDaddy", // Subject line
             // text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body

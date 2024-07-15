@@ -1,9 +1,9 @@
-const query = require('../utils/PromisifyQuery');
-
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-
+const query = require('../utils/PromisifyQuery');
 const jwt = require('jsonwebtoken'); // THIS PACKAGE IS FOR THE TOKEN
+
+// .env VARIABLES
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 
