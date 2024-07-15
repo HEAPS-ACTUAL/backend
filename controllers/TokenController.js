@@ -15,6 +15,7 @@ async function verifyToken(req, res){
     try{
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const email = decoded.email;
+        console.log(email);
 
         const updateOk = await updateUserVerification(email); // Update the user's email verification status in the database
 
@@ -32,7 +33,7 @@ async function verifyToken(req, res){
 
 async function updateUserVerification(inputEmail){
     try{
-        const sqlQuery = "Update User set isVerified = true where email = ?";
+        const sqlQuery = "Update User set isVerified = true where Email = ?";
         const updateOk = await query(sqlQuery, [inputEmail]);
         return updateOk;
     }

@@ -27,17 +27,17 @@ const transporter = nodemailer.createTransport({
 transporter.verify((error, success) => {
     if (error) {
         console.log(error);
-    } 
+    }
     else {
         console.log("Server is ready to send out emails");
         // sendVerificationEmail();
     }
 });
 
-async function sendVerificationEmail(req, res){ 
-    const inputEmail = req.body.email;   
+async function sendVerificationEmail(inputEmail) {
     const token = generateVerificationToken(inputEmail);
-    try{
+
+    try {
         const verificationLink = `http://${HOST}:${PORT}/verify-email?token=${token}`
         const info = await transporter.sendMail({
             from: `"quizDaddy" <${app_email}>`, // sender address
@@ -45,18 +45,18 @@ async function sendVerificationEmail(req, res){
             subject: "Email Verification", // Subject line
             text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
             html: `<a href="${verificationLink}"><H2>Verify your email through this link</H2></a>`, // html body
-          });
+        });
         
-          console.log("Verification Email Sent Successfully: %s", info.messageId);
-          // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-          return res.status(200).json({message: "Verification Email sent Successfully"})
+        const msg = "Verification Email Sent Successfully";
+        console.log(`${msg}: ${info.messageId}`);
+        // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+        return msg;
     }
-    catch(error){
+    catch (error) {
         const msg = `Error sending verification email`;
         console.error(`${msg}: ${error.message}`);
-        return res.status(404).json({ message: msg });
+        throw new Error(msg);    
     }
 }
 
-
-module.exports = { sendVerificationEmail};
+module.exports = { sendVerificationEmail };

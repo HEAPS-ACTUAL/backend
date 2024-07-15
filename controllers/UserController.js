@@ -78,15 +78,16 @@ async function createNewUser(req, res) {
     const pass_salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
     try {
-        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender ) values (?, ?, ?, ?, ?)";
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
         const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
 
         if (insertOk) {
-            sendVerificationEmail(req, res);
+            sendVerificationEmail(inputEmail);
             return res.status(200).json({ message: "Account created! Click ok to sign in" });
         }
     } 
     catch (error) {
+        console.error(error);
         return res.status(401).json({ message: "Email already exists!" });
     }
 }
