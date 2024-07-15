@@ -196,25 +196,29 @@ FOR THE QUIZ RESULTS PAGE
 delimiter $$
 create procedure reviewQuiz(in input_test_id int, in input_attempt_no int)
 begin
-	select t4.*, json_arrayagg(json_object("QuestionNo", t5.QuestionNo, "QuestionText", t5.QuestionText, "Elaboration", t5.Elaboration, "UserChoice", t5.UserChoice, "CorrectOption", t5.CorrectOption, "Options", t5.Options)) as QuestionsAndAnswers from 
-		(select us.TestID, us.NumOfCorrectAnswers, count(qn.QuestionNo) as TotalNumOfQuestions from UserQuizScores us, Question qn 
-			where (us.TestID = qn.TestID) and (us.TestID = input_test_id) and (us.AttemptNo = input_attempt_no) 
-			group by us.TestID
-		) t4,
-		(select t2.*, t3.Options from
-			(select t1.*, o.OptionLetter as CorrectOption from 
-				(select qn.*, ua.UserChoice from Question qn, UserQuizAnswers ua 
-					where (qn.testID = ua.TestID) and (qn.QuestionNo = ua.QuestionNo) and (qn.TestID = input_test_id) and (ua.AttemptNo = input_attempt_no)
-				) t1,
-				`Option` o 
-					where (t1.TestID = o.TestID) and (t1.QuestionNo = o.QuestionNo) and (o.IsCorrect = true)
-			) t2,
-			(select TestID, QuestionNo, json_arrayagg(json_object("OptionLetter", OptionLetter, "OptionText", OptionText)) as 'Options' from `Option` 
-				where (TestID = input_test_id) group by QuestionNo
-			) t3
-			where (t2.QuestionNo = t3.QuestionNo)
-		) t5
-	group by t4.TestID;
+	select * from
+		(select t4.*, json_arrayagg(json_object("QuestionNo", t5.QuestionNo, "QuestionText", t5.QuestionText, "Elaboration", t5.Elaboration, "UserChoice", t5.UserChoice, "CorrectOption", t5.CorrectOption, "Options", t5.Options)) as QuestionsAndAnswers from 
+			(select us.TestID, us.NumOfCorrectAnswers, count(qn.QuestionNo) as TotalNumOfQuestions from UserQuizScores us, Question qn 
+				where (us.TestID = qn.TestID) and (us.TestID = input_test_id) and (us.AttemptNo = input_attempt_no) 
+				group by us.TestID
+			) t4,
+			(select t2.*, t3.Options from
+				(select t1.*, o.OptionLetter as CorrectOption from 
+					(select qn.*, ua.UserChoice from Question qn, UserQuizAnswers ua 
+						where (qn.testID = ua.TestID) and (qn.QuestionNo = ua.QuestionNo) and (qn.TestID = input_test_id) and (ua.AttemptNo = input_attempt_no)
+					) t1,
+					`Option` o 
+						where (t1.TestID = o.TestID) and (t1.QuestionNo = o.QuestionNo) and (o.IsCorrect = true)
+				) t2,
+				(select TestID, QuestionNo, json_arrayagg(json_object("OptionLetter", OptionLetter, "OptionText", OptionText)) as 'Options' from `Option` 
+					where (TestID = input_test_id) group by QuestionNo
+				) t3
+				where (t2.QuestionNo = t3.QuestionNo)
+			) t5
+		group by t4.TestID
+        ) t6,
+        (select json_arrayagg(json_object("AttemptNo", AttemptNo, "NumOfCorrectAnswers", NumOfCorrectAnswers)) as Attempts from UserQuizScores where TestID = input_test_id group by TestID
+        ) t7;
 end $$
 delimiter ;
 
