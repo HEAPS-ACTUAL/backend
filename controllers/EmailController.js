@@ -1,11 +1,14 @@
+const nodemailer = require('nodemailer');
+
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const nodemailer = require('nodemailer');
+
 const HOST = "localhost";
 const PORT = 3000;
+// ABOVE SHOULD MOVE TO .env MOSTLY
+
 const app_email = process.env.app_email;
 const app_email_password = process.env.app_email_password;
-// ABOVE SHOULD MOVE TO .env MOSTLY
 
 // FUNCTIONS AND VARIABLES
 const { generateVerificationToken } = require("./TokenController");
@@ -34,7 +37,8 @@ transporter.verify((error, success) => {
     }
 });
 
-async function sendVerificationEmail(inputEmail) {
+async function sendVerificationEmail(req, res = null) {
+    const inputEmail = req.body.email;
     const token = generateVerificationToken(inputEmail);
 
     try {
@@ -46,16 +50,22 @@ async function sendVerificationEmail(inputEmail) {
             // text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
             html: `<p>Hello! <br><br> Thank you for choosing quizDaddy. <br><br> To complete your registration, please <a href="${verificationLink}">verify your email.<p> </a>Best regards, <br> The Quizdaddy Team`, // html body
         });
-        
-        const msg = "Verification Email Sent Successfully";
+        console.log(info);
+        const msg = `Verification Email Sent Successfully to ${inputEmail}`;
         console.log(`${msg}: ${info.messageId}`);
         // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-        return msg;
+        
+        if (res == null){
+            return msg;
+        }
+        else{
+            return res.status(200).json({message: msg}) 
+        }
     }
     catch (error) {
         const msg = `Error sending verification email`;
         console.error(`${msg}: ${error.message}`);
-        throw new Error(msg);    
+        throw new Error(msg);
     }
 }
 
