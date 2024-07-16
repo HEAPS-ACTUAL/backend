@@ -1,4 +1,4 @@
-require('dotenv').config(); // MUST BE FIRST TO READ PORT NUMBERS
+require('dotenv').config(); // MUST BE FIRST LINE TO READ PORT NUMBERS
 const express = require("express");
 const cors = require("cors");
 const con = require("./models/ConnectionManager");
