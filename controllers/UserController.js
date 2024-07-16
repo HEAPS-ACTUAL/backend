@@ -114,7 +114,7 @@ async function deleteUser(req, res) {
         const deleteResult = await query(sqlQuery, [inputEmail]);
 
         if (deleteResult.affectedRows) {
-            return res.status(200).json({ message: "User deleted successfully." });
+            return res.status(200).json({ message: "Your account has been deleted." });
         }
         else {
             return res.status(404).json({ message: "User not found." });
