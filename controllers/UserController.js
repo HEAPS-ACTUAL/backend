@@ -24,23 +24,23 @@ differently depending on who is calling it (see if statement below).
 
 async function getUserByEmail(req, res = null) {
     const inputEmail = req.body.email;
-    const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined from User where Email = ?";
+    const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined, IsVerified from User where Email = ?";
 
     userFound = await query(sqlQuery, [inputEmail]);
     userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
 
     /*
-    If the function is called without the "res" parameter, return a user object.
-    Else, return a response to the frontend.
-    */
+      If the function is called without the "res" parameter, return a user object.
+      Else, return a response to the frontend.
+      */
 
     if (res == null) {
         return userFound;
-    } 
+    }
     else {
         if (userFound) {
             return res.status(200).json(userFound);
-        } 
+        }
         else {
             return res.status(401).json(userFound);
         }
@@ -52,7 +52,7 @@ async function authenticate(req, res) {
 
     if (userFound == undefined) {
         return res.status(401).json({ message: "Email does not exist. Please create an account." });
-    } 
+    }
     else {
         const hashedPassword = userFound.HashedPassword;
         const inputPassword = req.body.password;
@@ -61,7 +61,7 @@ async function authenticate(req, res) {
 
         if (comparePassword == true) {
             return res.status(200).json({ message: "Authentication Successful!" });
-        } 
+        }
         else {
             return res.status(401).json({ message: "Wrong password. Login failed!" });
         }
@@ -79,13 +79,13 @@ async function createNewUser(req, res) {
     const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
     try {
         const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender]);
+        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender,]);
 
         if (insertOk) {
             sendVerificationEmail(req);
-            return res.status(200).json({ message: "Account created! Please CHECK YOUR EMAIL to verify your account." }); 
+            return res.status(200).json({ message: "Account created! Please CHECK YOUR EMAIL to verify your account.", });
         }
-    } 
+    }
     catch (error) {
         console.error(error);
         return res.status(401).json({ message: "Email already exists!" });
@@ -100,7 +100,7 @@ async function checkUserIsVerified(req, res) {
 
     if (userFound) {
         return res.status(200).json(userFound[0]["IsVerified"]);
-    } 
+    }
     else {
         return res.status(401).json(userFound[0]["IsVerified"]);
     }
@@ -115,11 +115,11 @@ async function deleteUser(req, res) {
 
         if (deleteResult.affectedRows) {
             return res.status(200).json({ message: "User deleted successfully." });
-        } 
+        }
         else {
             return res.status(404).json({ message: "User not found." });
         }
-    } 
+    }
     catch (error) {
         console.error("Failed to delete user:", error);
         return res.status(500).json({ message: "Failed to delete user." });
@@ -132,16 +132,16 @@ async function updateUser(req, res) {
     const inputLastName = req.body.lastName;
 
     try {
-        const sqlQuery ="UPDATE User SET FirstName = ?, LastName = ? WHERE Email = ?";
-        const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail]);
+        const sqlQuery = "UPDATE User SET FirstName = ?, LastName = ? WHERE Email = ?";
+        const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
 
         if (updateResult.affectedRows) {
             return res.status(200).json({ message: "User updated successfully." });
-        } 
+        }
         else {
             return res.status(404).json({ message: "User not found." });
         }
-    } 
+    }
     catch (error) {
         console.error("Failed to update user:", error);
         return res.status(500).json({ message: "Failed to update user." });
@@ -149,4 +149,5 @@ async function updateUser(req, res) {
 }
 
 // EXPORT ALL THE FUNCTIONS
-module.exports = {getAllUsers, getUserByEmail, authenticate, createNewUser, deleteUser, updateUser, checkUserIsVerified};
+module.exports = { getAllUsers, getUserByEmail, authenticate, createNewUser, deleteUser, updateUser, checkUserIsVerified };
+
