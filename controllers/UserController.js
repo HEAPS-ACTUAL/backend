@@ -135,8 +135,8 @@ async function deleteUser(req, res) {
 async function updateUser(req, res) {
     
     /*
-    inputFirstName and inputLastName will be null when changing password
-    hashedPassword, inputPassword and inputNewPassword will be null when changing names 
+    INPUT FIRSTNAME AND INPUT LAST NAME WILL BE NULL WHEN CHANGING PASSWORD
+    HASHEDPASSWORD, INPUT PASSWORD AND INPUT NEW PASSWORD WILL BE NULL WHEN CHANGING NAME
     */
     const inputEmail = req.body.email;
     const inputFirstName = req.body.firstName;
@@ -146,7 +146,7 @@ async function updateUser(req, res) {
     const inputNewPassword = req.body.newPassword;
 
 
-    if(inputFirstName !== null && inputLastName !== null){
+    if(inputFirstName !== null && inputLastName !== null){ // NAME CHANGE
         try {
             const sqlQuery = "UPDATE User SET FirstName = ?, LastName = ? WHERE Email = ?";
             const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
@@ -163,7 +163,7 @@ async function updateUser(req, res) {
             return res.status(500).json({ message: "Failed to update user." });
         }
     }
-    else if(hashedPassword !== null && inputPassword !== null && inputNewPassword !== null){
+    else if(hashedPassword !== null && inputPassword !== null && inputNewPassword !== null){ // PASSWORD CHANGE
         if(await bothPasswordsMatch(inputPassword, hashedPassword) === false){
             return res.status(404).json({ message: "Password is incorrect!" }); 
         }
