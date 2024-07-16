@@ -45,12 +45,4 @@ async function updateUserVerification(inputEmail){
     }
 }
 
-// async function generateTokenExpiry(){
-//     const duration = 3600000 // 1-hour in miliseconds
-//     const localDateString = new Date().toLocaleDateString("en-GB").split("/");
-//     const localTimeString = new Date(Date.now() + duration).toLocaleTimeString("en-GB");
-//     const tokenExpiry = localDateString[2] + "-" + localDateString[1] +"-"+ localDateString[0] + ", " + localTimeString;
-//     return tokenExpiry;
-// }
-
 module.exports = {verifyToken, generateVerificationToken};
