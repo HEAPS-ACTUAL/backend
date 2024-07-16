@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt"); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS AND VARIABLES
 const { sendVerificationEmail } = require("./EmailController");
+const { verify } = require("jsonwebtoken");
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res) {
@@ -30,9 +31,9 @@ async function getUserByEmail(req, res = null) {
     userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
 
     /*
-      If the function is called without the "res" parameter, return a user object.
-      Else, return a response to the frontend.
-      */
+    If the function is called without the "res" parameter, return a user object.
+    Else, return a response to the frontend.
+    */
 
     if (res == null) {
         return userFound;
@@ -56,16 +57,21 @@ async function authenticate(req, res) {
     else {
         const hashedPassword = userFound.HashedPassword;
         const inputPassword = req.body.password;
-
-        const comparePassword = await bcrypt.compare(inputPassword, hashedPassword);
-
-        if (comparePassword == true) {
+        
+        if (await bothPasswordsMatch(inputPassword, hashedPassword)) {
             return res.status(200).json({ message: "Authentication Successful!" });
         }
         else {
             return res.status(401).json({ message: "Wrong password. Login failed!" });
         }
     }
+}
+
+// If passwords match, return true, else return false.
+async function bothPasswordsMatch(inputPassword, hashedPassword) {
+    const comparePassword = await bcrypt.compare(inputPassword, hashedPassword);
+
+    return comparePassword; 
 }
 
 async function createNewUser(req, res) {
@@ -127,27 +133,62 @@ async function deleteUser(req, res) {
 }
 
 async function updateUser(req, res) {
+    
+    /*
+    inputFirstName and inputLastName will be null when changing password
+    hashedPassword, inputPassword and inputNewPassword will be null when changing names 
+    */
     const inputEmail = req.body.email;
     const inputFirstName = req.body.firstName;
     const inputLastName = req.body.lastName;
+    const hashedPassword = req.body.hashedPassword;
+    const inputPassword = req.body.inputPassword;
+    const inputNewPassword = req.body.newPassword;
 
-    try {
-        const sqlQuery = "UPDATE User SET FirstName = ?, LastName = ? WHERE Email = ?";
-        const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
 
-        if (updateResult.affectedRows) {
-            return res.status(200).json({ message: "User details updated successfully." });
-        } 
-        else {
-            return res.status(404).json({ message: "User not found." });
+    if(inputFirstName !== null && inputLastName !== null){
+        try {
+            const sqlQuery = "UPDATE User SET FirstName = ?, LastName = ? WHERE Email = ?";
+            const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
+    
+            if (updateResult.affectedRows) {
+                return res.status(200).json({ message: "User details updated successfully." });
+            }
+            else {
+                return res.status(404).json({ message: "User not found." });
+            }
+        }
+        catch (error) {
+            console.error("Failed to update user:", error);
+            return res.status(500).json({ message: "Failed to update user." });
         }
     }
-    catch (error) {
-        console.error("Failed to update user:", error);
-        return res.status(500).json({ message: "Failed to update user." });
+    else if(hashedPassword !== null && inputPassword !== null && inputNewPassword !== null){
+        if(await bothPasswordsMatch(inputPassword, hashedPassword) === false){
+            return res.status(404).json({ message: "Password is incorrect!" }); 
+        }
+        else{
+            const pass_salt = await bcrypt.genSalt();
+            const newHashedPassword = await bcrypt.hash(inputNewPassword, pass_salt);
+            
+            try {
+                const sqlQuery = "UPDATE User SET HashedPassword = ? WHERE Email = ?";
+                const updateResult = await query(sqlQuery, [newHashedPassword, inputEmail,]);
+        
+                if (updateResult.affectedRows) {
+                    return res.status(200).json({ message: "Your password has been successfully changed!" });
+                }
+                else {
+                    return res.status(404).json({ message: "User not found." });
+                }
+            }
+            catch (error) {
+                console.error("Failed to update user:", error);
+                return res.status(500).json({ message: "Failed to update user." });
+            }
+        }
     }
 }
 
 // EXPORT ALL THE FUNCTIONS
 module.exports = { getAllUsers, getUserByEmail, authenticate, createNewUser, deleteUser, updateUser, checkUserIsVerified };
-
