@@ -136,8 +136,8 @@ async function updateUser(req, res) {
         const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
 
         if (updateResult.affectedRows) {
-            return res.status(200).json({ message: "User updated successfully." });
-        }
+            return res.status(200).json({ message: "User details updated successfully." });
+        } 
         else {
             return res.status(404).json({ message: "User not found." });
         }
