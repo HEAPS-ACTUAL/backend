@@ -3,8 +3,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const nodemailer = require("nodemailer");
 
 // .env CONFIGS
-const HOSTNAME = process.env.HOSTNAME;
-const FE_PORT = Number(process.env.FE_PORT);
+const FRONTEND_ENDPOINT = process.env.FRONTEND_ENDPOINT;
 const APP_EMAIL = process.env.APP_EMAIL;
 const APP_EMAIL_PASSWORD = process.env.APP_EMAIL_PASSWORD;
 
@@ -39,7 +38,7 @@ async function sendVerificationEmail(req, res = null) {
   const token = generateVerificationToken(inputEmail);
 
   try {
-    const verificationLink = `http://${HOSTNAME}:${FE_PORT}/verify-email?token=${token}`;
+    const verificationLink = `${FRONTEND_ENDPOINT}/verify-email?token=${token}`;
 
     const info = await transporter.sendMail({
       from: `"quizDaddy" <${APP_EMAIL}>`, // sender address
