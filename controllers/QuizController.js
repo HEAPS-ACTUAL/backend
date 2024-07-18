@@ -44,8 +44,13 @@ async function storeUserQuizAnswers(req, res){
 
     try{
         const sqlQuery = 'Call storeUserQuizAnswers(?, ?)';
-        await query(sqlQuery, [testID, formattedUserAnswers]);
-        console.log(`User's answers has been stored!`);
+        const insertOk = await query(sqlQuery, [testID, formattedUserAnswers]);
+        
+        if(insertOk.affectedRows){
+            const msg = `User's answers has been stored!`
+            console.log(msg);
+            res.status(200).json(msg);
+        }
     }
     catch(error){
         console.error(error);
