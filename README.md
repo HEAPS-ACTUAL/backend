@@ -93,9 +93,9 @@ quizDaddy is a web application for students to upload their notes and materials 
     npm run devStart
     ```
     You should see the following in the terminal:
-    Server is listening on port 8001
-    Successfully connected to DB!
-    Server is ready to send out emails
+    - Server is listening on port 8001
+    - Successfully connected to DB!
+    - Server is ready to send out emails
     
 
 2. The API will be available at `http://localhost:8001`.
