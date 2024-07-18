@@ -9,7 +9,6 @@
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 quizDaddy is a web application for students to upload their notes and materials to generate flashcards and quizzes using ChatGPT API for their enhanced learning. Empowered by our spaced repetition algorithm, revision is structured and maximised for upcoming exams.
