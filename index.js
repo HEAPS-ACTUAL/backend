@@ -12,16 +12,17 @@ const BE_PORT = Number(process.env.BE_PORT) // Defining our port as 8001
 
 // Establishing connection with SQL Database
 con.connect((error) => {
-  if (error) {
-    console.log(`DATABASE ERROR: ${error}`);
-  } else {
-    console.log("Successfully connected to DB!");
-  }
+    if (error) {
+        console.log(`DATABASE ERROR: ${error}`);
+    } 
+    else {
+        console.log("Successfully connected to DB!");
+    }
 });
 
 // HEALTH CHECK ENDPOINT
 app.get("/", (req, res) => {
-  return res.status(200).json({ message: "Server is up and running!" });
+    return res.status(200).json({ message: "Server is up and running!" });
 });
 
 // ROUTES FOR USER
@@ -44,5 +45,5 @@ app.use("/email", require("./routers/EmailRouter"));
 
 // Start server
 app.listen(BE_PORT, () => {
-  console.log(`Server is listening on port ${BE_PORT}`);
+    console.log(`Server is listening on port ${BE_PORT}`);
 });

@@ -1,5 +1,8 @@
+// FOR .ENV FILE
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
+// MODULES
 const nodemailer = require("nodemailer");
 
 // .env CONFIGS
@@ -64,10 +67,12 @@ async function sendVerificationEmail(req, res = null) {
 
         if (res == null) {
             return msg;
-        } else {
+        } 
+        else {
             return res.status(200).json({ message: msg });
         }
-    } catch (error) {
+    } 
+    catch (error) {
         const msg = `Error sending verification email`;
         console.error(`${msg}: ${error.message}`);
         throw new Error(msg);

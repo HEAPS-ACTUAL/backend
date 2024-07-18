@@ -1,11 +1,5 @@
 const query = require("../utils/PromisifyQuery");
 
-/*
-------------------------------------------------------------------------------------------------------------------------------------
-SQL DATABASE RELATED FUNCTIONS
-------------------------------------------------------------------------------------------------------------------------------------
-*/
-
 async function addAllQuestionsForATest(arrayOfValues){
     try{
         const sqlQuery = "Insert into Question (TestID, QuestionNo, QuestionText, Elaboration) values ?";
@@ -24,8 +18,5 @@ async function addAllQuestionsForATest(arrayOfValues){
         throw new Error(msg);
     }
 }
-
-// To test the functions
-// createNewQuestion('alice@gmail.com', 1, 'what is sodium chloride?', 'sodium chloride is salt!');
 
 module.exports = { addAllQuestionsForATest };

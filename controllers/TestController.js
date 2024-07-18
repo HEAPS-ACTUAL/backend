@@ -17,9 +17,6 @@ const { addAllQuestionsForATest } = require('./QuestionController');
 const { addAllOptionsForAQuiz } = require('./OptionController');
 const { createNewQuiz } = require('./QuizController');
 
-const CHATGPT_response_flashcard = require("../test_format_examples/chatgptResponseFlashcard"); 
-const CHATGPT_response_quiz = require('../test_format_examples/chatgptResponseQuiz');
-
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 SQL DATABASE RELATED FUNCTIONS

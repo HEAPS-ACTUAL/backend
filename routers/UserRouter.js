@@ -5,15 +5,7 @@ execute based on the endpoint of the request that is being sent.
 
 const express = require("express");
 const router = express.Router();
-const {
-  getAllUsers,
-  authenticate,
-  getUserByEmail,
-  createNewUser,
-  checkUserIsVerified,
-  deleteUser,
-  updateUser,
-} = require("../controllers/UserController");
+const { getAllUsers, authenticate, getUserByEmail, createNewUser, checkUserIsVerified, deleteUser, updateUser } = require("../controllers/UserController");
 
 // GET ALL USERS
 router.get("/", getAllUsers);

@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt"); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS AND VARIABLES
 const { sendVerificationEmail } = require("./EmailController");
-const { verify } = require("jsonwebtoken");
 
 // FUNCTIONS RELATED TO USER
 async function getAllUsers(req, res) {
@@ -58,7 +57,7 @@ async function authenticate(req, res) {
         const hashedPassword = userFound.HashedPassword;
         const inputPassword = req.body.password;
         
-        if (await bothPasswordsMatch(inputPassword, hashedPassword)) {
+        if (await bothPasswordsMatch(inputPassword, hashedPassword)) { // FUNCTION DEFINED BELOW
             return res.status(200).json({ message: "Authentication Successful!" });
         }
         else {
