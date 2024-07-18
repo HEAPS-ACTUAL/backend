@@ -44,7 +44,6 @@ async function sendVerificationEmail(req, res = null) {
             from: `"quizDaddy" <${APP_EMAIL}>`, // sender address
             to: inputEmail, // list of receivers
             subject: "Email Verification for QuizDaddy", // Subject line
-            // text: `Visit this link to verify your email: ${verificationLink}`,  // plain text body
             html: `
                 <p> 
                     Hello! 
@@ -56,7 +55,8 @@ async function sendVerificationEmail(req, res = null) {
                 <br><br> 
                 Best regards, 
                 <br> 
-                The Quizdaddy Team`, // html body
+                The Quizdaddy Team
+            ` // html body
         });
 
         const msg = `Verification email sent successfully to ${inputEmail}. The message ID is: ${info.messageId}`;
