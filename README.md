@@ -61,7 +61,7 @@ quizDaddy is a web application for students to upload their notes and materials 
 
     ```
 
-## Configuration (to be edited)
+## Configuration
 1. Create a `.env` file in the root directory and add the following configuration:
     ```
     # STANDARD CONFIGURATION
