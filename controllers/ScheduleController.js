@@ -37,7 +37,7 @@ async function retrieveAllRevisionDatesByUser(req, res) {
     }
 }
 
-async function DeleteExistingExam(req, res) {
+async function deleteExistingExam(req, res) {
     const input_ScheduleId = req.body.scheduleID;
 
     try {
@@ -53,7 +53,7 @@ async function DeleteExistingExam(req, res) {
     }
 }
 
-async function DeleteSpecificRevisionDate(req, res) {
+async function deleteSpecificRevisionDate(req, res) {
     const input_ScheduleId = req.body.scheduleID;
     const input_RevisionDate = req.body.revisionDate;
 
@@ -146,4 +146,4 @@ async function createNewExam(req, res) {
     }
 }
 
-module.exports = { createNewExam, retrieveAllRevisionDatesByUser, DeleteExistingExam, DeleteSpecificRevisionDate };
+module.exports = { createNewExam, retrieveAllRevisionDatesByUser, deleteExistingExam, deleteSpecificRevisionDate };

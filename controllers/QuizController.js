@@ -85,7 +85,7 @@ async function reviewQuiz(req, res){
 
     try{
         const sqlQuery = 'call reviewQuiz(?, ?)';
-        const returnedData = await query(sqlQuery, [testID, attemptNo]); // Go to 'example/reviewQuiz.js' to see how returnedData looks like
+        const returnedData = await query(sqlQuery, [testID, attemptNo]); // Go to 'test_format_examples/reviewQuiz.js' to see how returnedData looks like
         res.status(200).json(returnedData[0]);
     }
     catch(error){
@@ -107,8 +107,5 @@ async function getLatestAttempt(req, res){
         res.status(404).json({message: error});
     }
 }
-
-// reviewQuiz(req = {body: {testID: 8, attemptNo: 1}}, res = null);
-// getLatestAttempt(req = {body: {testID: 4}}, res = null)
 
 module.exports = { createNewQuiz, markQuizAsDone, storeUserQuizAnswers, reviewQuiz, getLatestAttempt };

@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken'); // THIS PACKAGE IS FOR THE TOKEN
 // .env VARIABLES
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
-
 const generateVerificationToken = (email) => {
     const token = jwt.sign({ email }, JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
     return token;
