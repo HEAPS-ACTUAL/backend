@@ -67,7 +67,7 @@ quizDaddy is a web application for students to upload their notes and materials 
     # STANDARD CONFIGURATION
     BE_PORT=your-backend-port
     FE_PORT=your-frontend-port
-    CHATGPT_MODEL="gpt-3.5-turbo"
+    CHATGPT_MODEL="gpt-4o-mini"
     CHATGPT_ROLE="user"
     CHATGPT_TEMP="0.7"
     CHATGPT_MAX_TOKENS=3000
