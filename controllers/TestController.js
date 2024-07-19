@@ -167,7 +167,6 @@ function getPrompt(testType, difficulty, numOfQuestions=12){
 }
 
 async function queryChatgptForTest(extractedText, testType, difficulty) {
-    console.log(CHATGPT_MODEL);
     const chatgpt = new openAI({ apiKey: process.env.OPENAI_API_KEY });
     const prompt = getPrompt(testType, difficulty, CHATGPT_NUM_OF_QUESTIONS); // contains key-value for appropriate Test prompt
     // console.log(prompt);
@@ -207,7 +206,7 @@ async function formatAndStoreTest(email, testName, testType, difficulty, chatgpt
         var array_of_question_obj_strings = chatgpt_response.split('|||')
         
         // slice to remove last element of array if it is an empty string
-        if(array_of_question_obj_strings[-1] === ''){
+        if(array_of_question_obj_strings[array_of_question_obj_strings.length - 1] === ''){
             array_of_question_obj_strings.slice(0, -1);
         }
         
