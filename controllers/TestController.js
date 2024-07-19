@@ -103,7 +103,7 @@ Go to examples/testQuestionAndOptions.js to see an example of what this function
 Take note: "Options" is a string, not an object.
 */
 async function getAllQuestionsAndOptionsFromATest(req, res){ 
-    const testID = req.body.testID;
+    const testID = req.query.testID;
 
     try{
         const sqlQuery = 'call getAllQuestionsAndOptionsForATest(?)';

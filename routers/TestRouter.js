@@ -17,6 +17,6 @@ router.delete('/deleteTest', deleteTest);
 router.post('/getTestInfo', getTestInfo);
 
 // GET QUESTIONS AND OPTIONS FOR A TEST
-router.post('/getQuestionsAndOptions', getAllQuestionsAndOptionsFromATest);
+router.get('/getQuestionsAndOptions', getAllQuestionsAndOptionsFromATest);
 
 module.exports = router;
