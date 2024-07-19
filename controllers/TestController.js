@@ -128,7 +128,7 @@ function getPrompt(testType, difficulty, numOfQuestions=12){
     const promptDict = {
         'F': () =>`Based on the text above, generate a maximised number of Test questions. These questions should test how well I know the content of the given text. \n\n
         
-        Use a variety of formats for the questions such as "Define this term", "Describe this process", “True or false”, “Fill in the blank”. There should also be an Elaboration. \n
+        Use a variety of formats for the questions such as "Define this term", "Describe this process", “True or false”, “Fill in the blank”. There should also be an Elaboration which is the answer to the question. \n
         
         Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Elaboration". \n
         
