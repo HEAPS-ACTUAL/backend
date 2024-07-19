@@ -11,9 +11,9 @@ router.post('/markQuizAsDone', markQuizAsDone);
 router.post('/storeUserQuizAnswers', storeUserQuizAnswers);
 
 // REVIEW QUIZ
-router.post('/reviewQuiz', reviewQuiz);
+router.get('/reviewQuiz', reviewQuiz);
 
 // GET LATEST QUIZ ATTEMPT
-router.post('/getLatestAttempt', getLatestAttempt);
+router.get('/getLatestAttempt', getLatestAttempt);
 
 module.exports = router;

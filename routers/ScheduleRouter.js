@@ -8,12 +8,12 @@ const {createNewExam, retrieveAllRevisionDatesByUser, deleteExistingExam, delete
 router.post("/createNewExam", createNewExam);
 
 // RETRIEVE EXAM DETAILS FROM DB
-router.post("/retrieveAllRevisionDates", retrieveAllRevisionDatesByUser);
+router.get("/retrieveAllRevisionDates", retrieveAllRevisionDatesByUser);
 
 // DELETE EXAM FROM DB
-router.post("/deleteExistingExam", deleteExistingExam);
+router.delete("/deleteExistingExam", deleteExistingExam);
 
 // DELETE SPECIFIC REVISION DATE
-router.post("/deleteSpecificRevisionDate", deleteSpecificRevisionDate);
+router.delete("/deleteSpecificRevisionDate", deleteSpecificRevisionDate);
 
 module.exports = router;

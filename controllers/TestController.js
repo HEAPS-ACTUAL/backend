@@ -81,15 +81,9 @@ This function returns an array of row objects.
 Each row object has the keys: "TestID", "TestName", "DateTimeCreated", "Difficulty" and "numOfQuestions".
 */
 async function getTestInfo(req, res){
-    const email = req.body.email;
-    const testType = req.body.testType;
-    
-    if(req.body.testStatus){
-        var testStatus = req.body.testStatus;
-    }
-    else{
-        var testStatus = false;
-    }
+    const email = req.query.email;
+    const testType = req.query.testType;
+    const testStatus = JSON.parse(req.query.testStatus || false);
     
     try{
         const sqlQuery = 'call getTestInfo(?, ?, ?)';
@@ -109,7 +103,7 @@ Go to examples/testQuestionAndOptions.js to see an example of what this function
 Take note: "Options" is a string, not an object.
 */
 async function getAllQuestionsAndOptionsFromATest(req, res){ 
-    const testID = req.body.testID;
+    const testID = req.query.testID;
 
     try{
         const sqlQuery = 'call getAllQuestionsAndOptionsForATest(?)';

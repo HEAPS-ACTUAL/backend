@@ -4,14 +4,6 @@ const bcrypt = require("bcrypt"); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 // FUNCTIONS AND VARIABLES
 const { sendVerificationEmail } = require("./EmailController");
 
-// FUNCTIONS RELATED TO USER
-async function getAllUsers(req, res) {
-    const sqlQuery = "Select * from User";
-    const allUsers = await query(sqlQuery);
-
-    return res.status(200).json(allUsers);
-}
-
 /*
 WHY IS "RES" SET TO NULL BY DEFAULT FOR THE getUserByEmail FUNCTION?
 
@@ -23,7 +15,7 @@ differently depending on who is calling it (see if statement below).
 */
 
 async function getUserByEmail(req, res = null) {
-    const inputEmail = req.body.email;
+    const inputEmail = req.body.email || req.query.email;
     const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined, IsVerified from User where Email = ?";
 
     userFound = await query(sqlQuery, [inputEmail]);
@@ -94,20 +86,6 @@ async function createNewUser(req, res) {
     catch (error) {
         console.error(error);
         return res.status(401).json({ message: "Email already exists!" });
-    }
-}
-
-async function checkUserIsVerified(req, res) {
-    const inputEmail = req.body.email;
-    const sqlQuery = "Select IsVerified from User where Email = ?";
-
-    userFound = await query(sqlQuery, [inputEmail]);
-
-    if (userFound) {
-        return res.status(200).json(userFound[0]["IsVerified"]);
-    }
-    else {
-        return res.status(401).json(userFound[0]["IsVerified"]);
     }
 }
 
@@ -190,4 +168,4 @@ async function updateUser(req, res) {
 }
 
 // EXPORT ALL THE FUNCTIONS
-module.exports = { getAllUsers, getUserByEmail, authenticate, createNewUser, deleteUser, updateUser, checkUserIsVerified };
+module.exports = { getUserByEmail, authenticate, createNewUser, deleteUser, updateUser };

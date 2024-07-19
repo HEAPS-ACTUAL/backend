@@ -5,13 +5,10 @@ execute based on the endpoint of the request that is being sent.
 
 const express = require("express");
 const router = express.Router();
-const { getAllUsers, authenticate, getUserByEmail, createNewUser, checkUserIsVerified, deleteUser, updateUser } = require("../controllers/UserController");
-
-// GET ALL USERS
-router.get("/", getAllUsers);
+const { authenticate, getUserByEmail, createNewUser, deleteUser, updateUser } = require("../controllers/UserController");
 
 // GET USER BY EMAIL
-router.post("/profile", getUserByEmail);
+router.get("/profile", getUserByEmail);
 
 // AUTHENTICATE
 router.post("/authenticate", authenticate);
@@ -19,13 +16,10 @@ router.post("/authenticate", authenticate);
 // REGISTER
 router.post("/register", createNewUser);
 
-// VERIFIED
-router.post("/is-verified", checkUserIsVerified);
-
 // DELETE USER
 router.delete("/delete", deleteUser);
 
 // UPDATE USER
-router.put("/update", updateUser);
+router.post("/update", updateUser);
 
 module.exports = router;
