@@ -83,13 +83,7 @@ Each row object has the keys: "TestID", "TestName", "DateTimeCreated", "Difficul
 async function getTestInfo(req, res){
     const email = req.body.email;
     const testType = req.body.testType;
-    
-    if(req.body.testStatus){
-        var testStatus = req.body.testStatus;
-    }
-    else{
-        var testStatus = false;
-    }
+    const testStatus = req.body.testStatus || false;
     
     try{
         const sqlQuery = 'call getTestInfo(?, ?, ?)';

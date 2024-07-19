@@ -1,7 +1,7 @@
 const query = require("../utils/PromisifyQuery");
 
 async function getAllFlashcardsWithoutSchedule(req, res) {
-    const email = req.body.email;
+    const email = req.query.email;
 
     try {
         const sqlQuery = 'Select TestID as value, TestName as label from Test where (Email = ?) and (TestType = "F") and isnull(ScheduleID)';
@@ -16,7 +16,7 @@ async function getAllFlashcardsWithoutSchedule(req, res) {
 }
 
 async function getFlashcardsByScheduleID(req, res) {
-    const scheduleID = req.body.scheduleID;
+    const scheduleID = req.query.scheduleID;
 
     try {
         const sqlQuery = "Select TestID, TestName, DateTimeCreated from Test where ScheduleID = ?";

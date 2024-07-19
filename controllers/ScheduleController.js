@@ -23,7 +23,7 @@ async function storeRevisionSchedule( startDate, endDate, examName, examColour, 
 }
 
 async function retrieveAllRevisionDatesByUser(req, res) {
-    const email = req.body.email;
+    const email = req.query.email;
 
     try {
         const sqlQuery = "Call retrieveAllRevisionDatesByUser(?)";

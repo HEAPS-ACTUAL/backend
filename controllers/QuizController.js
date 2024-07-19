@@ -85,8 +85,8 @@ function formatUserAnswers(userAnswers){
 }
 
 async function reviewQuiz(req, res){
-    const testID = req.body.testID;
-    const attemptNo = req.body.attemptNo;
+    const testID = req.query.testID;
+    const attemptNo = req.query.attemptNo;
 
     try{
         const sqlQuery = 'call reviewQuiz(?, ?)';
@@ -100,7 +100,7 @@ async function reviewQuiz(req, res){
 }
 
 async function getLatestAttempt(req, res){
-    const testID = req.body.testID;
+    const testID = req.query.testID;
 
     try{
         const sqlQuery = 'Select max(AttemptNo) as LatestAttempt from UserQuizScores where TestID = ?';
