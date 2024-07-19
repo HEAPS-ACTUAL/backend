@@ -11,7 +11,7 @@ const upload = multer({ storage: storage });
 router.post('/generateAndStoreTest', upload.single('file'), generateAndStoreTest);
 
 // DELETING A TEST
-router.post('/deleteTest', deleteTest);
+router.delete('/deleteTest', deleteTest);
 
 // RETRIEVING TEST INFO
 router.post('/getTestInfo', getTestInfo);

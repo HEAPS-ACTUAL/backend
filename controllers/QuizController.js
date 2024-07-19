@@ -59,7 +59,7 @@ async function storeUserQuizAnswers(req, res){
 }
 
 function formatUserAnswers(userAnswers){
-    const this_is_how_userAnswers_looks_like = 
+    `const this_is_how_userAnswers_looks_like = 
     {
         "1": "A",
         "2": "B",
@@ -71,7 +71,7 @@ function formatUserAnswers(userAnswers){
         "8": "C",
         "9": "C",
         "10": "C"
-    }
+    }`
     
     const returnedArray = [];
     
