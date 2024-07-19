@@ -5,7 +5,7 @@ execute based on the endpoint of the request that is being sent.
 
 const express = require("express");
 const router = express.Router();
-const { authenticate, getUserByEmail, createNewUser, checkUserIsVerified, deleteUser, updateUser } = require("../controllers/UserController");
+const { authenticate, getUserByEmail, createNewUser, deleteUser, updateUser } = require("../controllers/UserController");
 
 // GET USER BY EMAIL
 router.get("/profile", getUserByEmail);
@@ -15,9 +15,6 @@ router.post("/authenticate", authenticate);
 
 // REGISTER
 router.post("/register", createNewUser);
-
-// VERIFIED
-router.post("/is-verified", checkUserIsVerified);
 
 // DELETE USER
 router.delete("/delete", deleteUser);

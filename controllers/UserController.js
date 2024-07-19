@@ -89,20 +89,6 @@ async function createNewUser(req, res) {
     }
 }
 
-async function checkUserIsVerified(req, res) {
-    const inputEmail = req.body.email;
-    const sqlQuery = "Select IsVerified from User where Email = ?";
-
-    userFound = await query(sqlQuery, [inputEmail]);
-
-    if (userFound) {
-        return res.status(200).json(userFound[0]["IsVerified"]);
-    }
-    else {
-        return res.status(401).json(userFound[0]["IsVerified"]);
-    }
-}
-
 async function deleteUser(req, res) {
     const inputEmail = req.body.email;
 
@@ -182,4 +168,4 @@ async function updateUser(req, res) {
 }
 
 // EXPORT ALL THE FUNCTIONS
-module.exports = { getUserByEmail, authenticate, createNewUser, deleteUser, updateUser, checkUserIsVerified };
+module.exports = { getUserByEmail, authenticate, createNewUser, deleteUser, updateUser };

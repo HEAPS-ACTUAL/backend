@@ -14,7 +14,7 @@ router.post('/generateAndStoreTest', upload.single('file'), generateAndStoreTest
 router.delete('/deleteTest', deleteTest);
 
 // RETRIEVING TEST INFO
-router.post('/getTestInfo', getTestInfo);
+router.get('/getTestInfo', getTestInfo);
 
 // GET QUESTIONS AND OPTIONS FOR A TEST
 router.get('/getQuestionsAndOptions', getAllQuestionsAndOptionsFromATest);

@@ -121,23 +121,21 @@ Here are some of the main endpoints available:
 
 ### Schedule
 - `POST /schedule/createNewExam` - Post a new Exam Revision schedule using start date and end date
-- `POST /schedule/retrieveAllRevisionDates` - get all the revision dates for calendar 
-- `POST /schedule/deleteExistingExam` - delete all revision dates for specified flashcard from calendar
-- `POST /schedule/deleteSpecificRevisionDate` - delete one specified date instead from the revision schedule
+- `GET /schedule/retrieveAllRevisionDates` - get all the revision dates for calendar 
+- `DELETE /schedule/deleteExistingExam` - delete all revision dates for specified flashcard from calendar
+- `DELETE /schedule/deleteSpecificRevisionDate` - delete one specified date instead from the revision schedule
 
 ### Test
 - `POST /test/generateAndStoreTest` - create a test from uploaded file and store in db
-- `POST /test/deleteTest` - delete a test from db 
-- `POST /test/getTestInfo` - get all the tests for the user
-- `POST /test/getQuestionsAndOptions` - get questions and options for specified test
+- `DELETE /test/deleteTest` - delete a test from db 
+- `GET /test/getTestInfo` - get all the tests for the user
+- `GET /test/getQuestionsAndOptions` - get questions and options for specified test
 
 ### User
-- `POST /user/` - get all users (authentication purposes)
-- `POST /user/profile` - get info for profile page
+- `GET /user/profile` - get info for profile page
 - `POST /user/authenticate` - authenticate user for log in
 - `POST /user/register` - Register a new user
-- `POST /user/is-verified` - get User verification status
-- `POST /user/delete` - Delete a user's account
+- `DELETE /user/delete` - Delete a user's account
 - `POST /user/update` - Update a user's attributes
 
 ## Contributing
