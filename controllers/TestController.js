@@ -29,7 +29,7 @@ async function createNewTest(email, testName, testType) {
         const insertOk = await query(sqlQuery, [email, testID, testName, testType]);
 
         if (insertOk) {
-            console.log(`Test ${testID} added for ${email}!`);
+            console.log(`${testName} (${testType}) with TestID: ${testID} added for ${email}!`);
             return testID;
         }
     }
@@ -279,7 +279,7 @@ async function generateAndStoreTest(req, res) {
         const hasBeenStored = await formatAndStoreTest(email, testName, testType, difficulty, chatgptResponse); // FUNCTION DEFINED ABOVE
         
         if (hasBeenStored) {
-            const msg = 'Test, questions and options(if any) have been stored in database!';
+            const msg = `Test, questions and options(if any) have been stored in database for ${testName} (${testType})!`;
             console.log(msg)
             res.status(200).json({ message: msg });
         }
