@@ -203,11 +203,11 @@ async function formatAndStoreTest(email, testName, testType, difficulty, chatgpt
             throw new Error('Could not store Test!'); 
         }
 
-        var array_of_question_obj_strings = chatgpt_response.split('|||')
+        let array_of_question_obj_strings = chatgpt_response.split('|||')
         
         // slice to remove last element of array if it is an empty string
         if(array_of_question_obj_strings[array_of_question_obj_strings.length - 1] === ''){
-            array_of_question_obj_strings.slice(0, -1);
+            array_of_question_obj_strings = array_of_question_obj_strings.slice(0, -1);        
         }
         
         // console.log(array_of_question_obj_strings);
