@@ -132,7 +132,7 @@ function getPrompt(testType, difficulty, numOfQuestions=12){
         
         Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Elaboration". \n
         
-        Format your response exactly like this: \n
+        Format your response exactly like this but do not wrap the json codes in JSON markers: \n
         {
         "QuestionNumber": ,
         "ActualQuestion": ,
@@ -146,7 +146,7 @@ function getPrompt(testType, difficulty, numOfQuestions=12){
         Generate JSON objects for the questions with fields: "QuestionNumber", "ActualQuestion", "Elaboration", "Options".
         "Options" is a list of JSON objects with fields: "Option", "IsCorrect?". \n
         
-        Format your response exactly like this: \n
+        Format your response exactly like this but do not wrap the json codes in JSON markers: \n
         {
         "QuestionNumber": ,
         "ActualQuestion": ,
