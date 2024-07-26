@@ -126,7 +126,7 @@ THESE ARE JUST HELPER FUNCTIONS
 function getPrompt(testType, difficulty, numOfQuestions=12){
     // For now, function is just for these two entities, future entities may require more if-else statements instead
     const promptDict = {
-        'F': () =>`Based on the text above, generate a maximised number of Test questions, with a maximum of 30 questions. These questions should test how well I know the content of the given text. \n\n
+        'F': () =>`Based on the text above, generate a maximised number of Test questions, with a maximum of 20 questions. These questions should test how well I know the content of the given text. \n\n
         
         Use a variety of formats for the questions such as "Define this term", "Describe this process", “True or false”, “Fill in the blank”. There should also be an Elaboration which is the answer to the question. \n
         
