@@ -1,7 +1,7 @@
 require('dotenv').config(); // MUST BE FIRST LINE TO READ PORT NUMBERS
 const express = require("express");
 const cors = require("cors"); // to allow secure communication between the frontend and backend.
-const con = require("./models/ConnectionManager"); 
+const con = require("./models/ConnectionManager");
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
@@ -11,14 +11,27 @@ app.use(express.urlencoded({ extended: true })); // you can parse incoming Reque
 const BE_PORT = Number(process.env.BE_PORT) // Defining our port as 8001
 
 // Establishing connection with SQL Database
-con.connect((error) => {
-    if (error) {
-        console.log(`DATABASE ERROR: ${error}`);
-    } 
-    else {
-        console.log("Successfully connected to DB!");
-    }
-});
+connectToSQLDataBase();
+
+function connectToSQLDataBase() {
+    con.connect((error) => {
+        if (error) {
+            console.log(`DATABASE ERROR: ${error}`);
+            setTimeout(connectToSQLDataBase, 1000);
+        }
+        else {
+            console.log("Successfully connected to DB!");
+        }
+    });
+
+    con.on('error', (err) => {
+        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNREFUSED' || err.code === 'ER_CON_COUNT_ERROR') {
+            connectToSQLDataBase();
+        } else {
+            throw err;
+        }
+    });
+}
 
 // HEALTH CHECK ENDPOINT
 app.get("/", (req, res) => {
