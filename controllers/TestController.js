@@ -1,7 +1,7 @@
 // MODULES
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const query = require('../utils/PromisifyQuery');
+const {executeQuery} = require("../models/ConnectionManager");
 const openAI = require('openai');
 
 // .env VARIABLES 
@@ -26,7 +26,7 @@ async function createNewTest(email, testName, testType) {
     try {
         const testID = await determineTheNextTestID(); // FUNCTION DEFINED BELOW
         const sqlQuery = 'Insert into Test (Email, TestID, TestName, TestType) values (?, ?, ?, ?)';
-        const insertOk = await query(sqlQuery, [email, testID, testName, testType]);
+        const insertOk = await executeQuery(sqlQuery, [email, testID, testName, testType]);
 
         if (insertOk) {
             console.log(`${testName} (${testType}) with TestID: ${testID} added for ${email}!`);
@@ -43,7 +43,7 @@ async function createNewTest(email, testName, testType) {
 async function determineTheNextTestID() {
     try {
         const sqlQuery = 'Select TestID from Test order by TestID desc limit 1';
-        const returnedData = await query(sqlQuery);
+        const returnedData = await executeQuery(sqlQuery);
 
         if (returnedData.length == 0) {
             return 1; // IF NO TEST HAS BEEN CREATED BEFORE, USE NUMBER 1 AS THE NEXT Test ID
@@ -65,7 +65,7 @@ async function deleteTest(req, res) {
     try {
         const sqlQuery = 'Delete from Test where TestID = ?';
         
-        await query(sqlQuery, [testID]);
+        await executeQuery(sqlQuery, [testID]);
         
         console.log(`${testName} has been deleted!`);
         res.status(200).json({ message: `${testName} has been deleted!` });
@@ -87,7 +87,7 @@ async function getTestInfo(req, res){
     
     try{
         const sqlQuery = 'call getTestInfo(?, ?, ?)';
-        const returnedData = await query(sqlQuery, [email, testType, testStatus]);
+        const returnedData = await executeQuery(sqlQuery, [email, testType, testStatus]);
         const testInfoArray = returnedData[0];
         
         res.status(200).json(testInfoArray);
@@ -107,7 +107,7 @@ async function getAllQuestionsAndOptionsFromATest(req, res){
 
     try{
         const sqlQuery = 'call getAllQuestionsAndOptionsForATest(?)';
-        const returnedData = await query(sqlQuery, [testID]);
+        const returnedData = await executeQuery(sqlQuery, [testID]);
         const questionsOfThisTest = returnedData[0];
         
         res.status(200).json(questionsOfThisTest);
