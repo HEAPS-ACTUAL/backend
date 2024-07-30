@@ -7,7 +7,7 @@ const util = require('util');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 
 const DB_ENDPOINT = process.env.DB_ENDPOINT;
 const DB_NAME = process.env.DB_NAME;
@@ -20,10 +20,12 @@ const pool = mysql.createPool({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB_NAME,
-    acquireTimeout: 30000,
     connectTimeout: 10000,
     queueLimit: 0,
-    waitForConnections: true
+    waitForConnections: true,
+    idleTimeout: 300, // 28800 seconds = 8 hrs
+    keepAliveInitialDelay: 10000, // if KeepAlive is true, this will be the initial delay
+    enableKeepAlive: true // Enable keep-alive on the socket. (Default: true) 
 });
 
 // Promisify the pool.getConnection method
