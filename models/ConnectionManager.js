@@ -28,17 +28,14 @@ const pool = mysql.createPool({
     enableKeepAlive: true // Enable keep-alive on the socket. (Default: true) 
 });
 
-// Promisify the pool.getConnection method
-const getConnection = util.promisify(pool.getConnection).bind(pool);
-
 // Function to execute a query
 async function executeQuery(queryString, queryArgs) {
     let connection;
     try {
-        connection = await getConnection(); // 
+        connection = await pool.getConnection(); // 
         // console.log("Successfully connected to DB!")
-        const query = util.promisify(connection.query).bind(connection);
-        const results = await query(queryString, queryArgs);
+        const [results] = await connection.execute(queryString, queryArgs);
+        console.log(results)
         return results;
     } catch (err) {
         throw err;

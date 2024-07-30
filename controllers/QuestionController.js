@@ -2,7 +2,8 @@ const {executeQuery} = require("../models/ConnectionManager");
 
 async function addAllQuestionsForATest(arrayOfValues){
     try{
-        const sqlQuery = "Insert into Question (TestID, QuestionNo, QuestionText, Elaboration) values ?";
+        console.log(arrayOfValues)
+        const sqlQuery = "INSERT INTO `Question` (`TestID`, `QuestionNo`, `QuestionText`, `Elaboration`) VALUES (?,?,?,?)";
         const insertOk = await executeQuery(sqlQuery, [arrayOfValues]);
         
         if(insertOk.affectedRows === arrayOfValues.length){
