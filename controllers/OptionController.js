@@ -1,9 +1,9 @@
-const {executeQuery} = require("../models/ConnectionManager");
+const {execute, query} = require("../models/ConnectionManager");
 
 async function addAllOptionsForAQuiz(arrayOfValues){
     try{
         const sqlQuery = 'Insert into `Option` (TestID, QuestionNo, OptionLetter, OptionText, IsCorrect) values ?';
-        const insertOk = await executeQuery(sqlQuery, [arrayOfValues]);
+        const insertOk = await query(sqlQuery, [arrayOfValues]);
         
         if(insertOk.affectedRows === arrayOfValues.length){
             console.log('All options for this quiz has been inserted!');

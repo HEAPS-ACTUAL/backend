@@ -1,7 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const jwt = require('jsonwebtoken'); // THIS PACKAGE IS FOR THE TOKEN
-const { executeQuery } = require('../models/ConnectionManager');
+const { execute, query } = require('../models/ConnectionManager');
 
 // .env VARIABLES
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -36,7 +36,7 @@ async function verifyToken(req, res){
 async function updateUserVerification(inputEmail){
     try{
         const sqlQuery = "Update User set isVerified = true where Email = ?";
-        const updateOk = await executeQuery(sqlQuery, [inputEmail]);
+        const updateOk = await execute(sqlQuery, [inputEmail]);
         return updateOk;
     }
     catch(error){

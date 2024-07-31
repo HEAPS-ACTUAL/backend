@@ -1,7 +1,6 @@
 /* 
 Creating an connection instance to mySQL database.
 */
-const util = require('util');
 
 // FOR .ENV FILE
 const path = require('path');
@@ -28,14 +27,14 @@ const pool = mysql.createPool({
     enableKeepAlive: true // Enable keep-alive on the socket. (Default: true) 
 });
 
-// Function to execute a query
-async function executeQuery(queryString, queryArgs) {
+// Function to execute a prepared statement
+async function execute(queryString, queryArgs) {
     let connection;
     try {
         connection = await pool.getConnection(); // 
         // console.log("Successfully connected to DB!")
         const [results] = await connection.execute(queryString, queryArgs);
-        console.log(results)
+        // console.log(results)
         return results;
     } catch (err) {
         throw err;
@@ -46,6 +45,25 @@ async function executeQuery(queryString, queryArgs) {
     }
 }
 
+// Function to execute a query
+async function query(queryString, queryArgs) {
+    let connection;
+    try {
+        connection = await pool.getConnection(); // 
+        // console.log("Successfully connected to DB!")
+        const [results] = await connection.query(queryString, queryArgs);
+        // console.log(results)
+        return results;
+    } catch (err) {
+        throw err;
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+}
+
+
 module.exports = {
-    executeQuery, pool
+    execute, query, pool
 };

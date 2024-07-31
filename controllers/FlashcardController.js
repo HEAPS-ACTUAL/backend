@@ -1,11 +1,11 @@
-const {executeQuery} = require("../models/ConnectionManager");
+const {execute, query} = require("../models/ConnectionManager");
 
 async function getAllFlashcardsWithoutSchedule(req, res) {
     const email = req.query.email;
 
     try {
         const sqlQuery = 'Select TestID as value, TestName as label from Test where (Email = ?) and (TestType = "F") and isnull(ScheduleID)';
-        const returnedData = await executeQuery(sqlQuery, [email]);
+        const returnedData = await execute(sqlQuery, [email]);
         res.status(200).json(returnedData);
     } 
     catch (error) {
@@ -20,7 +20,7 @@ async function getFlashcardsByScheduleID(req, res) {
 
     try {
         const sqlQuery = "Select TestID, TestName, DateTimeCreated from Test where ScheduleID = ?";
-        const returnedData = await executeQuery(sqlQuery, [scheduleID]);
+        const returnedData = await query(sqlQuery, [scheduleID]);
 
         res.status(200).json(returnedData);
     }
