@@ -22,7 +22,7 @@ const pool = mysql.createPool({
     connectTimeout: 10000,
     queueLimit: 0,
     waitForConnections: true,
-    idleTimeout: 300, // 28800 seconds = 8 hrs
+    idleTimeout: 60000, 
     keepAliveInitialDelay: 10000, // if KeepAlive is true, this will be the initial delay
     enableKeepAlive: true // Enable keep-alive on the socket. (Default: true) 
 });
