@@ -64,6 +64,4 @@ async function query(queryString, queryArgs) {
 }
 
 
-module.exports = {
-    execute, query, pool
-};
+module.exports = {execute, query, pool};
