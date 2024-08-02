@@ -74,4 +74,4 @@ function connectToSQLDataBase() {
 }
 
 
-module.exports = {execute, query, connectToSQLDataBase, pool};
+module.exports = {execute, query, connectToSQLDataBase};

@@ -1,7 +1,7 @@
 require('dotenv').config(); // MUST BE FIRST LINE TO READ PORT NUMBERS
 const express = require("express");
 const cors = require("cors"); // to allow secure communication between the frontend and backend.
-const {pool, connectToSQLDataBase} = require("./models/ConnectionManager");
+const {connectToSQLDataBase} = require("./models/ConnectionManager");
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
