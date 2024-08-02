@@ -1,4 +1,4 @@
-const query = require('../utils/PromisifyQuery');
+const {execute, query} = require("../models/ConnectionManager");
 
 async function addAllOptionsForAQuiz(arrayOfValues){
     try{

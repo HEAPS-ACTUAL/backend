@@ -1,4 +1,4 @@
-const query = require("../utils/PromisifyQuery");
+const {execute, query} = require("../models/ConnectionManager");
 const bcrypt = require("bcrypt"); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS AND VARIABLES
@@ -18,7 +18,7 @@ async function getUserByEmail(req, res = null) {
     const inputEmail = req.body.email || req.query.email;
     const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined, IsVerified from User where Email = ?";
 
-    userFound = await query(sqlQuery, [inputEmail]);
+    userFound = await execute(sqlQuery, [inputEmail]);
     userFound = userFound[0]; // RETURNING THE FIRST ELEMENT BECAUSE userFound IS A LIST CONTANING ONE USER OBJECT
 
     /*
@@ -76,7 +76,7 @@ async function createNewUser(req, res) {
     const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
     try {
         const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
-        const insertOk = await query(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender,]);
+        const insertOk = await execute(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender,]);
 
         if (insertOk) {
             sendVerificationEmail(req);
@@ -94,7 +94,7 @@ async function deleteUser(req, res) {
 
     try {
         const sqlQuery = "DELETE FROM User WHERE Email = ?";
-        const deleteResult = await query(sqlQuery, [inputEmail]);
+        const deleteResult = await execute(sqlQuery, [inputEmail]);
 
         if (deleteResult.affectedRows) {
             return res.status(200).json({ message: "Your account has been deleted." });
@@ -126,7 +126,7 @@ async function updateUser(req, res) {
     if(inputFirstName !== null && inputLastName !== null){ // NAME CHANGE
         try {
             const sqlQuery = "UPDATE User SET FirstName = ?, LastName = ? WHERE Email = ?";
-            const updateResult = await query(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
+            const updateResult = await execute(sqlQuery, [inputFirstName, inputLastName, inputEmail,]);
     
             if (updateResult.affectedRows) {
                 return res.status(200).json({ message: "User details updated successfully." });
@@ -150,7 +150,7 @@ async function updateUser(req, res) {
             
             try {
                 const sqlQuery = "UPDATE User SET HashedPassword = ? WHERE Email = ?";
-                const updateResult = await query(sqlQuery, [newHashedPassword, inputEmail,]);
+                const updateResult = await execute(sqlQuery, [newHashedPassword, inputEmail,]);
         
                 if (updateResult.affectedRows) {
                     return res.status(200).json({ message: "Your password has been successfully changed!" });

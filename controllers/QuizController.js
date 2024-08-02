@@ -1,4 +1,4 @@
-const query = require('../utils/PromisifyQuery');
+const {execute, query} = require("../models/ConnectionManager");
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@ SQL DATABASE RELATED FUNCTIONS
 async function createNewQuiz(testID, difficulty){
     try {
         const sqlQuery = 'Insert into Quiz (TestID, Difficulty) values (?, ?)';
-        const insertOk = await query(sqlQuery, [testID, difficulty]);
+        const insertOk = await execute(sqlQuery, [testID, difficulty]);
 
         if (insertOk) {
             console.log('Quiz has been added into database!');
@@ -25,7 +25,7 @@ async function markQuizAsDone(req, res){
     const testID = req.body.testID;
     try {
         const sqlQuery = 'Update Quiz set IsDone = true where TestID = ?';
-        await query(sqlQuery, [testID]);
+        await execute(sqlQuery, [testID]);
 
         console.log(`TestID ${testID} has been marked as done!`);
         res.status(200).json({message: `TestID ${testID} has been marked as done!`})
@@ -44,7 +44,7 @@ async function storeUserQuizAnswers(req, res){
 
     try{
         const sqlQuery = 'Call storeUserQuizAnswers(?, ?)';
-        const insertOk = await query(sqlQuery, [testID, formattedUserAnswers]);
+        const insertOk = await execute(sqlQuery, [testID, formattedUserAnswers]);
         
         if(insertOk.affectedRows){
             const msg = `User's answers has been stored!`
@@ -90,7 +90,7 @@ async function reviewQuiz(req, res){
 
     try{
         const sqlQuery = 'call reviewQuiz(?, ?)';
-        const returnedData = await query(sqlQuery, [testID, attemptNo]); // Go to 'test_format_examples/reviewQuiz.js' to see how returnedData looks like
+        const returnedData = await execute(sqlQuery, [testID, attemptNo]); // Go to 'test_format_examples/reviewQuiz.js' to see how returnedData looks like
         res.status(200).json(returnedData[0]);
     }
     catch(error){
@@ -104,7 +104,7 @@ async function getLatestAttempt(req, res){
 
     try{
         const sqlQuery = 'Select max(AttemptNo) as LatestAttempt from UserQuizScores where TestID = ?';
-        const returnedData = await query(sqlQuery, [testID]);
+        const returnedData = await execute(sqlQuery, [testID]);
         res.status(200).json(returnedData[0]);
     }
     catch(error){

@@ -1,11 +1,11 @@
-const query = require("../utils/PromisifyQuery");
+const {execute, query} = require("../models/ConnectionManager");
 
 async function getAllFlashcardsWithoutSchedule(req, res) {
     const email = req.query.email;
 
     try {
         const sqlQuery = 'Select TestID as value, TestName as label from Test where (Email = ?) and (TestType = "F") and isnull(ScheduleID)';
-        const returnedData = await query(sqlQuery, [email]);
+        const returnedData = await execute(sqlQuery, [email]);
         res.status(200).json(returnedData);
     } 
     catch (error) {

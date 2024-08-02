@@ -1,5 +1,4 @@
-const query = require("../utils/PromisifyQuery");
-const db = require("../models/ConnectionManager"); // Import the database connection
+const {execute, query} = require("../models/ConnectionManager");
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -12,7 +11,7 @@ async function storeRevisionSchedule( startDate, endDate, examName, examColour, 
 
     try {
         const sqlQuery = "Call addRevisionSchedule(?, ?, ?, ?, ?, ?)";
-        const returnedData = await query(sqlQuery, [startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates]);
+        const returnedData = await execute(sqlQuery, [startDate, endDate, examName, examColour, arrayOfTestIDs, arrayOfReviewDates]);
         // console.log(returnedData);
     } 
     catch (error) {
@@ -27,7 +26,7 @@ async function retrieveAllRevisionDatesByUser(req, res) {
 
     try {
         const sqlQuery = "Call retrieveAllRevisionDatesByUser(?)";
-        const returnedData = await query(sqlQuery, [email]);
+        const returnedData = await execute(sqlQuery, [email]);
         res.status(200).json(returnedData[0]);
     } 
     catch (error) {
@@ -42,7 +41,7 @@ async function deleteExistingExam(req, res) {
 
     try {
         const sqlQuery = "call deleteEntireSchedule(?)";
-        const returnedData = await query(sqlQuery, [input_ScheduleId]);
+        const returnedData = await execute(sqlQuery, [input_ScheduleId]);
 
         res.status(200).json("ok deleted entire exam from db");
     } 
@@ -59,7 +58,7 @@ async function deleteSpecificRevisionDate(req, res) {
 
     try {
         const sqlQuery = "call deleteOneRevisionDate(?, ?)";
-        const returnedData = await query(sqlQuery, [input_ScheduleId, input_RevisionDate]);
+        const returnedData = await execute(sqlQuery, [input_ScheduleId, input_RevisionDate]);
         res.status(200).json("ok deleted specific date from db");
     } 
     catch (error) {
