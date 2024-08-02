@@ -32,9 +32,7 @@ async function execute(queryString, queryArgs) {
     let connection;
     try {
         connection = await pool.getConnection(); // 
-        // console.log("Successfully connected to DB!")
         const [results] = await connection.execute(queryString, queryArgs);
-        // console.log(results)
         return results;
     } catch (err) {
         throw err;
@@ -50,9 +48,7 @@ async function query(queryString, queryArgs) {
     let connection;
     try {
         connection = await pool.getConnection(); // 
-        // console.log("Successfully connected to DB!")
         const [results] = await connection.query(queryString, queryArgs);
-        // console.log(results)
         return results;
     } catch (err) {
         throw err;
@@ -64,4 +60,18 @@ async function query(queryString, queryArgs) {
 }
 
 
-module.exports = {execute, query, pool};
+function connectToSQLDataBase() {
+    pool.on('connection', function (connection) {
+    console.log('Successfully connected to DB!');
+  
+    connection.on('error', function (err) {
+      console.error(new Date(), 'MySQL error', err.code);
+    });
+    connection.on('close', function (err) {
+      console.error(new Date(), 'MySQL close', err);
+    });
+  });
+}
+
+
+module.exports = {execute, query, connectToSQLDataBase, pool};

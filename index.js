@@ -1,7 +1,7 @@
 require('dotenv').config(); // MUST BE FIRST LINE TO READ PORT NUMBERS
 const express = require("express");
 const cors = require("cors"); // to allow secure communication between the frontend and backend.
-const {pool} = require("./models/ConnectionManager");
+const {pool, connectToSQLDataBase} = require("./models/ConnectionManager");
 
 const app = express(); // CREATING AN INSTANCE OF EXPRESS
 app.use(express.json()); // TELLING EXPRESS TO UNDERSTAND JSON
@@ -12,38 +12,6 @@ const BE_PORT = Number(process.env.BE_PORT) // Defining our port as 8001
 
 // Establishing connection with SQL Database
 connectToSQLDataBase();
-
-// function connectToSQLDataBase() {
-//     con.connect((error) => {
-//         if (error) {
-//             console.log(`DATABASE ERROR: ${error}`);
-//             setTimeout(connectToSQLDataBase, 1000);
-//         }
-//         else {
-//             console.log("Successfully connected to DB!");
-//         }
-//     });
-
-//     con.on('error', (err) => {
-//         if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNREFUSED' || err.code === 'ER_CON_COUNT_ERROR') {
-//             connectToSQLDataBase();
-//         } else {
-//             throw err;
-//         }
-//     });
-// }
-function connectToSQLDataBase() {
-    pool.on('connection', function (connection) {
-    console.log('Successfully connected to DB!');
-  
-    connection.on('error', function (err) {
-      console.error(new Date(), 'MySQL error', err.code);
-    });
-    connection.on('close', function (err) {
-      console.error(new Date(), 'MySQL close', err);
-    });
-  });
-}
 
 // HEALTH CHECK ENDPOINT
 app.get("/", (req, res) => {
