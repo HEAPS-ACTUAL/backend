@@ -1,3 +1,4 @@
+USE heap;
 DROP PROCEDURE IF EXISTS getAllQuestionsAndOptionsForATest;
 DROP PROCEDURE IF EXISTS getTestInfo;
 DROP PROCEDURE IF EXISTS reviewQuiz;
