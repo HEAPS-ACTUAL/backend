@@ -30,4 +30,26 @@ async function getFlashcardsByScheduleID(req, res) {
     }
 }
 
-module.exports = { getAllFlashcardsWithoutSchedule, getFlashcardsByScheduleID };
+async function updateFlashcard(req, res) {
+    const testID = req.body.testID;
+    const newText = req.body.newText; // input from user
+    const isBack = req.body.isFront; // true if updating front, false if updating back
+    let sqlQuery;
+
+    try {
+        if (isBack){
+            sqlQuery = "UPDATE Question SET Elaboration = ? WHERE TestID = ?";
+        }else{
+            sqlQuery = "UPDATE Question SET QuestionText = ? WHERE TestID = ?";
+
+        }
+        await execute(sqlQuery, [newText, testID]);
+        res.status(200).json({ message: "Flashcard updated successfully" });
+    }
+    catch (error) {
+        console.error("Failed to update flashcard:", error);
+        res.status(404).json({ message: error });
+    }
+}
+
+module.exports = { getAllFlashcardsWithoutSchedule, getFlashcardsByScheduleID, updateFlashcard };
