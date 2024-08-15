@@ -32,18 +32,19 @@ async function getFlashcardsByScheduleID(req, res) {
 
 async function updateFlashcard(req, res) {
     const testID = req.body.testID;
-    const newText = req.body.newText; // input from user
-    const isBack = req.body.isFront; // true if updating front, false if updating back
+    const updatedText = req.body.updatedText; // input from user
+    const questionNo = req.body.questionNo;
+    const isBack = req.body.isBack; // true if updating front, false if updating back
     let sqlQuery;
 
     try {
         if (isBack){
-            sqlQuery = "UPDATE Question SET Elaboration = ? WHERE TestID = ?";
+            sqlQuery = "UPDATE Question SET Elaboration = ? WHERE TestID = ? AND QuestionNo = ?";
         }else{
-            sqlQuery = "UPDATE Question SET QuestionText = ? WHERE TestID = ?";
+            sqlQuery = "UPDATE Question SET QuestionText = ? WHERE TestID = ? AND QuestionNo = ?";
 
         }
-        await execute(sqlQuery, [newText, testID]);
+        await execute(sqlQuery, [updatedText, testID, questionNo]);
         res.status(200).json({ message: "Flashcard updated successfully" });
     }
     catch (error) {
