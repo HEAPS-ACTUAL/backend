@@ -1,8 +1,12 @@
-const {execute, query} = require("../models/ConnectionManager");
+// MODULES
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const bcrypt = require("bcrypt"); // THIS PACKAGE IS FOR HASHING THE PASSWORD
 
 // FUNCTIONS AND VARIABLES
+const ACCESS_CODE = process.env.ACCESS_CODE;
 const { sendVerificationEmail } = require("./EmailController");
+const {execute, query} = require("../models/ConnectionManager");
 
 /*
 WHY IS "RES" SET TO NULL BY DEFAULT FOR THE getUserByEmail FUNCTION?
@@ -71,12 +75,18 @@ async function createNewUser(req, res) {
     const inputFirstName = req.body.firstName;
     const inputLastName = req.body.lastName;
     const inputGender = req.body.gender;
+    const inputAccessCode = req.body.accessCode;
 
     const pass_salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(inputPassword, pass_salt);
+
+    if (inputAccessCode !== ACCESS_CODE){
+        return res.status(401).json({ message: "Incorrect Access Code!" });
+    }
+
     try {
-        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender) values (?, ?, ?, ?, ?)";
-        const insertOk = await execute(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender,]);
+        const sqlQuery = "Insert into User (Email, HashedPassword, FirstName, LastName, Gender, AccessCode) values (?, ?, ?, ?, ?, ?)";
+        const insertOk = await execute(sqlQuery, [inputEmail, hashedPassword, inputFirstName, inputLastName, inputGender, inputAccessCode]);
 
         if (insertOk) {
             sendVerificationEmail(req);
