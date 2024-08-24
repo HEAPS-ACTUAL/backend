@@ -10,7 +10,8 @@ CREATE TABLE User (
     LastName VARCHAR(255),
     Gender CHAR(1),
     DateTimeJoined DATETIME DEFAULT CURRENT_TIMESTAMP,
-    IsVerified BOOLEAN DEFAULT FALSE
+    IsVerified BOOLEAN DEFAULT FALSE,
+    AccessCode VARCHAR(255)
 );
 
 -- Creating the Schedule table
