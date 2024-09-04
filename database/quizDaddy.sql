@@ -91,6 +91,26 @@ CREATE TABLE UserQuizScores (
     FOREIGN KEY (TestID) REFERENCES Quiz(TestID) ON DELETE CASCADE
 );
 
+CREATE TABLE DeletedTests (
+	Email VARCHAR(255),
+    DateTimeDeleted DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    TestID INT NOT NULL,
+    TestName VARCHAR(255),
+    TestType CHAR(1),
+    PRIMARY KEY (Email, DateTimeDeleted)
+);
+
+CREATE TABLE DeletedQuizScores (
+	Email VARCHAR(255),
+	TestID INT NOT NULL,
+    NumOfCorrectAnswers INT NOT NULL,
+    NumOfQuestions INT NOT NULL,
+    AttemptNo INT NOT NULL,
+    DateTimeDeleted DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (Email, AttemptNo, DateTimeDeleted),
+    FOREIGN KEY (Email, DateTimeDeleted) REFERENCES DeletedTests(Email, DateTimeDeleted)
+);
+
 
 # STORED PROCEDURES
 /* 
@@ -324,5 +344,45 @@ begin
     else 
 		delete from RevisionDates where ScheduleID = input_schedule_id and RevisionDate = input_date;
     end if;
+end $$
+delimiter ;
+
+/* 
+-----------------------------------------------------------------------------------------------------------------------
+Update delete table
+-----------------------------------------------------------------------------------------------------------------------
+*/
+delimiter $$
+create procedure updateDeletedTests(in deleted_test_id int)
+begin
+	declare user_email varchar(255);
+    declare date_time_deleted datetime;
+    declare deleted_test_name varchar(255);
+    declare deleted_test_type char(1);
+    
+    declare num_of_questions int;
+    declare num_of_correct_ans int;
+    declare attempt_no int;
+    
+    declare num_of_rows int;
+    declare current_row int;
+    
+    set date_time_deleted = now();
+    select Email, Testname, TestType into user_email, deleted_test_name, deleted_test_type from Test where testid = deleted_test_id;
+    
+    insert into DeletedTests values (user_email, date_time_deleted, deleted_test_id, deleted_test_name, deleted_test_type);
+    
+    select count(*) into num_of_questions from Question where TestID = deleted_test_id;
+    select count(*) into num_of_rows from UserQuizScores where TestID = deleted_test_id;
+    
+    set current_row = 0;
+    
+    while current_row < num_of_rows do
+		select NumOfCorrectAnswers, AttemptNo into num_of_correct_ans, attempt_no from UserQuizScores where TestID = deleted_test_id limit 1 offset current_row;
+        
+        insert into DeletedQuizScores values (user_email, deleted_test_id, num_of_correct_ans, num_of_questions, attempt_no, date_time_deleted);
+        
+        set current_row = current_row + 1;
+    end while;
 end $$
 delimiter ;
