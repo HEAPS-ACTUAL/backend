@@ -58,9 +58,21 @@ async function determineTheNextTestID() {
     }
 }
 
+async function updateDeleteTable(testID){
+    try {
+        const sqlQuery = 'Call updateDeletedTests(?)';
+        await execute(sqlQuery, [testID]);
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
 async function deleteTest(req, res) {
     const testID = req.body.testID;
     const testName = req.body.testName;
+
+    await updateDeleteTable(testID);
 
     try {
         const sqlQuery = 'Delete from Test where TestID = ?';
