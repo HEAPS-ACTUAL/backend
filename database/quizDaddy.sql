@@ -97,6 +97,7 @@ CREATE TABLE DeletedTests (
     TestID INT NOT NULL,
     TestName VARCHAR(255),
     TestType CHAR(1),
+    IsDone BOOLEAN,
     PRIMARY KEY (Email, DateTimeDeleted)
 );
 
@@ -359,6 +360,7 @@ begin
     declare date_time_deleted datetime;
     declare deleted_test_name varchar(255);
     declare deleted_test_type char(1);
+    declare quiz_status boolean;
     
     declare num_of_questions int;
     declare num_of_correct_ans int;
@@ -370,7 +372,13 @@ begin
     set date_time_deleted = now();
     select Email, Testname, TestType into user_email, deleted_test_name, deleted_test_type from Test where testid = deleted_test_id;
     
-    insert into DeletedTests values (user_email, date_time_deleted, deleted_test_id, deleted_test_name, deleted_test_type);
+    if deleted_test_type = 'Q' then
+		select IsDone into quiz_status from Quiz where TestID = deleted_test_id;
+	else
+		set quiz_status = null;
+    end if;
+    
+    insert into DeletedTests values (user_email, date_time_deleted, deleted_test_id, deleted_test_name, deleted_test_type, quiz_status);
     
     select count(*) into num_of_questions from Question where TestID = deleted_test_id;
     select count(*) into num_of_rows from UserQuizScores where TestID = deleted_test_id;
