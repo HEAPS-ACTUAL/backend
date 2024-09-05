@@ -9,5 +9,5 @@ router.post('/verify-email', verifyToken);
 
 // SEND VERIFICATION EMAIL
 router.post('/send-verification-email', sendVerificationEmail);
-
+// TEST
 module.exports = router;
