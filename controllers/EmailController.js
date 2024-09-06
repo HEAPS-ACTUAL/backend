@@ -54,6 +54,8 @@ async function sendVerificationEmail(req, res = null) {
                     Thank you for choosing quizDaddy. 
                     <br><br> 
                     To complete your registration, please <a href="${verificationLink}"> verify your email. </a> 
+                    <br><br>
+                    Alternatively, you may use this link: ${verificationLink}
                 </p>
                 <br>
                 Best regards, 
