@@ -19,7 +19,7 @@ differently depending on who is calling it (see if statement below).
 */
 
 async function getUserByEmail(req, res = null) {
-    console.log(req.body)
+    console.log(req);
     const inputEmail = req.body.email || req.query.email;
     const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined, IsVerified from User where Email = ?";
 
