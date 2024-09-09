@@ -26,7 +26,7 @@ async function getUserByEmail(req, res = null) {
     let inputEmail = req.body.email || req.query.email;
 
     if (inputEmail === undefined){
-        inputEmail = '';
+        inputEmail = null;
     }
 
     const sqlQuery = "Select Email, HashedPassword, FirstName, LastName, Gender, convert(DateTimeJoined, char) as DateTimeJoined, IsVerified from User where Email = ?";
