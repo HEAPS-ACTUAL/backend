@@ -88,6 +88,22 @@ async function deleteTest(req, res) {
     }
 }
 
+async function getTestNameById(req, res) {
+    const testID = req.query.testID
+
+    try {
+        const sqlQuery = 'select testName from test where testID = ?'
+
+        const returnedData = await execute(sqlQuery, [testID])
+
+        res.status(200).json(returnedData[0])
+    }
+        catch (error) {
+            console.log(`Could not get test name due to the following error: ${error}`);
+            res.status(404).json({ message: `Could not get testName!` });
+    }
+}
+
 /*
 This function returns an array of row objects.
 Each row object has the keys: "TestID", "TestName", "DateTimeCreated", "Difficulty" and "numOfQuestions".
@@ -302,4 +318,4 @@ async function generateAndStoreTest(req, res) {
     }
 }
 
-module.exports = { generateAndStoreTest, deleteTest, getTestInfo, getAllQuestionsAndOptionsFromATest };
+module.exports = { generateAndStoreTest, deleteTest, getTestInfo, getAllQuestionsAndOptionsFromATest, getTestNameById };
