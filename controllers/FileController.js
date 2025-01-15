@@ -30,7 +30,7 @@ async function extractTextFromPDF(uploadedFile, selectedPages) {
       extractedText.push(`Page ${pageIndex}:\n${pageText}`);
     }
     // Join results
-    console.log(extractedText);
+    // console.log(extractedText);
     return extractedText.join("\n\n");
   } catch (error) {
     console.error(`PDF extraction error: ${error.message}`);
